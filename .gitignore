@@ -1,0 +1,31 @@
+# Python caches
+__pycache__/
+*.pyc
+
+# Test caches and local test/runtime temp areas
+/.pytest_cache/
+/pytest-cache-files-*
+/.test_runtime/
+/.tmp_windows_temp/
+
+# Local environments
+/.venv/
+
+# Claude Code local settings
+/.claude/
+
+# Build and release outputs
+/build/
+/dist/
+
+# Local temporary workspaces and probes
+/tmp/
+/tmp*/
+/layout_probe.ini
+/tmp_layout_probe.png
+
+# Local clean export prepared from this workspace
+/TavPer_Repository/
+
+# SVG vector sources (kept outside the repo)
+/*.svg

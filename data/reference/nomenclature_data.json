@@ -1,0 +1,2905 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "fallback_language": "en",
+    "supported_languages": [
+      "en",
+      "it",
+      "es",
+      "fr",
+      "de",
+      "zh",
+      "ru"
+    ],
+    "required_element_fields": [
+      "name_en",
+      "name_it",
+      "anion_en",
+      "anion_it"
+    ],
+    "naming_patterns": {
+      "en": {
+        "stock_simple": "{cation} {anion}",
+        "stock_roman": "{cation}({roman}) {anion}",
+        "traditional": "{epithet} {anion}"
+      },
+      "it": {
+        "stock_simple": "{anion} di {cation}",
+        "stock_roman": "{anion} di {cation} ({roman})",
+        "traditional": "{anion} {epithet}"
+      },
+      "fr": {
+        "stock_simple": "{anion} de {cation}",
+        "stock_roman": "{anion} de {cation} ({roman})",
+        "traditional": "{anion} {epithet}"
+      },
+      "de": {
+        "stock_simple": "{cation}{anion}",
+        "stock_roman": "{cation}({roman})-{anion}",
+        "traditional": "{anion} {epithet}"
+      },
+      "zh": {
+        "stock_simple": "{anion}{cation}",
+        "stock_roman": "{anion}{cation}（{roman}）",
+        "traditional": "{anion}{epithet}"
+      },
+      "ru": {
+        "stock_simple": "{anion} {cation}",
+        "stock_roman": "{anion} {cation} ({roman})",
+        "traditional": "{anion} {epithet}"
+      },
+      "es": {
+        "stock_simple": "{anion} de {cation}",
+        "stock_roman": "{anion} de {cation} ({roman})",
+        "traditional": "{anion} {epithet}"
+      }
+    },
+    "translation_audit": {
+      "verified_name_languages_default": [
+        "en",
+        "it"
+      ],
+      "verified_anion_languages_default": [
+        "en",
+        "it"
+      ],
+      "notes": [
+        "English and Italian fields remain the original verified baseline.",
+        "Spanish, French, German, Simplified Chinese, and Russian support entries were re-audited on 2026-04-04 before re-exposing those UI languages.",
+        "German stock names use concatenation and Chinese stock names use the recovered Simplified Chinese ordering from zh_CN sources.",
+        "Russian stock names require a runtime genitive transform for the cation name; the stored names remain nominative for general UI display.",
+        "The inferred tennesside anion forms for es/fr/de/ru/zh were added conservatively because no pre-existing localized anion fields were present in the project data."
+      ]
+    }
+  },
+  "elements": {
+    "Ac": {
+      "name_en": "actinium",
+      "name_it": "attinio",
+      "name_fr": "actinium",
+      "name_de": "Actinium",
+      "name_zh": "锕",
+      "name_ru": "актиний",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "actinio"
+    },
+    "Ag": {
+      "name_en": "silver",
+      "name_it": "argento",
+      "name_fr": "argent",
+      "name_de": "Silber",
+      "name_zh": "银",
+      "name_ru": "серебро",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "plata"
+    },
+    "Al": {
+      "name_en": "aluminium",
+      "name_it": "alluminio",
+      "name_fr": "aluminium",
+      "name_de": "Aluminium",
+      "name_zh": "铝",
+      "name_ru": "алюминий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "aluminio"
+    },
+    "Am": {
+      "name_en": "americium",
+      "name_it": "americio",
+      "name_fr": "américium",
+      "name_de": "Americium",
+      "name_zh": "镅",
+      "name_ru": "америций",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "americio"
+    },
+    "Ar": {
+      "name_en": "argon",
+      "name_it": "argo",
+      "name_fr": "argon",
+      "name_de": "Argon",
+      "name_zh": "氩",
+      "name_ru": "аргон",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "argón"
+    },
+    "As": {
+      "name_en": "arsenic",
+      "name_it": "arsenico",
+      "anion_en": "arsenide",
+      "anion_it": "arseniuro",
+      "name_fr": "arsenic",
+      "name_de": "Arsen",
+      "name_zh": "砷",
+      "name_ru": "мышьяк",
+      "anion_fr": "arséniure",
+      "anion_de": "arsenid",
+      "anion_zh": "砷化",
+      "anion_ru": "арсенид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "arsénico",
+      "anion_es": "arseniuro"
+    },
+    "At": {
+      "name_en": "astatine",
+      "name_it": "astato",
+      "anion_en": "astatide",
+      "anion_it": "astaturo",
+      "name_fr": "astate",
+      "name_de": "Astat",
+      "name_zh": "砹",
+      "name_ru": "астат",
+      "anion_fr": "astature",
+      "anion_de": "astatid",
+      "anion_zh": "砹化",
+      "anion_ru": "астатид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "astato",
+      "anion_es": "astaturo"
+    },
+    "Au": {
+      "name_en": "gold",
+      "name_it": "oro",
+      "traditional_low_it": "auroso",
+      "traditional_high_it": "aurico",
+      "traditional_low_en": "aurous",
+      "traditional_high_en": "auric",
+      "name_fr": "or",
+      "name_de": "Gold",
+      "name_zh": "金",
+      "name_ru": "золото",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "oro"
+    },
+    "B": {
+      "name_en": "boron",
+      "name_it": "boro",
+      "anion_en": "boride",
+      "anion_it": "boruro",
+      "name_fr": "bore",
+      "name_de": "Bor",
+      "name_zh": "硼",
+      "name_ru": "бор",
+      "anion_fr": "borure",
+      "anion_de": "borid",
+      "anion_zh": "硼化",
+      "anion_ru": "борид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "boro",
+      "anion_es": "boruro"
+    },
+    "Ba": {
+      "name_en": "barium",
+      "name_it": "bario",
+      "name_fr": "baryum",
+      "name_de": "Barium",
+      "name_zh": "钡",
+      "name_ru": "барий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "bario"
+    },
+    "Be": {
+      "name_en": "beryllium",
+      "name_it": "berillio",
+      "anion_en": "beryllide",
+      "anion_it": "berilluro",
+      "name_fr": "béryllium",
+      "name_de": "Beryllium",
+      "name_zh": "铍",
+      "name_ru": "бериллий",
+      "anion_fr": "béryllure",
+      "anion_de": "beryllid",
+      "anion_zh": "铍化",
+      "anion_ru": "бериллид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "berilio",
+      "anion_es": "beriluro"
+    },
+    "Bh": {
+      "name_en": "bohrium",
+      "name_it": "bohrio",
+      "name_fr": "bohrium",
+      "name_de": "Bohrium",
+      "name_zh": "𬭛",
+      "name_ru": "борий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "bohrio"
+    },
+    "Bi": {
+      "name_en": "bismuth",
+      "name_it": "bismuto",
+      "name_fr": "bismuth",
+      "name_de": "Bismut",
+      "name_zh": "铋",
+      "name_ru": "висмут",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "bismuto"
+    },
+    "Bk": {
+      "name_en": "berkelium",
+      "name_it": "berkelio",
+      "name_fr": "berkélium",
+      "name_de": "Berkelium",
+      "name_zh": "锫",
+      "name_ru": "берклий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "berkelio"
+    },
+    "Br": {
+      "name_en": "bromine",
+      "name_it": "bromo",
+      "anion_en": "bromide",
+      "anion_it": "bromuro",
+      "name_fr": "brome",
+      "name_de": "Brom",
+      "name_zh": "溴",
+      "name_ru": "бром",
+      "anion_fr": "bromure",
+      "anion_de": "bromid",
+      "anion_zh": "溴化",
+      "anion_ru": "бромид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "bromo",
+      "anion_es": "bromuro"
+    },
+    "C": {
+      "name_en": "carbon",
+      "name_it": "carbonio",
+      "anion_en": "carbide",
+      "anion_it": "carburo",
+      "name_fr": "carbone",
+      "name_de": "Kohlenstoff",
+      "name_zh": "碳",
+      "name_ru": "углерод",
+      "anion_fr": "carbure",
+      "anion_de": "carbid",
+      "anion_zh": "碳化",
+      "anion_ru": "карбид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "carbono",
+      "anion_es": "carburo"
+    },
+    "Ca": {
+      "name_en": "calcium",
+      "name_it": "calcio",
+      "name_fr": "calcium",
+      "name_de": "Calcium",
+      "name_zh": "钙",
+      "name_ru": "кальций",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "calcio"
+    },
+    "Cd": {
+      "name_en": "cadmium",
+      "name_it": "cadmio",
+      "name_fr": "cadmium",
+      "name_de": "Cadmium",
+      "name_zh": "镉",
+      "name_ru": "кадмий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "cadmio"
+    },
+    "Ce": {
+      "name_en": "cerium",
+      "name_it": "cerio",
+      "name_fr": "cérium",
+      "name_de": "Cer",
+      "name_zh": "铈",
+      "name_ru": "церий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "cerio"
+    },
+    "Cf": {
+      "name_en": "californium",
+      "name_it": "californio",
+      "name_fr": "californium",
+      "name_de": "Californium",
+      "name_zh": "锎",
+      "name_ru": "калифорний",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "californio"
+    },
+    "Cl": {
+      "name_en": "chlorine",
+      "name_it": "cloro",
+      "anion_en": "chloride",
+      "anion_it": "cloruro",
+      "name_fr": "chlore",
+      "name_de": "Chlor",
+      "name_zh": "氯",
+      "name_ru": "хлор",
+      "anion_fr": "chlorure",
+      "anion_de": "chlorid",
+      "anion_zh": "氯化",
+      "anion_ru": "хлорид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "cloro",
+      "anion_es": "cloruro"
+    },
+    "Cm": {
+      "name_en": "curium",
+      "name_it": "curio",
+      "name_fr": "curium",
+      "name_de": "Curium",
+      "name_zh": "锔",
+      "name_ru": "кюрий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "curio"
+    },
+    "Cn": {
+      "name_en": "copernicium",
+      "name_it": "copernicio",
+      "name_fr": "copernicium",
+      "name_de": "Copernicium",
+      "name_zh": "鿔",
+      "name_ru": "коперниций",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "copernicio"
+    },
+    "Co": {
+      "name_en": "cobalt",
+      "name_it": "cobalto",
+      "traditional_low_it": "cobaltoso",
+      "traditional_high_it": "cobaltico",
+      "traditional_low_en": "cobaltous",
+      "traditional_high_en": "cobaltic",
+      "name_fr": "cobalt",
+      "name_de": "Cobalt",
+      "name_zh": "钴",
+      "name_ru": "кобальт",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "cobalto"
+    },
+    "Cr": {
+      "name_en": "chromium",
+      "name_it": "cromo",
+      "traditional_low_it": "cromoso",
+      "traditional_high_it": "cromico",
+      "traditional_low_en": "chromous",
+      "traditional_high_en": "chromic",
+      "name_fr": "chrome",
+      "name_de": "Chrom",
+      "name_zh": "铬",
+      "name_ru": "хром",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "cromo"
+    },
+    "Cs": {
+      "name_en": "cesium",
+      "name_it": "cesio",
+      "name_fr": "césium",
+      "name_de": "Caesium",
+      "name_zh": "铯",
+      "name_ru": "цезий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "cesio"
+    },
+    "Cu": {
+      "name_en": "copper",
+      "name_it": "rame",
+      "traditional_low_it": "rameoso",
+      "traditional_high_it": "rameico",
+      "traditional_low_en": "cuprous",
+      "traditional_high_en": "cupric",
+      "name_fr": "cuivre",
+      "name_de": "Kupfer",
+      "name_zh": "铜",
+      "name_ru": "медь",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "cobre"
+    },
+    "Db": {
+      "name_en": "dubnium",
+      "name_it": "dubnio",
+      "name_fr": "dubnium",
+      "name_de": "Dubnium",
+      "name_zh": "𬭊",
+      "name_ru": "дубний",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "dubnio"
+    },
+    "Ds": {
+      "name_en": "darmstadtium",
+      "name_it": "darmstadtio",
+      "name_fr": "darmstadtium",
+      "name_de": "Darmstadtium",
+      "name_zh": "𫟼",
+      "name_ru": "дармштадтий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "darmstadtio"
+    },
+    "Dy": {
+      "name_en": "dysprosium",
+      "name_it": "disprosio",
+      "name_fr": "dysprosium",
+      "name_de": "Dysprosium",
+      "name_zh": "镝",
+      "name_ru": "диспрозий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "disprosio"
+    },
+    "Er": {
+      "name_en": "erbium",
+      "name_it": "erbio",
+      "name_fr": "erbium",
+      "name_de": "Erbium",
+      "name_zh": "铒",
+      "name_ru": "эрбий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "erbio"
+    },
+    "Es": {
+      "name_en": "einsteinium",
+      "name_it": "einsteinio",
+      "name_fr": "einsteinium",
+      "name_de": "Einsteinium",
+      "name_zh": "锿",
+      "name_ru": "эйнштейний",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "einsteinio"
+    },
+    "Eu": {
+      "name_en": "europium",
+      "name_it": "europio",
+      "name_fr": "europium",
+      "name_de": "Europium",
+      "name_zh": "铕",
+      "name_ru": "европий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "europio"
+    },
+    "F": {
+      "name_en": "fluorine",
+      "name_it": "fluoro",
+      "anion_en": "fluoride",
+      "anion_it": "fluoruro",
+      "name_fr": "fluor",
+      "name_de": "Fluor",
+      "name_zh": "氟",
+      "name_ru": "фтор",
+      "anion_fr": "fluorure",
+      "anion_de": "fluorid",
+      "anion_zh": "氟化",
+      "anion_ru": "фторид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "flúor",
+      "anion_es": "fluoruro"
+    },
+    "Fe": {
+      "name_en": "iron",
+      "name_it": "ferro",
+      "traditional_low_it": "ferroso",
+      "traditional_high_it": "ferrico",
+      "traditional_low_en": "ferrous",
+      "traditional_high_en": "ferric",
+      "name_fr": "fer",
+      "name_de": "Eisen",
+      "name_zh": "铁",
+      "name_ru": "железо",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "hierro"
+    },
+    "Fl": {
+      "name_en": "flerovium",
+      "name_it": "flerovio",
+      "name_fr": "flérovium",
+      "name_de": "Flerovium",
+      "name_zh": "𫓧",
+      "name_ru": "флеровий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "flerovio"
+    },
+    "Fm": {
+      "name_en": "fermium",
+      "name_it": "fermio",
+      "name_fr": "fermium",
+      "name_de": "Fermium",
+      "name_zh": "镄",
+      "name_ru": "фермий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "fermio"
+    },
+    "Fr": {
+      "name_en": "francium",
+      "name_it": "francio",
+      "name_fr": "francium",
+      "name_de": "Francium",
+      "name_zh": "钫",
+      "name_ru": "франций",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "francio"
+    },
+    "Ga": {
+      "name_en": "gallium",
+      "name_it": "gallio",
+      "name_fr": "gallium",
+      "name_de": "Gallium",
+      "name_zh": "镓",
+      "name_ru": "галлий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "galio"
+    },
+    "Gd": {
+      "name_en": "gadolinium",
+      "name_it": "gadolinio",
+      "name_fr": "gadolinium",
+      "name_de": "Gadolinium",
+      "name_zh": "钆",
+      "name_ru": "гадолиний",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "gadolinio"
+    },
+    "Ge": {
+      "name_en": "germanium",
+      "name_it": "germanio",
+      "anion_en": "germanide",
+      "anion_it": "germanuro",
+      "name_fr": "germanium",
+      "name_de": "Germanium",
+      "name_zh": "锗",
+      "name_ru": "германий",
+      "anion_fr": "germaniure",
+      "anion_de": "germanid",
+      "anion_zh": "锗化",
+      "anion_ru": "германид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "germanio",
+      "anion_es": "germaniuro"
+    },
+    "H": {
+      "name_en": "hydrogen",
+      "name_it": "idrogeno",
+      "anion_en": "hydride",
+      "anion_it": "idruro",
+      "name_fr": "hydrogène",
+      "name_de": "Wasserstoff",
+      "name_zh": "氢",
+      "name_ru": "водород",
+      "anion_fr": "hydrure",
+      "anion_de": "hydrid",
+      "anion_zh": "氢化",
+      "anion_ru": "гидрид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "hidrógeno",
+      "anion_es": "hidruro"
+    },
+    "He": {
+      "name_en": "helium",
+      "name_it": "elio",
+      "name_fr": "hélium",
+      "name_de": "Helium",
+      "name_zh": "氦",
+      "name_ru": "гелий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "helio"
+    },
+    "Hf": {
+      "name_en": "hafnium",
+      "name_it": "afnio",
+      "name_fr": "hafnium",
+      "name_de": "Hafnium",
+      "name_zh": "铪",
+      "name_ru": "гафний",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "hafnio"
+    },
+    "Hg": {
+      "name_en": "mercury",
+      "name_it": "mercurio",
+      "traditional_low_it": "mercurioso",
+      "traditional_high_it": "mercurico",
+      "traditional_low_en": "mercurous",
+      "traditional_high_en": "mercuric",
+      "name_fr": "mercure",
+      "name_de": "Quecksilber",
+      "name_zh": "汞",
+      "name_ru": "ртуть",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "mercurio"
+    },
+    "Ho": {
+      "name_en": "holmium",
+      "name_it": "olmio",
+      "name_fr": "holmium",
+      "name_de": "Holmium",
+      "name_zh": "钬",
+      "name_ru": "гольмий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "holmio"
+    },
+    "Hs": {
+      "name_en": "hassium",
+      "name_it": "hassio",
+      "name_fr": "hassium",
+      "name_de": "Hassium",
+      "name_zh": "𬭶",
+      "name_ru": "хассий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "hassio"
+    },
+    "I": {
+      "name_en": "iodine",
+      "name_it": "iodio",
+      "anion_en": "iodide",
+      "anion_it": "ioduro",
+      "name_fr": "iode",
+      "name_de": "Iod",
+      "name_zh": "碘",
+      "name_ru": "иод",
+      "anion_fr": "iodure",
+      "anion_de": "iodid",
+      "anion_zh": "碘化",
+      "anion_ru": "йодид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "yodo",
+      "anion_es": "yoduro"
+    },
+    "In": {
+      "name_en": "indium",
+      "name_it": "indio",
+      "name_fr": "indium",
+      "name_de": "Indium",
+      "name_zh": "铟",
+      "name_ru": "индий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "indio"
+    },
+    "Ir": {
+      "name_en": "iridium",
+      "name_it": "iridio",
+      "name_fr": "iridium",
+      "name_de": "Iridium",
+      "name_zh": "铱",
+      "name_ru": "иридий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "iridio"
+    },
+    "K": {
+      "name_en": "potassium",
+      "name_it": "potassio",
+      "name_fr": "potassium",
+      "name_de": "Kalium",
+      "name_zh": "钾",
+      "name_ru": "калий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "potasio"
+    },
+    "Kr": {
+      "name_en": "krypton",
+      "name_it": "cripton",
+      "name_fr": "krypton",
+      "name_de": "Krypton",
+      "name_zh": "氪",
+      "name_ru": "криптон",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "kriptón"
+    },
+    "La": {
+      "name_en": "lanthanum",
+      "name_it": "lantanio",
+      "name_fr": "lanthane",
+      "name_de": "Lanthan",
+      "name_zh": "镧",
+      "name_ru": "лантан",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "lantano"
+    },
+    "Li": {
+      "name_en": "lithium",
+      "name_it": "litio",
+      "name_fr": "lithium",
+      "name_de": "Lithium",
+      "name_zh": "锂",
+      "name_ru": "литий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "litio"
+    },
+    "Lr": {
+      "name_en": "lawrencium",
+      "name_it": "laurenzio",
+      "name_fr": "lawrencium",
+      "name_de": "Lawrencium",
+      "name_zh": "铹",
+      "name_ru": "лоуренсий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "laurencio"
+    },
+    "Lu": {
+      "name_en": "lutetium",
+      "name_it": "lutezio",
+      "name_fr": "lutécium",
+      "name_de": "Lutetium",
+      "name_zh": "镥",
+      "name_ru": "лютеций",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "lutecio"
+    },
+    "Lv": {
+      "name_en": "livermorium",
+      "name_it": "livermorio",
+      "name_fr": "livermorium",
+      "name_de": "Livermorium",
+      "name_zh": "𫟷",
+      "name_ru": "ливерморий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "livermorio"
+    },
+    "Mc": {
+      "name_en": "moscovium",
+      "name_it": "moscovio",
+      "name_fr": "moscovium",
+      "name_de": "Moscovium",
+      "name_zh": "镆",
+      "name_ru": "московий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "moscovio"
+    },
+    "Md": {
+      "name_en": "mendelevium",
+      "name_it": "mendelevio",
+      "name_fr": "mendélévium",
+      "name_de": "Mendelevium",
+      "name_zh": "钔",
+      "name_ru": "менделевий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "mendelevio"
+    },
+    "Mg": {
+      "name_en": "magnesium",
+      "name_it": "magnesio",
+      "name_fr": "magnésium",
+      "name_de": "Magnesium",
+      "name_zh": "镁",
+      "name_ru": "магний",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "magnesio"
+    },
+    "Mn": {
+      "name_en": "manganese",
+      "name_it": "manganese",
+      "traditional_low_it": "manganoso",
+      "traditional_high_it": "manganico",
+      "traditional_low_en": "manganous",
+      "traditional_high_en": "manganic",
+      "name_fr": "manganèse",
+      "name_de": "Mangan",
+      "name_zh": "锰",
+      "name_ru": "марганец",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "manganeso"
+    },
+    "Mo": {
+      "name_en": "molybdenum",
+      "name_it": "molibdeno",
+      "name_fr": "molybdène",
+      "name_de": "Molybdän",
+      "name_zh": "钼",
+      "name_ru": "молибден",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "molibdeno"
+    },
+    "Mt": {
+      "name_en": "meitnerium",
+      "name_it": "meitnerio",
+      "name_fr": "meitnérium",
+      "name_de": "Meitnerium",
+      "name_zh": "鿏",
+      "name_ru": "мейтнерий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "meitnerio"
+    },
+    "N": {
+      "name_en": "nitrogen",
+      "name_it": "azoto",
+      "anion_en": "nitride",
+      "anion_it": "nitruro",
+      "name_fr": "azote",
+      "name_de": "Stickstoff",
+      "name_zh": "氮",
+      "name_ru": "азот",
+      "anion_fr": "nitrure",
+      "anion_de": "nitrid",
+      "anion_zh": "氮化",
+      "anion_ru": "нитрид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "nitrógeno",
+      "anion_es": "nitruro"
+    },
+    "Na": {
+      "name_en": "sodium",
+      "name_it": "sodio",
+      "name_fr": "sodium",
+      "name_de": "Natrium",
+      "name_zh": "钠",
+      "name_ru": "натрий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "sodio"
+    },
+    "Nb": {
+      "name_en": "niobium",
+      "name_it": "niobio",
+      "name_fr": "niobium",
+      "name_de": "Niob",
+      "name_zh": "铌",
+      "name_ru": "ниобий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "niobio"
+    },
+    "Nd": {
+      "name_en": "neodymium",
+      "name_it": "neodimio",
+      "name_fr": "néodyme",
+      "name_de": "Neodym",
+      "name_zh": "钕",
+      "name_ru": "неодим",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "neodimio"
+    },
+    "Ne": {
+      "name_en": "neon",
+      "name_it": "neon",
+      "name_fr": "néon",
+      "name_de": "Neon",
+      "name_zh": "氖",
+      "name_ru": "неон",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "neón"
+    },
+    "Nh": {
+      "name_en": "nihonium",
+      "name_it": "nihonio",
+      "name_fr": "nihonium",
+      "name_de": "Nihonium",
+      "name_zh": "鿭",
+      "name_ru": "нихоний",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "nihonio"
+    },
+    "Ni": {
+      "name_en": "nickel",
+      "name_it": "nichel",
+      "traditional_low_it": "nicheloso",
+      "traditional_high_it": "nichelico",
+      "traditional_low_en": "nickelous",
+      "traditional_high_en": "nickelic",
+      "name_fr": "nickel",
+      "name_de": "Nickel",
+      "name_zh": "镍",
+      "name_ru": "никель",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "níquel"
+    },
+    "No": {
+      "name_en": "nobelium",
+      "name_it": "nobelio",
+      "name_fr": "nobélium",
+      "name_de": "Nobelium",
+      "name_zh": "锘",
+      "name_ru": "нобелий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "nobelio"
+    },
+    "Np": {
+      "name_en": "neptunium",
+      "name_it": "nettunio",
+      "name_fr": "neptunium",
+      "name_de": "Neptunium",
+      "name_zh": "镎",
+      "name_ru": "нептуний",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "neptunio"
+    },
+    "O": {
+      "name_en": "oxygen",
+      "name_it": "ossigeno",
+      "anion_en": "oxide",
+      "anion_it": "ossido",
+      "name_fr": "oxygène",
+      "name_de": "Sauerstoff",
+      "name_zh": "氧",
+      "name_ru": "кислород",
+      "anion_fr": "oxyde",
+      "anion_de": "oxid",
+      "anion_zh": "氧化",
+      "anion_ru": "оксид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "oxígeno",
+      "anion_es": "óxido"
+    },
+    "Og": {
+      "name_en": "oganesson",
+      "name_it": "oganesson",
+      "name_fr": "oganesson",
+      "name_de": "Oganesson",
+      "name_zh": "鿫",
+      "name_ru": "оганесон",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "oganesón"
+    },
+    "Os": {
+      "name_en": "osmium",
+      "name_it": "osmio",
+      "name_fr": "osmium",
+      "name_de": "Osmium",
+      "name_zh": "锇",
+      "name_ru": "осмий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "osmio"
+    },
+    "P": {
+      "name_en": "phosphorus",
+      "name_it": "fosforo",
+      "anion_en": "phosphide",
+      "anion_it": "fosfuro",
+      "name_fr": "phosphore",
+      "name_de": "Phosphor",
+      "name_zh": "磷",
+      "name_ru": "фосфор",
+      "anion_fr": "phosphure",
+      "anion_de": "phosphid",
+      "anion_zh": "磷化",
+      "anion_ru": "фосфид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "fósforo",
+      "anion_es": "fosfuro"
+    },
+    "Pa": {
+      "name_en": "protactinium",
+      "name_it": "protoattinio",
+      "name_fr": "protactinium",
+      "name_de": "Protactinium",
+      "name_zh": "镤",
+      "name_ru": "протактиний",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "protactinio"
+    },
+    "Pb": {
+      "name_en": "lead",
+      "name_it": "piombo",
+      "traditional_low_it": "piomboso",
+      "traditional_high_it": "piombico",
+      "traditional_low_en": "plumbous",
+      "traditional_high_en": "plumbic",
+      "name_fr": "plomb",
+      "name_de": "Blei",
+      "name_zh": "铅",
+      "name_ru": "свинец",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "plomo"
+    },
+    "Pd": {
+      "name_en": "palladium",
+      "name_it": "palladio",
+      "name_fr": "palladium",
+      "name_de": "Palladium",
+      "name_zh": "钯",
+      "name_ru": "палладий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "paladio"
+    },
+    "Pm": {
+      "name_en": "promethium",
+      "name_it": "promezio",
+      "name_fr": "prométhium",
+      "name_de": "Promethium",
+      "name_zh": "钷",
+      "name_ru": "прометий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "prometio"
+    },
+    "Po": {
+      "name_en": "polonium",
+      "name_it": "polonio",
+      "anion_en": "polonide",
+      "anion_it": "polonuro",
+      "name_fr": "polonium",
+      "name_de": "Polonium",
+      "name_zh": "钋",
+      "name_ru": "полоний",
+      "anion_fr": "poloniure",
+      "anion_de": "polonid",
+      "anion_zh": "钋化",
+      "anion_ru": "полонид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "polonio",
+      "anion_es": "polonuro"
+    },
+    "Pr": {
+      "name_en": "praseodymium",
+      "name_it": "praseodimio",
+      "name_fr": "praséodyme",
+      "name_de": "Praseodym",
+      "name_zh": "镨",
+      "name_ru": "празеодим",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "praseodimio"
+    },
+    "Pt": {
+      "name_en": "platinum",
+      "name_it": "platino",
+      "traditional_low_it": "platinoso",
+      "traditional_high_it": "platinico",
+      "traditional_low_en": "platinous",
+      "traditional_high_en": "platinic",
+      "name_fr": "platine",
+      "name_de": "Platin",
+      "name_zh": "铂",
+      "name_ru": "платина",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "platino"
+    },
+    "Pu": {
+      "name_en": "plutonium",
+      "name_it": "plutonio",
+      "name_fr": "plutonium",
+      "name_de": "Plutonium",
+      "name_zh": "钚",
+      "name_ru": "плутоний",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "plutonio"
+    },
+    "Ra": {
+      "name_en": "radium",
+      "name_it": "radio",
+      "name_fr": "radium",
+      "name_de": "Radium",
+      "name_zh": "镭",
+      "name_ru": "радий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "radio"
+    },
+    "Rb": {
+      "name_en": "rubidium",
+      "name_it": "rubidio",
+      "name_fr": "rubidium",
+      "name_de": "Rubidium",
+      "name_zh": "铷",
+      "name_ru": "рубидий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "rubidio"
+    },
+    "Re": {
+      "name_en": "rhenium",
+      "name_it": "renio",
+      "name_fr": "rhénium",
+      "name_de": "Rhenium",
+      "name_zh": "铼",
+      "name_ru": "рений",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "renio"
+    },
+    "Rf": {
+      "name_en": "rutherfordium",
+      "name_it": "rutherfordio",
+      "name_fr": "rutherfordium",
+      "name_de": "Rutherfordium",
+      "name_zh": "𬬻",
+      "name_ru": "резерфордий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "rutherfordio"
+    },
+    "Rg": {
+      "name_en": "roentgenium",
+      "name_it": "roentgenio",
+      "name_fr": "roentgenium",
+      "name_de": "Roentgenium",
+      "name_zh": "𬬭",
+      "name_ru": "рентгений",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "roentgenio"
+    },
+    "Rh": {
+      "name_en": "rhodium",
+      "name_it": "rodio",
+      "name_fr": "rhodium",
+      "name_de": "Rhodium",
+      "name_zh": "铑",
+      "name_ru": "родий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "rodio"
+    },
+    "Rn": {
+      "name_en": "radon",
+      "name_it": "radon",
+      "name_fr": "radon",
+      "name_de": "Radon",
+      "name_zh": "氡",
+      "name_ru": "радон",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "radón"
+    },
+    "Ru": {
+      "name_en": "ruthenium",
+      "name_it": "rutenio",
+      "name_fr": "ruthénium",
+      "name_de": "Ruthenium",
+      "name_zh": "钌",
+      "name_ru": "рутений",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "rutenio"
+    },
+    "S": {
+      "name_en": "sulfur",
+      "name_it": "zolfo",
+      "anion_en": "sulfide",
+      "anion_it": "solfuro",
+      "name_fr": "soufre",
+      "name_de": "Schwefel",
+      "name_zh": "硫",
+      "name_ru": "сера",
+      "anion_fr": "sulfure",
+      "anion_de": "sulfid",
+      "anion_zh": "硫化",
+      "anion_ru": "сульфид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "azufre",
+      "anion_es": "sulfuro"
+    },
+    "Sb": {
+      "name_en": "antimony",
+      "name_it": "antimonio",
+      "anion_en": "antimonide",
+      "anion_it": "antimoniuro",
+      "name_fr": "antimoine",
+      "name_de": "Antimon",
+      "name_zh": "锑",
+      "name_ru": "сурьма",
+      "anion_fr": "antimoniure",
+      "anion_de": "antimonid",
+      "anion_zh": "锑化",
+      "anion_ru": "антимонид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "antimonio",
+      "anion_es": "antimoniuro"
+    },
+    "Sc": {
+      "name_en": "scandium",
+      "name_it": "scandio",
+      "name_fr": "scandium",
+      "name_de": "Scandium",
+      "name_zh": "钪",
+      "name_ru": "скандий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "escandio"
+    },
+    "Se": {
+      "name_en": "selenium",
+      "name_it": "selenio",
+      "anion_en": "selenide",
+      "anion_it": "seleniuro",
+      "name_fr": "sélénium",
+      "name_de": "Selen",
+      "name_zh": "硒",
+      "name_ru": "селен",
+      "anion_fr": "séléniure",
+      "anion_de": "selenid",
+      "anion_zh": "硒化",
+      "anion_ru": "селенид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "selenio",
+      "anion_es": "seleniuro"
+    },
+    "Sg": {
+      "name_en": "seaborgium",
+      "name_it": "seaborgio",
+      "name_fr": "seaborgium",
+      "name_de": "Seaborgium",
+      "name_zh": "𬭳",
+      "name_ru": "сиборгий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "seaborgio"
+    },
+    "Si": {
+      "name_en": "silicon",
+      "name_it": "silicio",
+      "anion_en": "silicide",
+      "anion_it": "siliciuro",
+      "name_fr": "silicium",
+      "name_de": "Silicium",
+      "name_zh": "硅",
+      "name_ru": "кремний",
+      "anion_fr": "siliciure",
+      "anion_de": "silicid",
+      "anion_zh": "硅化",
+      "anion_ru": "силицид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "silicio",
+      "anion_es": "siliciuro"
+    },
+    "Sm": {
+      "name_en": "samarium",
+      "name_it": "samario",
+      "name_fr": "samarium",
+      "name_de": "Samarium",
+      "name_zh": "钐",
+      "name_ru": "самарий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "samario"
+    },
+    "Sn": {
+      "name_en": "tin",
+      "name_it": "stagno",
+      "traditional_low_it": "stannoso",
+      "traditional_high_it": "stannico",
+      "traditional_low_en": "stannous",
+      "traditional_high_en": "stannic",
+      "name_fr": "étain",
+      "name_de": "Zinn",
+      "name_zh": "锡",
+      "name_ru": "олово",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "estaño"
+    },
+    "Sr": {
+      "name_en": "strontium",
+      "name_it": "stronzio",
+      "name_fr": "strontium",
+      "name_de": "Strontium",
+      "name_zh": "锶",
+      "name_ru": "стронций",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "estroncio"
+    },
+    "Ta": {
+      "name_en": "tantalum",
+      "name_it": "tantalio",
+      "name_fr": "tantale",
+      "name_de": "Tantal",
+      "name_zh": "钽",
+      "name_ru": "тантал",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "tantalio"
+    },
+    "Tb": {
+      "name_en": "terbium",
+      "name_it": "terbio",
+      "name_fr": "terbium",
+      "name_de": "Terbium",
+      "name_zh": "铽",
+      "name_ru": "тербий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "terbio"
+    },
+    "Tc": {
+      "name_en": "technetium",
+      "name_it": "tecnezio",
+      "name_fr": "technétium",
+      "name_de": "Technetium",
+      "name_zh": "锝",
+      "name_ru": "технеций",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "tecnecio"
+    },
+    "Te": {
+      "name_en": "tellurium",
+      "name_it": "tellurio",
+      "anion_en": "telluride",
+      "anion_it": "tellururo",
+      "name_fr": "tellure",
+      "name_de": "Tellur",
+      "name_zh": "碲",
+      "name_ru": "теллур",
+      "anion_fr": "tellurure",
+      "anion_de": "tellurid",
+      "anion_zh": "碲化",
+      "anion_ru": "теллурид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "teluro",
+      "anion_es": "telururo"
+    },
+    "Th": {
+      "name_en": "thorium",
+      "name_it": "torio",
+      "name_fr": "thorium",
+      "name_de": "Thorium",
+      "name_zh": "钍",
+      "name_ru": "торий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "torio"
+    },
+    "Ti": {
+      "name_en": "titanium",
+      "name_it": "titanio",
+      "name_fr": "titane",
+      "name_de": "Titan",
+      "name_zh": "钛",
+      "name_ru": "титан",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "titanio"
+    },
+    "Tl": {
+      "name_en": "thallium",
+      "name_it": "tallio",
+      "name_fr": "thallium",
+      "name_de": "Thallium",
+      "name_zh": "铊",
+      "name_ru": "таллий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "talio"
+    },
+    "Tm": {
+      "name_en": "thulium",
+      "name_it": "tulio",
+      "name_fr": "thulium",
+      "name_de": "Thulium",
+      "name_zh": "铥",
+      "name_ru": "тулий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "tulio"
+    },
+    "Ts": {
+      "name_en": "tennessine",
+      "name_it": "tennessinio",
+      "anion_en": "tennesside",
+      "anion_it": "tennessuro",
+      "name_fr": "tennesse",
+      "name_de": "Tenness",
+      "name_zh": "鿬",
+      "name_ru": "теннессин",
+      "anion_fr": "tennessure",
+      "anion_de": "tennessid",
+      "anion_zh": "鿬化",
+      "anion_ru": "теннессид",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "name_es": "teneso",
+      "anion_es": "tenesuro"
+    },
+    "U": {
+      "name_en": "uranium",
+      "name_it": "uranio",
+      "name_fr": "uranium",
+      "name_de": "Uran",
+      "name_zh": "铀",
+      "name_ru": "уран",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "uranio"
+    },
+    "V": {
+      "name_en": "vanadium",
+      "name_it": "vanadio",
+      "name_fr": "vanadium",
+      "name_de": "Vanadium",
+      "name_zh": "钒",
+      "name_ru": "ванадий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "vanadio"
+    },
+    "W": {
+      "name_en": "tungsten",
+      "name_it": "tungsteno",
+      "name_fr": "tungstène",
+      "name_de": "Wolfram",
+      "name_zh": "钨",
+      "name_ru": "вольфрам",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "wolframio"
+    },
+    "Xe": {
+      "name_en": "xenon",
+      "name_it": "xeno",
+      "name_fr": "xénon",
+      "name_de": "Xenon",
+      "name_zh": "氙",
+      "name_ru": "ксенон",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "xenón"
+    },
+    "Y": {
+      "name_en": "yttrium",
+      "name_it": "ittrio",
+      "name_fr": "yttrium",
+      "name_de": "Yttrium",
+      "name_zh": "钇",
+      "name_ru": "иттрий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "ytrio"
+    },
+    "Yb": {
+      "name_en": "ytterbium",
+      "name_it": "itterbio",
+      "name_fr": "ytterbium",
+      "name_de": "Ytterbium",
+      "name_zh": "镱",
+      "name_ru": "иттербий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "yterbio"
+    },
+    "Zn": {
+      "name_en": "zinc",
+      "name_it": "zinco",
+      "name_fr": "zinc",
+      "name_de": "Zink",
+      "name_zh": "锌",
+      "name_ru": "цинк",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [
+        "en",
+        "it"
+      ],
+      "name_es": "zinc"
+    },
+    "Zr": {
+      "name_en": "zirconium",
+      "name_it": "zirconio",
+      "name_fr": "zirconium",
+      "name_de": "Zirconium",
+      "name_zh": "锆",
+      "name_ru": "цирконий",
+      "verified_name_languages": [
+        "en",
+        "it",
+        "es",
+        "fr",
+        "de",
+        "zh",
+        "ru"
+      ],
+      "verified_anion_languages": [],
+      "name_es": "zirconio"
+    }
+  },
+  "common_compounds": {
+    "Al|O": [
+      {
+        "formula": "Al2O3",
+        "name_en": "aluminium oxide (alumina)",
+        "name_it": "ossido di alluminio (allumina)",
+        "name_es": "óxido de aluminio (alúmina)",
+        "name_fr": "oxyde d'aluminium (alumine)",
+        "name_de": "Aluminiumoxid (Tonerde)",
+        "name_zh": "氧化铝",
+        "name_ru": "оксид алюминия (глинозём)"
+      }
+    ],
+    "C|O": [
+      {
+        "formula": "CO2",
+        "name_en": "carbon dioxide",
+        "name_it": "diossido di carbonio",
+        "name_es": "dióxido de carbono",
+        "name_fr": "dioxyde de carbone",
+        "name_de": "Kohlenstoffdioxid",
+        "name_zh": "二氧化碳",
+        "name_ru": "диоксид углерода"
+      },
+      {
+        "formula": "CO",
+        "name_en": "carbon monoxide",
+        "name_it": "monossido di carbonio",
+        "name_es": "monóxido de carbono",
+        "name_fr": "monoxyde de carbone",
+        "name_de": "Kohlenstoffmonoxid",
+        "name_zh": "一氧化碳",
+        "name_ru": "монооксид углерода"
+      }
+    ],
+    "Ca|O": [
+      {
+        "formula": "CaO",
+        "name_en": "calcium oxide (quicklime)",
+        "name_it": "ossido di calcio (calce viva)",
+        "name_es": "óxido de calcio (cal viva)",
+        "name_fr": "oxyde de calcium (chaux vive)",
+        "name_de": "Calciumoxid (gebrannter Kalk)",
+        "name_zh": "氧化钙（生石灰）",
+        "name_ru": "оксид кальция (негашёная известь)"
+      }
+    ],
+    "Cl|H": [
+      {
+        "formula": "HCl",
+        "name_en": "hydrogen chloride",
+        "name_it": "cloruro di idrogeno",
+        "name_es": "cloruro de hidrógeno",
+        "name_fr": "chlorure d'hydrogène",
+        "name_de": "Wasserstoffchlorid",
+        "name_zh": "氯化氢",
+        "name_ru": "хлорид водорода"
+      }
+    ],
+    "Cl|K": [
+      {
+        "formula": "KCl",
+        "name_en": "potassium chloride",
+        "name_it": "cloruro di potassio",
+        "name_es": "cloruro de potasio",
+        "name_fr": "chlorure de potassium",
+        "name_de": "Kaliumchlorid",
+        "name_zh": "氯化钾",
+        "name_ru": "хлорид калия"
+      }
+    ],
+    "Cl|Na": [
+      {
+        "formula": "NaCl",
+        "name_en": "sodium chloride (table salt)",
+        "name_it": "cloruro di sodio (sale da cucina)",
+        "name_es": "cloruro de sodio (sal de mesa)",
+        "name_fr": "chlorure de sodium (sel de table)",
+        "name_de": "Natriumchlorid (Kochsalz)",
+        "name_zh": "氯化钠（食盐）",
+        "name_ru": "хлорид натрия (поваренная соль)"
+      }
+    ],
+    "Cu|O": [
+      {
+        "formula": "CuO",
+        "name_en": "copper(II) oxide (cupric oxide)",
+        "name_it": "ossido di rame(II) (ossido rameico)",
+        "name_es": "óxido de cobre(II) (óxido cúprico)",
+        "name_fr": "oxyde de cuivre(II) (oxyde cuivrique)",
+        "name_de": "Kupfer(II)-oxid",
+        "name_zh": "氧化铜(II)",
+        "name_ru": "оксид меди(II)"
+      },
+      {
+        "formula": "Cu2O",
+        "name_en": "copper(I) oxide (cuprous oxide)",
+        "name_it": "ossido di rame(I) (ossido rameoso)",
+        "name_es": "óxido de cobre(I) (óxido cuproso)",
+        "name_fr": "oxyde de cuivre(I) (oxyde cuivreux)",
+        "name_de": "Kupfer(I)-oxid",
+        "name_zh": "氧化铜(I)",
+        "name_ru": "оксид меди(I)"
+      }
+    ],
+    "Fe|O": [
+      {
+        "formula": "Fe2O3",
+        "name_en": "iron(III) oxide (ferric oxide)",
+        "name_it": "ossido di ferro(III) (ossido ferrico)",
+        "name_es": "óxido de hierro(III) (óxido férrico)",
+        "name_fr": "oxyde de fer(III) (oxyde ferrique)",
+        "name_de": "Eisen(III)-oxid",
+        "name_zh": "氧化铁(III)",
+        "name_ru": "оксид железа(III)"
+      },
+      {
+        "formula": "FeO",
+        "name_en": "iron(II) oxide (ferrous oxide)",
+        "name_it": "ossido di ferro(II) (ossido ferroso)",
+        "name_es": "óxido de hierro(II) (óxido ferroso)",
+        "name_fr": "oxyde de fer(II) (oxyde ferreux)",
+        "name_de": "Eisen(II)-oxid",
+        "name_zh": "氧化铁(II)",
+        "name_ru": "оксид железа(II)"
+      }
+    ],
+    "H|O": [
+      {
+        "formula": "H2O",
+        "name_en": "water",
+        "name_it": "acqua",
+        "name_es": "agua",
+        "name_fr": "eau",
+        "name_de": "Wasser",
+        "name_zh": "水",
+        "name_ru": "вода"
+      }
+    ],
+    "Mg|O": [
+      {
+        "formula": "MgO",
+        "name_en": "magnesium oxide",
+        "name_it": "ossido di magnesio",
+        "name_es": "óxido de magnesio",
+        "name_fr": "oxyde de magnésium",
+        "name_de": "Magnesiumoxid",
+        "name_zh": "氧化镁",
+        "name_ru": "оксид магния"
+      }
+    ]
+  }
+}

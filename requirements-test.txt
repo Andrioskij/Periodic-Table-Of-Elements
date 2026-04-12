@@ -1,0 +1,2 @@
+# Tests currently rely on unittest from the standard library and reuse runtime dependencies.
+-r requirements.txt

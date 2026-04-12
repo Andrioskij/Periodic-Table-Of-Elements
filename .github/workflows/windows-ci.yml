@@ -1,0 +1,42 @@
+name: Windows CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-and-build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install test dependencies
+        run: python -m pip install -r requirements-test.txt
+
+      - name: Run automated test suite
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: python -m unittest discover -s tests -p "test_*.py"
+
+      - name: Install build dependencies
+        run: python -m pip install -r requirements-build.txt
+
+      - name: Build portable Windows release
+        shell: powershell
+        run: powershell -ExecutionPolicy Bypass -File tools/build_windows.ps1 -Clean
+
+      - name: Upload release bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: PeriodicTableApp-release
+          path: dist/release/*.zip

@@ -1,0 +1,2 @@
+# Minimal runtime dependency set for running the desktop app from source.
+PySide6==6.11.0
