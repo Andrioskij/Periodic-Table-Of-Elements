@@ -13,7 +13,7 @@ ALL_LANGUAGE_OPTIONS = [
 
 UI_TEXTS = {
     "en": {
-        "title": "PERIODIC TABLE",
+        "title": "PERIODIC TABLE OF ELEMENTS",
         "search_placeholder": "Search by name, symbol or atomic number...",
         "search_button": "Search",
         "first_element": "First element (e.g. H)",
@@ -94,7 +94,7 @@ UI_TEXTS = {
         "info_section_physical_properties": "Physical properties",
     },
     "it": {
-        "title": "TAVOLA PERIODICA",
+        "title": "TAVOLA PERIODICA DEGLI ELEMENTI",
         "search_placeholder": "Cerca per nome, simbolo o numero atomico...",
         "search_button": "Cerca",
         "first_element": "Primo elemento (es. H)",
@@ -175,7 +175,7 @@ UI_TEXTS = {
         "info_section_physical_properties": "Proprietà fisiche",
     },
     "es": {
-        "title": "TABLA PERIODICA",
+        "title": "TABLA PERIÓDICA DE LOS ELEMENTOS",
         "search_placeholder": "Busca por nombre, simbolo o numero atomico...",
         "search_button": "Buscar",
         "first_element": "Primer elemento (p. ej. H)",
@@ -256,7 +256,7 @@ UI_TEXTS = {
         "info_section_physical_properties": "Propiedades fisicas",
     },
     "fr": {
-        "title": "TABLEAU PÉRIODIQUE",
+        "title": "TABLEAU PÉRIODIQUE DES ÉLÉMENTS",
         "search_placeholder": "Rechercher par nom, symbole ou numéro atomique...",
         "search_button": "Rechercher",
         "first_element": "Premier élément (ex. H)",
@@ -337,7 +337,7 @@ UI_TEXTS = {
         "info_section_physical_properties": "Propriétés physiques",
     },
     "de": {
-        "title": "PERIODENSYSTEM",
+        "title": "PERIODENSYSTEM DER ELEMENTE",
         "search_placeholder": "Nach Name, Symbol oder Ordnungszahl suchen...",
         "search_button": "Suchen",
         "first_element": "Erstes Element (z. B. H)",
@@ -493,7 +493,7 @@ UI_TEXTS = {
         "info_section_physical_properties": "物理性质",
     },
     "ru": {
-        "title": "ПЕРИОДИЧЕСКАЯ ТАБЛИЦА",
+        "title": "ПЕРИОДИЧЕСКАЯ ТАБЛИЦА ЭЛЕМЕНТОВ",
         "search_placeholder": "Поиск по названию, символу или атомному номеру...",
         "search_button": "Поиск",
         "first_element": "Первый элемент (напр. H)",
@@ -853,7 +853,7 @@ UI_TEXTS["it"].update(
 
 UI_TEXTS["es"].update(
     {
-        "title": "TABLA PERIÓDICA",
+        "title": "TABLA PERIÓDICA DE LOS ELEMENTOS",
         "search_placeholder": "Busca por nombre, símbolo o número atómico...",
         "search_button": "Buscar",
         "calculate_formula": "Calcular fórmula",

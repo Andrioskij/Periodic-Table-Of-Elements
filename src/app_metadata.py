@@ -5,7 +5,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
-APP_DISPLAY_NAME = "Periodic Table"
+APP_DISPLAY_NAME = "Periodic Table Of Elements"
 APP_EXECUTABLE_NAME = "PeriodicTableApp"
 APP_VENDOR = "T_P_python"
 APP_ID = "t_p_python.periodic_table_app"

@@ -1,4 +1,4 @@
-# Periodic Table
+# Periodic Table Of Elements
 
 Release target: `0.6.0-beta.1 "Quality Pass"`
 

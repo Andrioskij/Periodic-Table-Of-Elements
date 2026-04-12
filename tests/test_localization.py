@@ -10,7 +10,7 @@ from src.services.localization_service import (
 class TestTranslation(unittest.TestCase):
 
     def test_english_title(self):
-        self.assertEqual(tr("en", "title"), "PERIODIC TABLE")
+        self.assertEqual(tr("en", "title"), "PERIODIC TABLE OF ELEMENTS")
 
     def test_missing_key_returns_key(self):
         result = tr("en", "nonexistent_key_xyz")

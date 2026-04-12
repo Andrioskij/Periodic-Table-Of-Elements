@@ -21,9 +21,9 @@ class TestAppMetadata(unittest.TestCase):
         self.assertIn(APP_VERSION, name)
 
     def test_window_title_contains_version(self):
-        title = build_window_title("Periodic Table")
+        title = build_window_title("Periodic Table Of Elements")
         self.assertIn(APP_VERSION, title)
-        self.assertIn("Periodic Table", title)
+        self.assertIn("Periodic Table Of Elements", title)
 
     def test_release_slug_lowercase_no_spaces(self):
         slug = get_release_slug()
