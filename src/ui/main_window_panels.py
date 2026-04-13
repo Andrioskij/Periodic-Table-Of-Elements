@@ -2,6 +2,8 @@ RIGHT_PANEL_STACK_INDEX = {
     "info": 0,
     "diagram": 1,
     "compound": 2,
+    "molar": 3,
+    "stoichiometry": 4,
 }
 
 

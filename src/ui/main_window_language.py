@@ -2,12 +2,16 @@ RIGHT_PANEL_TEXT_KEYS = {
     "info": "right_info",
     "diagram": "right_diagram",
     "compound": "right_compound",
+    "molar": "right_molar",
+    "stoichiometry": "right_stoichiometry",
 }
 
 RIGHT_PANEL_SHORTCUTS = {
     "info": "Ctrl+1",
     "diagram": "Ctrl+2",
     "compound": "Ctrl+3",
+    "molar": "Ctrl+4",
+    "stoichiometry": "Ctrl+5",
 }
 
 

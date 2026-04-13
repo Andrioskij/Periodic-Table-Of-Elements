@@ -71,7 +71,9 @@ from src.ui.main_window_panels import (
 )
 from src.ui.panels.compound_panel import CompoundBuilderPanel, CompoundPanel
 from src.ui.panels.info_panel import InfoPanel
+from src.ui.panels.molar_mass_panel import MolarMassPanel
 from src.ui.panels.orbital_diagram_panel import OrbitalDiagramPanel
+from src.ui.panels.stoichiometry_panel import StoichiometryPanel
 from src.ui.search_helpers import (
     compute_match_score as compute_search_match_score,
     get_ranked_matches as get_ranked_search_matches,
@@ -462,6 +464,8 @@ class MainWindow(QWidget):
             ("info", self.tr("right_info")),
             ("diagram", self.tr("right_diagram")),
             ("compound", self.tr("right_compound")),
+            ("molar", self.tr("right_molar")),
+            ("stoichiometry", self.tr("right_stoichiometry")),
         ]
 
         for mode, text_button in right_modes:
@@ -498,12 +502,28 @@ class MainWindow(QWidget):
         self.compound_title_label = self.compound_panel.title_label
         self.compound_result_label = self.compound_panel.result_label
 
+        self.molar_mass_panel = MolarMassPanel(
+            self.tr("molar_title"),
+            self.tr("molar_prompt"),
+            self.elements,
+        )
+        self.molar_page = self.molar_mass_panel
+
+        self.stoichiometry_panel = StoichiometryPanel(
+            self.tr("stoichiometry_title"),
+            self.tr("stoichiometry_prompt"),
+            self.elements,
+        )
+        self.stoichiometry_page = self.stoichiometry_panel
+
         self.right_panel_container = QWidget()
         self.right_panel_stack = QStackedLayout()
         self.right_panel_stack.setContentsMargins(0, 0, 0, 0)
         self.right_panel_stack.addWidget(self.info_page)
         self.right_panel_stack.addWidget(self.diagram_page)
         self.right_panel_stack.addWidget(self.compound_page)
+        self.right_panel_stack.addWidget(self.molar_page)
+        self.right_panel_stack.addWidget(self.stoichiometry_page)
         self.right_panel_container.setLayout(self.right_panel_stack)
         self.right_panel_container.setMinimumHeight(0)
 
@@ -548,6 +568,8 @@ class MainWindow(QWidget):
         self.info_panel.setFocusPolicy(Qt.StrongFocus)
         self.orbital_diagram_panel.setFocusPolicy(Qt.StrongFocus)
         self.compound_panel.setFocusPolicy(Qt.StrongFocus)
+        self.molar_mass_panel.setFocusPolicy(Qt.StrongFocus)
+        self.stoichiometry_panel.setFocusPolicy(Qt.StrongFocus)
 
         # Tab order: about -> language -> search -> trend -> panels -> table -> builder
         def safe_set_tab_order(first, second):
@@ -592,6 +614,8 @@ class MainWindow(QWidget):
         QShortcut(QKeySequence("Ctrl+1"), self, activated=lambda: self.set_right_panel_mode("info"))
         QShortcut(QKeySequence("Ctrl+2"), self, activated=lambda: self.set_right_panel_mode("diagram"))
         QShortcut(QKeySequence("Ctrl+3"), self, activated=lambda: self.set_right_panel_mode("compound"))
+        QShortcut(QKeySequence("Ctrl+4"), self, activated=lambda: self.set_right_panel_mode("molar"))
+        QShortcut(QKeySequence("Ctrl+5"), self, activated=lambda: self.set_right_panel_mode("stoichiometry"))
         QShortcut(QKeySequence("Ctrl+L"), self, activated=self.reset_builder)
 
     def _focus_search_input(self):
@@ -732,6 +756,20 @@ class MainWindow(QWidget):
         )
         self.compound_panel.set_title(texts["formula_title"])
         self.compound_panel.set_scope_note(texts["compound_scope_note"])
+        self.molar_mass_panel.apply_language(
+            title=self.tr("molar_title"),
+            prompt=self.tr("molar_prompt"),
+            button_text=self.tr("molar_calculate"),
+            error_prefix=self.tr("molar_error"),
+        )
+        self.stoichiometry_panel.apply_language(
+            title=self.tr("stoichiometry_title"),
+            prompt=self.tr("stoichiometry_prompt"),
+            balance_text=self.tr("stoichiometry_balance"),
+            calc_masses_text=self.tr("stoichiometry_calc_masses"),
+            mass_section_text=self.tr("stoichiometry_mass_section"),
+            error_prefix=self.tr("stoichiometry_error"),
+        )
         self.periodic_table_widget.set_language_texts(
             selected_none_text=texts["selected_none"],
             transition_text=texts["transition_metals"],

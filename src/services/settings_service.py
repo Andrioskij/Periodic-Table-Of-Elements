@@ -11,7 +11,7 @@ DEFAULT_RIGHT_PANEL_MODE = "info"
 DEFAULT_TREND_MODE = "normal"
 DEFAULT_WINDOW_STATE = "normal"
 
-VALID_RIGHT_PANEL_MODES = {"info", "diagram", "compound"}
+VALID_RIGHT_PANEL_MODES = {"info", "diagram", "compound", "molar", "stoichiometry"}
 VALID_TREND_MODES = set(list(NUMERIC_TREND_PROPERTIES.keys()) + ["normal", "macroclass", "metallic", "nonmetallic"])
 VALID_LANGUAGES = {code for code, _ in LANGUAGE_OPTIONS}
 VALID_WINDOW_STATES = {"normal", "maximized"}

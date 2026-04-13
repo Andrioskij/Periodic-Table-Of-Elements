@@ -9,8 +9,8 @@ APP_DISPLAY_NAME = "Periodic Table Of Elements"
 APP_EXECUTABLE_NAME = "PeriodicTableApp"
 APP_VENDOR = "T_P_python"
 APP_ID = "t_p_python.periodic_table_app"
-APP_VERSION = "0.6.0-beta.1"
-APP_RELEASE_NAME = "Quality Pass"
+APP_VERSION = "0.7.0"
+APP_RELEASE_NAME = "Chemistry Tools"
 OPTIONAL_ICON_PATH = PROJECT_ROOT / "assets_" / "app.ico"
 
 
