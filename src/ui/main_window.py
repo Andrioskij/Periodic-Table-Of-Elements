@@ -76,6 +76,7 @@ from src.ui.panels.info_panel import InfoPanel
 from src.ui.panels.molar_mass_panel import MolarMassPanel
 from src.ui.panels.orbital_diagram_panel import OrbitalDiagramPanel
 from src.ui.panels.lewis_panel import LewisPanel
+from src.ui.panels.solubility_panel import SolubilityPanel
 from src.ui.panels.stoichiometry_panel import StoichiometryPanel
 from src.ui.search_helpers import (
     compute_match_score as compute_search_match_score,
@@ -322,7 +323,7 @@ class MainWindow(QWidget):
         self.main_layout.addLayout(title_row)
 
     def _build_top_controls(self):
-        """Build the top controls row containing the search card and the compound builder."""
+        """Build the top controls row containing the search card."""
         self.top_controls_layout = QBoxLayout(QBoxLayout.LeftToRight)
         self.top_controls_layout.setContentsMargins(0, 0, 0, 0)
         self.top_controls_layout.setSpacing(10)
@@ -331,7 +332,7 @@ class MainWindow(QWidget):
         self._build_builder_widget()
 
         self.top_controls_layout.addWidget(self.search_widget, 0, Qt.AlignTop | Qt.AlignLeft)
-        self.top_controls_layout.addWidget(self.builder_widget, 1, Qt.AlignTop)
+        self.top_controls_layout.addStretch(1)
         self.main_layout.addLayout(self.top_controls_layout)
 
     def _build_search_widget(self):
@@ -399,6 +400,7 @@ class MainWindow(QWidget):
             ("compounds", self.tr("tool_compounds")),
             ("molar", self.tr("tool_molar")),
             ("stoichiometry", self.tr("tool_stoichiometry")),
+            ("solubility", self.tr("tool_solubility")),
         ]
 
         for mode, text_button in tool_modes:
@@ -446,12 +448,19 @@ class MainWindow(QWidget):
             self.elements,
         )
 
+        # Solubility panel
+        self.solubility_panel = SolubilityPanel(
+            self.tr("solubility_title"),
+            self.tr("solubility_prompt"),
+        )
+
         # Stacked layout for tool area pages
         self.tool_area_stack = QStackedLayout()
         self.tool_area_stack.setContentsMargins(0, 0, 0, 0)
         self.tool_area_stack.addWidget(self.compound_builder_panel)
         self.tool_area_stack.addWidget(self.molar_mass_panel)
         self.tool_area_stack.addWidget(self.stoichiometry_panel)
+        self.tool_area_stack.addWidget(self.solubility_panel)
 
         tool_area_container = QWidget()
         tool_area_layout = QVBoxLayout()
@@ -521,6 +530,7 @@ class MainWindow(QWidget):
         self._build_right_panel_area()
         self.content_layout.addWidget(self.right_column_widget, 1)
         self.main_layout.addLayout(self.content_layout)
+        self.main_layout.addWidget(self.builder_widget)
 
     def _build_right_panel_area(self):
         """Build the right-side panel area with info, diagram, and compound pages in a stacked layout."""
@@ -833,6 +843,26 @@ class MainWindow(QWidget):
         self.lewis_panel.apply_language(
             title=self.tr("lewis_title"),
             prompt=self.tr("lewis_prompt"),
+        )
+        self.solubility_panel.apply_language(
+            title=self.tr("solubility_title"),
+            prompt=self.tr("solubility_prompt"),
+            cation_label=self.tr("solubility_cation_label"),
+            anion_label=self.tr("solubility_anion_label"),
+            check_text=self.tr("solubility_check"),
+            soluble_text=self.tr("solubility_soluble"),
+            insoluble_text=self.tr("solubility_insoluble"),
+            slightly_text=self.tr("solubility_slightly_soluble"),
+            rule_label=self.tr("solubility_rule_label"),
+            exceptions_label=self.tr("solubility_exceptions_label"),
+            legend_title=self.tr("solubility_legend_title"),
+            rule_alkali=self.tr("solubility_rule_alkali"),
+            rule_nitrate_acetate=self.tr("solubility_rule_nitrate_acetate"),
+            rule_halide=self.tr("solubility_rule_halide"),
+            rule_sulfate=self.tr("solubility_rule_sulfate"),
+            rule_hydroxide=self.tr("solubility_rule_hydroxide"),
+            rule_carbonate_phosphate_sulfide=self.tr("solubility_rule_carbonate_phosphate_sulfide"),
+            rule_default=self.tr("solubility_rule_default"),
         )
         self.periodic_table_widget.set_language_texts(
             selected_none_text=texts["selected_none"],
@@ -1293,6 +1323,11 @@ class MainWindow(QWidget):
         self.current_selected_element = element
         self.refresh_selection_header()
         self._refresh_panel_modes(("info", "diagram", "lewis"))
+        symbol = element.get("symbol", "") if element else ""
+        if symbol:
+            self.solubility_panel.highlight_element(symbol)
+        else:
+            self.solubility_panel.clear_highlight()
 
     def parse_oxidation_states(self, oxidation_data):
         """Parse raw oxidation-state data into a sorted list of integers."""
@@ -1605,7 +1640,7 @@ class MainWindow(QWidget):
             self.search_widget.setMinimumWidth(0)
             self.search_widget.setMaximumWidth(policy.search_max_width)
 
-        self.builder_widget.setMaximumWidth(policy.builder_max_width)
+        self.builder_widget.setMaximumWidth(16777215)
         self.right_column_widget.setMaximumWidth(policy.right_column_max_width)
         self._sync_trend_status_visibility(policy.mode)
 

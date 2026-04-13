@@ -16,6 +16,7 @@ TOOL_AREA_TEXT_KEYS = {
     "compounds": "tool_compounds",
     "molar": "tool_molar",
     "stoichiometry": "tool_stoichiometry",
+    "solubility": "tool_solubility",
 }
 
 

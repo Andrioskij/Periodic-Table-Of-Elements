@@ -9,8 +9,8 @@ APP_DISPLAY_NAME = "Periodic Table Of Elements"
 APP_EXECUTABLE_NAME = "PeriodicTableApp"
 APP_VENDOR = "T_P_python"
 APP_ID = "t_p_python.periodic_table_app"
-APP_VERSION = "0.8.0"
-APP_RELEASE_NAME = "Lewis Diagrams"
+APP_VERSION = "0.9.0"
+APP_RELEASE_NAME = "Solubility Table"
 OPTIONAL_ICON_PATH = PROJECT_ROOT / "assets_" / "app.ico"
 
 

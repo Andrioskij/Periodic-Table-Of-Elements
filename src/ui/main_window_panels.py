@@ -9,6 +9,7 @@ TOOL_AREA_STACK_INDEX = {
     "compounds": 0,
     "molar": 1,
     "stoichiometry": 2,
+    "solubility": 3,
 }
 
 
