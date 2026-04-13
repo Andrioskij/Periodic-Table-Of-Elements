@@ -2,9 +2,13 @@ RIGHT_PANEL_STACK_INDEX = {
     "info": 0,
     "diagram": 1,
     "compound": 2,
-    "molar": 3,
-    "stoichiometry": 4,
-    "lewis": 5,
+    "lewis": 3,
+}
+
+TOOL_AREA_STACK_INDEX = {
+    "compounds": 0,
+    "molar": 1,
+    "stoichiometry": 2,
 }
 
 
@@ -102,4 +106,19 @@ def build_right_panel_mode_state(*, mode, has_selected_element):
             for panel_mode in RIGHT_PANEL_STACK_INDEX
         },
         "refresh_modes": refresh_modes,
+    }
+
+
+def build_tool_area_mode_state(*, mode):
+    """Compute the UI state needed to switch the tool-area tab.
+
+    Returns the stack index to show and which toggle buttons should be
+    checked.
+    """
+    return {
+        "stack_index": TOOL_AREA_STACK_INDEX[mode],
+        "checked_modes": {
+            tool_mode: tool_mode == mode
+            for tool_mode in TOOL_AREA_STACK_INDEX
+        },
     }

@@ -64,10 +64,12 @@ from src.ui.main_window_language import (
     build_main_window_texts,
 )
 from src.ui.main_window_panels import (
+    TOOL_AREA_STACK_INDEX,
     build_compound_panel_state,
     build_diagram_panel_state,
     build_info_panel_prompt,
     build_right_panel_mode_state,
+    build_tool_area_mode_state,
 )
 from src.ui.panels.compound_panel import CompoundBuilderPanel, CompoundPanel
 from src.ui.panels.info_panel import InfoPanel
@@ -374,7 +376,33 @@ class MainWindow(QWidget):
         self.search_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
     def _build_builder_widget(self):
-        """Build the compound builder panel and wire its signals to handler methods."""
+        """Build the tool area with compound builder, molar mass, and stoichiometry panels."""
+        self.tool_area_mode = "compounds"
+
+        # Tool area tab buttons
+        self.tool_area_buttons = {}
+        tool_buttons_widget = QWidget()
+        self.tool_area_buttons_widget = tool_buttons_widget
+        self.tool_area_buttons_layout = FlowLayout(spacing=6)
+
+        tool_modes = [
+            ("compounds", self.tr("tool_compounds")),
+            ("molar", self.tr("tool_molar")),
+            ("stoichiometry", self.tr("tool_stoichiometry")),
+        ]
+
+        for mode, text_button in tool_modes:
+            button = QPushButton(text_button)
+            button.setObjectName("panelMiniButton")
+            button.setCheckable(True)
+            button.clicked.connect(lambda checked=False, m=mode: self.set_tool_area_mode(m))
+            self.tool_area_buttons[mode] = button
+            self.tool_area_buttons_layout.addWidget(button)
+
+        self.tool_area_buttons["compounds"].setChecked(True)
+        tool_buttons_widget.setLayout(self.tool_area_buttons_layout)
+
+        # Compound builder panel
         self.compound_builder_panel = CompoundBuilderPanel()
         self.compound_builder_panel.use_a_button.clicked.connect(self.set_compound_a)
         self.compound_builder_panel.use_b_button.clicked.connect(self.set_compound_b)
@@ -383,7 +411,6 @@ class MainWindow(QWidget):
         self.compound_builder_panel.build_button.clicked.connect(self.build_compound)
         self.compound_builder_panel.builder_reset_button.clicked.connect(self.reset_builder)
 
-        self.builder_widget = self.compound_builder_panel
         self.builder_title_label = self.compound_builder_panel.builder_title_label
         self.use_a_button = self.compound_builder_panel.use_a_button
         self.use_b_button = self.compound_builder_panel.use_b_button
@@ -394,6 +421,37 @@ class MainWindow(QWidget):
         self.build_button = self.compound_builder_panel.build_button
         self.builder_reset_button = self.compound_builder_panel.builder_reset_button
         self.builder_status_label = self.compound_builder_panel.builder_status_label
+
+        # Molar mass panel
+        self.molar_mass_panel = MolarMassPanel(
+            self.tr("molar_title"),
+            self.tr("molar_prompt"),
+            self.elements,
+        )
+
+        # Stoichiometry panel
+        self.stoichiometry_panel = StoichiometryPanel(
+            self.tr("stoichiometry_title"),
+            self.tr("stoichiometry_prompt"),
+            self.elements,
+        )
+
+        # Stacked layout for tool area pages
+        self.tool_area_stack = QStackedLayout()
+        self.tool_area_stack.setContentsMargins(0, 0, 0, 0)
+        self.tool_area_stack.addWidget(self.compound_builder_panel)
+        self.tool_area_stack.addWidget(self.molar_mass_panel)
+        self.tool_area_stack.addWidget(self.stoichiometry_panel)
+
+        tool_area_container = QWidget()
+        tool_area_layout = QVBoxLayout()
+        tool_area_layout.setContentsMargins(0, 0, 0, 0)
+        tool_area_layout.setSpacing(6)
+        tool_area_layout.addWidget(tool_buttons_widget)
+        tool_area_layout.addLayout(self.tool_area_stack)
+        tool_area_container.setLayout(tool_area_layout)
+
+        self.builder_widget = tool_area_container
 
     def _build_trend_controls(self):
         """Build the trend-mode toggle buttons and the trend status label."""
@@ -465,8 +523,6 @@ class MainWindow(QWidget):
             ("info", self.tr("right_info")),
             ("diagram", self.tr("right_diagram")),
             ("compound", self.tr("right_compound")),
-            ("molar", self.tr("right_molar")),
-            ("stoichiometry", self.tr("right_stoichiometry")),
             ("lewis", self.tr("right_lewis")),
         ]
 
@@ -504,20 +560,6 @@ class MainWindow(QWidget):
         self.compound_title_label = self.compound_panel.title_label
         self.compound_result_label = self.compound_panel.result_label
 
-        self.molar_mass_panel = MolarMassPanel(
-            self.tr("molar_title"),
-            self.tr("molar_prompt"),
-            self.elements,
-        )
-        self.molar_page = self.molar_mass_panel
-
-        self.stoichiometry_panel = StoichiometryPanel(
-            self.tr("stoichiometry_title"),
-            self.tr("stoichiometry_prompt"),
-            self.elements,
-        )
-        self.stoichiometry_page = self.stoichiometry_panel
-
         self.lewis_panel = LewisPanel(
             self.tr("lewis_title"),
             self.tr("lewis_prompt"),
@@ -530,8 +572,6 @@ class MainWindow(QWidget):
         self.right_panel_stack.addWidget(self.info_page)
         self.right_panel_stack.addWidget(self.diagram_page)
         self.right_panel_stack.addWidget(self.compound_page)
-        self.right_panel_stack.addWidget(self.molar_page)
-        self.right_panel_stack.addWidget(self.stoichiometry_page)
         self.right_panel_stack.addWidget(self.lewis_page)
         self.right_panel_container.setLayout(self.right_panel_stack)
         self.right_panel_container.setMinimumHeight(0)
@@ -577,9 +617,9 @@ class MainWindow(QWidget):
         self.info_panel.setFocusPolicy(Qt.StrongFocus)
         self.orbital_diagram_panel.setFocusPolicy(Qt.StrongFocus)
         self.compound_panel.setFocusPolicy(Qt.StrongFocus)
+        self.lewis_panel.setFocusPolicy(Qt.StrongFocus)
         self.molar_mass_panel.setFocusPolicy(Qt.StrongFocus)
         self.stoichiometry_panel.setFocusPolicy(Qt.StrongFocus)
-        self.lewis_panel.setFocusPolicy(Qt.StrongFocus)
 
         # Tab order: about -> language -> search -> trend -> panels -> table -> builder
         def safe_set_tab_order(first, second):
@@ -624,9 +664,7 @@ class MainWindow(QWidget):
         QShortcut(QKeySequence("Ctrl+1"), self, activated=lambda: self.set_right_panel_mode("info"))
         QShortcut(QKeySequence("Ctrl+2"), self, activated=lambda: self.set_right_panel_mode("diagram"))
         QShortcut(QKeySequence("Ctrl+3"), self, activated=lambda: self.set_right_panel_mode("compound"))
-        QShortcut(QKeySequence("Ctrl+4"), self, activated=lambda: self.set_right_panel_mode("molar"))
-        QShortcut(QKeySequence("Ctrl+5"), self, activated=lambda: self.set_right_panel_mode("stoichiometry"))
-        QShortcut(QKeySequence("Ctrl+6"), self, activated=lambda: self.set_right_panel_mode("lewis"))
+        QShortcut(QKeySequence("Ctrl+4"), self, activated=lambda: self.set_right_panel_mode("lewis"))
         QShortcut(QKeySequence("Ctrl+L"), self, activated=self.reset_builder)
 
     def _focus_search_input(self):
@@ -798,6 +836,9 @@ class MainWindow(QWidget):
 
         for mode, text in texts["right_panel_buttons"].items():
             self.right_panel_buttons[mode].setText(text)
+
+        for mode, text in texts["tool_area_buttons"].items():
+            self.tool_area_buttons[mode].setText(text)
 
     def refresh_status_labels(self, *, search_text=None, clear_search=False):
         """Refresh search status, builder panel, and trend status labels."""
@@ -1436,6 +1477,21 @@ class MainWindow(QWidget):
         self.settings_service.set_right_panel_mode(mode)
         self.refresh_right_panel_mode()
 
+    def set_tool_area_mode(self, mode):
+        """Switch the tool area to a different mode (compounds, molar, stoichiometry)."""
+        self.tool_area_mode = mode
+        self.refresh_tool_area_mode()
+
+    def refresh_tool_area_mode(self):
+        """Switch the tool area stacked layout and update button checked states."""
+        state = build_tool_area_mode_state(mode=self.tool_area_mode)
+        self.tool_area_stack.setCurrentIndex(state["stack_index"])
+
+        for button_mode, button in self.tool_area_buttons.items():
+            button.blockSignals(True)
+            button.setChecked(state["checked_modes"][button_mode])
+            button.blockSignals(False)
+
     def refresh_control_accessibility(self):
         """Rebuild and apply accessible names, descriptions, and tooltips for all interactive controls."""
         specs = build_accessibility_specs(
@@ -1591,8 +1647,7 @@ class MainWindow(QWidget):
             widget.setFixedHeight(height)
 
     def _sync_compact_section_heights(self):
-        """Recalculate fixed heights for the builder, trend container, and panel buttons."""
-        self._sync_height_for_width_widget(self.builder_widget)
+        """Recalculate fixed heights for the trend container and panel buttons."""
         self._sync_height_for_width_widget(self.trend_container)
         self._sync_height_for_width_widget(self.right_panel_buttons_widget)
 

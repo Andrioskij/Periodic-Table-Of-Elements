@@ -2,8 +2,6 @@ RIGHT_PANEL_TEXT_KEYS = {
     "info": "right_info",
     "diagram": "right_diagram",
     "compound": "right_compound",
-    "molar": "right_molar",
-    "stoichiometry": "right_stoichiometry",
     "lewis": "right_lewis",
 }
 
@@ -11,9 +9,13 @@ RIGHT_PANEL_SHORTCUTS = {
     "info": "Ctrl+1",
     "diagram": "Ctrl+2",
     "compound": "Ctrl+3",
-    "molar": "Ctrl+4",
-    "stoichiometry": "Ctrl+5",
-    "lewis": "Ctrl+6",
+    "lewis": "Ctrl+4",
+}
+
+TOOL_AREA_TEXT_KEYS = {
+    "compounds": "tool_compounds",
+    "molar": "tool_molar",
+    "stoichiometry": "tool_stoichiometry",
 }
 
 
@@ -56,6 +58,10 @@ def build_main_window_texts(translate, trend_button_specs):
         "right_panel_buttons": {
             mode: translate(label_key)
             for mode, label_key in RIGHT_PANEL_TEXT_KEYS.items()
+        },
+        "tool_area_buttons": {
+            mode: translate(label_key)
+            for mode, label_key in TOOL_AREA_TEXT_KEYS.items()
         },
     }
 
