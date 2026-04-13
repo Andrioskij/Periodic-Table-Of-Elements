@@ -271,6 +271,16 @@ class MainWindow(QWidget):
         self.setMinimumSize(560, 480)
         self.setStyleSheet(APP_STYLESHEET)
 
+    @staticmethod
+    def _wrap_in_scroll_area(widget):
+        """Wrap a widget in a QScrollArea with vertical scrolling."""
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        scroll.setWidget(widget)
+        return scroll
+
     def _build_shell(self):
         """Create the outermost layout and scrollable content container."""
         self.outer_layout = QVBoxLayout()
@@ -547,7 +557,7 @@ class MainWindow(QWidget):
             self.tr("diagram_title"),
             self.tr("diagram_prompt"),
         )
-        self.diagram_page = self.orbital_diagram_panel
+        self.diagram_page = self._wrap_in_scroll_area(self.orbital_diagram_panel)
         self.diagram_title_label = self.orbital_diagram_panel.title_label
         self.diagram_label = self.orbital_diagram_panel.diagram_label
 
@@ -556,7 +566,7 @@ class MainWindow(QWidget):
             self.tr("compound_prompt"),
             self.tr("compound_scope_note"),
         )
-        self.compound_page = self.compound_panel
+        self.compound_page = self._wrap_in_scroll_area(self.compound_panel)
         self.compound_title_label = self.compound_panel.title_label
         self.compound_result_label = self.compound_panel.result_label
 
@@ -564,7 +574,7 @@ class MainWindow(QWidget):
             self.tr("lewis_title"),
             self.tr("lewis_prompt"),
         )
-        self.lewis_page = self.lewis_panel
+        self.lewis_page = self._wrap_in_scroll_area(self.lewis_panel)
 
         self.right_panel_container = QWidget()
         self.right_panel_stack = QStackedLayout()
