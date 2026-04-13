@@ -416,16 +416,16 @@ class MainWindow(QWidget):
 
         # Compound builder panel
         self.compound_builder_panel = CompoundBuilderPanel()
-        self.compound_builder_panel.use_a_button.clicked.connect(self.set_compound_a)
-        self.compound_builder_panel.use_b_button.clicked.connect(self.set_compound_b)
+        self.compound_builder_panel.search_a_input.returnPressed.connect(self._on_search_element_a)
+        self.compound_builder_panel.search_b_input.returnPressed.connect(self._on_search_element_b)
         self.compound_builder_panel.a_oxidation_combo.currentIndexChanged.connect(self.update_builder_status)
         self.compound_builder_panel.b_oxidation_combo.currentIndexChanged.connect(self.update_builder_status)
         self.compound_builder_panel.build_button.clicked.connect(self.build_compound)
         self.compound_builder_panel.builder_reset_button.clicked.connect(self.reset_builder)
 
         self.builder_title_label = self.compound_builder_panel.builder_title_label
-        self.use_a_button = self.compound_builder_panel.use_a_button
-        self.use_b_button = self.compound_builder_panel.use_b_button
+        self.search_a_input = self.compound_builder_panel.search_a_input
+        self.search_b_input = self.compound_builder_panel.search_b_input
         self.a_oxidation_label = self.compound_builder_panel.a_oxidation_label
         self.b_oxidation_label = self.compound_builder_panel.b_oxidation_label
         self.a_oxidation_combo = self.compound_builder_panel.a_oxidation_combo
@@ -817,8 +817,8 @@ class MainWindow(QWidget):
             selection_hint=texts["builder_selection_hint"],
             selector_a_title=texts["builder_slot_a_title"],
             selector_b_title=texts["builder_slot_b_title"],
-            use_selected_a=texts["builder_use_selected_a"],
-            use_selected_b=texts["builder_use_selected_b"],
+            search_placeholder_a=texts["builder_search_placeholder_a"],
+            search_placeholder_b=texts["builder_search_placeholder_b"],
             oxidation_first=texts["oxidation_first"],
             oxidation_second=texts["oxidation_second"],
             calculate_formula=texts["calculate_formula"],
@@ -968,8 +968,7 @@ class MainWindow(QWidget):
         self.compound_builder_panel.selection_summary_card.setToolTip(
             self.compound_builder_panel.builder_guide_label.text()
         )
-        self.use_a_button.setEnabled(has_selection)
-        self.use_b_button.setEnabled(has_selection)
+        # Search inputs are always enabled (no longer button-based)
 
     def refresh_builder_status(self):
         """Update the builder status label showing selected elements and their oxidation states."""
@@ -1018,16 +1017,13 @@ class MainWindow(QWidget):
         self.compound_builder_panel.selector_b_summary_label.setToolTip(second_text)
 
     def refresh_builder_action_accessibility(self):
-        """Update tooltips and accessible descriptions on the Use A / Use B buttons."""
-        current_selection_text = self.compound_builder_panel.current_selection_value_label.text()
-        for button, slot_text in (
-            (self.use_a_button, self.compound_builder_panel.selector_a_summary_label.text()),
-            (self.use_b_button, self.compound_builder_panel.selector_b_summary_label.text()),
+        """Update tooltips and accessible descriptions on the search inputs."""
+        for search_input, slot_text in (
+            (self.search_a_input, self.compound_builder_panel.selector_a_summary_label.text()),
+            (self.search_b_input, self.compound_builder_panel.selector_b_summary_label.text()),
         ):
-            action_text = button.text()
-            button.setToolTip(action_text)
-            button.setAccessibleName(action_text)
-            button.setAccessibleDescription(f"{action_text}. {current_selection_text}. {slot_text}.")
+            search_input.setToolTip(slot_text)
+            search_input.setAccessibleDescription(slot_text)
 
     def refresh_compound_panel(self, *, rebuild=False):
         """Refresh the compound result panel, optionally rebuilding the full formula output."""
@@ -1363,11 +1359,48 @@ class MainWindow(QWidget):
         value = combo.currentData()
         return value if isinstance(value, int) else None
 
+    def _on_search_element_a(self):
+        """Search for an element by name/symbol and assign it to compound slot A."""
+        query = self.search_a_input.text().strip()
+        if not query:
+            return
+        matches = self.get_ranked_matches(query, limit=1)
+        if matches:
+            self.compound_a = matches[0]
+            self.search_a_input.setText(
+                f"{self.get_localized_element_name(self.compound_a)} ({self.compound_a['symbol']})"
+            )
+            self.populate_oxidation_combo(self.a_oxidation_combo, self.compound_a)
+            self.refresh_builder_panel()
+            self.refresh_compound_panel()
+        else:
+            self.search_a_input.setText("")
+
+    def _on_search_element_b(self):
+        """Search for an element by name/symbol and assign it to compound slot B."""
+        query = self.search_b_input.text().strip()
+        if not query:
+            return
+        matches = self.get_ranked_matches(query, limit=1)
+        if matches:
+            self.compound_b = matches[0]
+            self.search_b_input.setText(
+                f"{self.get_localized_element_name(self.compound_b)} ({self.compound_b['symbol']})"
+            )
+            self.populate_oxidation_combo(self.b_oxidation_combo, self.compound_b)
+            self.refresh_builder_panel()
+            self.refresh_compound_panel()
+        else:
+            self.search_b_input.setText("")
+
     def set_compound_a(self):
         """Assign the currently selected element as compound slot A and refresh the builder."""
         if self.current_selected_element is None:
             return
         self.compound_a = self.current_selected_element
+        self.search_a_input.setText(
+            f"{self.get_localized_element_name(self.compound_a)} ({self.compound_a['symbol']})"
+        )
         self.populate_oxidation_combo(self.a_oxidation_combo, self.compound_a)
         self.refresh_builder_panel()
         self.refresh_compound_panel()
@@ -1377,6 +1410,9 @@ class MainWindow(QWidget):
         if self.current_selected_element is None:
             return
         self.compound_b = self.current_selected_element
+        self.search_b_input.setText(
+            f"{self.get_localized_element_name(self.compound_b)} ({self.compound_b['symbol']})"
+        )
         self.populate_oxidation_combo(self.b_oxidation_combo, self.compound_b)
         self.refresh_builder_panel()
         self.refresh_compound_panel()
@@ -1387,6 +1423,8 @@ class MainWindow(QWidget):
         self.compound_b = None
         self.compound_builder_state.first_oxidation = None
         self.compound_builder_state.second_oxidation = None
+        self.search_a_input.setText("")
+        self.search_b_input.setText("")
         self.populate_oxidation_combo(self.a_oxidation_combo, None)
         self.populate_oxidation_combo(self.b_oxidation_combo, None)
         self.refresh_builder_status()
@@ -1640,7 +1678,7 @@ class MainWindow(QWidget):
             self.search_widget.setMinimumWidth(0)
             self.search_widget.setMaximumWidth(policy.search_max_width)
 
-        self.builder_widget.setMaximumWidth(16777215)
+        self.builder_widget.setMaximumWidth(UNBOUNDED_MAX_WIDTH)
         self.right_column_widget.setMaximumWidth(policy.right_column_max_width)
         self._sync_trend_status_visibility(policy.mode)
 

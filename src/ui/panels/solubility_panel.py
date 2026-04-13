@@ -233,6 +233,7 @@ class SolubilityPanel(QWidget):
         self._default_rule_text = rule_default
 
         # Update legend labels
+        self._legend_title_label.setText(legend_title)
         self._legend_labels[0].setText(soluble_text)
         self._legend_labels[1].setText(insoluble_text)
         self._legend_labels[2].setText(slightly_text)
@@ -279,11 +280,15 @@ class SolubilityPanel(QWidget):
     # ------------------------------------------------------------------
 
     def _build_legend(self):
-        """Build the legend row with three colored squares and labels."""
+        """Build the legend row with title and three colored squares and labels."""
         widget = QWidget()
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(12)
+
+        self._legend_title_label = QLabel(self._legend_title)
+        self._legend_title_label.setStyleSheet("font-weight: bold;")
+        layout.addWidget(self._legend_title_label)
 
         self._legend_labels = []
         for color, text in [

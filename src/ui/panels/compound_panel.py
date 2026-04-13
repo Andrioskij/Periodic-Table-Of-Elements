@@ -3,6 +3,7 @@ from PySide6.QtWidgets import (
     QComboBox,
     QHBoxLayout,
     QLabel,
+    QLineEdit,
     QPushButton,
     QSizePolicy,
     QVBoxLayout,
@@ -13,9 +14,9 @@ from PySide6.QtWidgets import (
 class CompoundBuilderPanel(QWidget):
     """Top-area panel where the user selects two elements and their oxidation states.
 
-    Contains slot cards for element A and B, oxidation-state combo
-    boxes, and action buttons to calculate the formula or reset
-    the selection.
+    Contains slot cards for element A and B with inline search fields,
+    oxidation-state combo boxes, and action buttons to calculate the
+    formula or reset the selection.
     """
 
     def __init__(self):
@@ -72,9 +73,10 @@ class CompoundBuilderPanel(QWidget):
         selector_a_header.addWidget(self.selector_a_title_label, 1)
         self.selector_a_summary_label = QLabel()
         self.selector_a_summary_label.setObjectName("builderSelectorSummaryLabel")
-        self.use_a_button = QPushButton()
-        self.use_a_button.setObjectName("builderButton")
-        selector_a_header.addWidget(self.use_a_button, 0)
+        self.search_a_input = QLineEdit()
+        self.search_a_input.setObjectName("builderSearchInput")
+        self.search_a_input.setAccessibleName("Search element A")
+        selector_a_header.addWidget(self.search_a_input, 1)
         self.a_oxidation_label = QLabel()
         self.a_oxidation_label.setObjectName("builderSelectorCaptionLabel")
         self.a_oxidation_combo = QComboBox()
@@ -105,9 +107,10 @@ class CompoundBuilderPanel(QWidget):
         selector_b_header.addWidget(self.selector_b_title_label, 1)
         self.selector_b_summary_label = QLabel()
         self.selector_b_summary_label.setObjectName("builderSelectorSummaryLabel")
-        self.use_b_button = QPushButton()
-        self.use_b_button.setObjectName("builderButton")
-        selector_b_header.addWidget(self.use_b_button, 0)
+        self.search_b_input = QLineEdit()
+        self.search_b_input.setObjectName("builderSearchInput")
+        self.search_b_input.setAccessibleName("Search element B")
+        selector_b_header.addWidget(self.search_b_input, 1)
         self.b_oxidation_label = QLabel()
         self.b_oxidation_label.setObjectName("builderSelectorCaptionLabel")
         self.b_oxidation_combo = QComboBox()
@@ -164,8 +167,8 @@ class CompoundBuilderPanel(QWidget):
         selection_hint,
         selector_a_title,
         selector_b_title,
-        use_selected_a,
-        use_selected_b,
+        search_placeholder_a,
+        search_placeholder_b,
         oxidation_first,
         oxidation_second,
         calculate_formula,
@@ -177,8 +180,8 @@ class CompoundBuilderPanel(QWidget):
         self.builder_guide_label.setText(selection_hint)
         self.selector_a_title_label.setText(selector_a_title)
         self.selector_b_title_label.setText(selector_b_title)
-        self.use_a_button.setText(use_selected_a)
-        self.use_b_button.setText(use_selected_b)
+        self.search_a_input.setPlaceholderText(search_placeholder_a)
+        self.search_b_input.setPlaceholderText(search_placeholder_b)
         self.a_oxidation_label.setText(oxidation_first)
         self.b_oxidation_label.setText(oxidation_second)
         self.build_button.setText(calculate_formula)
