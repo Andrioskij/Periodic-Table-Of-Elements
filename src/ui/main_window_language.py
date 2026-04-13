@@ -4,6 +4,7 @@ RIGHT_PANEL_TEXT_KEYS = {
     "compound": "right_compound",
     "molar": "right_molar",
     "stoichiometry": "right_stoichiometry",
+    "lewis": "right_lewis",
 }
 
 RIGHT_PANEL_SHORTCUTS = {
@@ -12,6 +13,7 @@ RIGHT_PANEL_SHORTCUTS = {
     "compound": "Ctrl+3",
     "molar": "Ctrl+4",
     "stoichiometry": "Ctrl+5",
+    "lewis": "Ctrl+6",
 }
 
 

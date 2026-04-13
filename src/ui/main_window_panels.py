@@ -4,6 +4,7 @@ RIGHT_PANEL_STACK_INDEX = {
     "compound": 2,
     "molar": 3,
     "stoichiometry": 4,
+    "lewis": 5,
 }
 
 
@@ -91,6 +92,8 @@ def build_right_panel_mode_state(*, mode, has_selected_element):
         refresh_modes = (mode,)
     elif mode == "diagram":
         refresh_modes = ("diagram",)
+    elif mode == "lewis":
+        refresh_modes = ("lewis",)
 
     return {
         "stack_index": RIGHT_PANEL_STACK_INDEX[mode],

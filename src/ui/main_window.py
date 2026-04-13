@@ -73,6 +73,7 @@ from src.ui.panels.compound_panel import CompoundBuilderPanel, CompoundPanel
 from src.ui.panels.info_panel import InfoPanel
 from src.ui.panels.molar_mass_panel import MolarMassPanel
 from src.ui.panels.orbital_diagram_panel import OrbitalDiagramPanel
+from src.ui.panels.lewis_panel import LewisPanel
 from src.ui.panels.stoichiometry_panel import StoichiometryPanel
 from src.ui.search_helpers import (
     compute_match_score as compute_search_match_score,
@@ -466,6 +467,7 @@ class MainWindow(QWidget):
             ("compound", self.tr("right_compound")),
             ("molar", self.tr("right_molar")),
             ("stoichiometry", self.tr("right_stoichiometry")),
+            ("lewis", self.tr("right_lewis")),
         ]
 
         for mode, text_button in right_modes:
@@ -516,6 +518,12 @@ class MainWindow(QWidget):
         )
         self.stoichiometry_page = self.stoichiometry_panel
 
+        self.lewis_panel = LewisPanel(
+            self.tr("lewis_title"),
+            self.tr("lewis_prompt"),
+        )
+        self.lewis_page = self.lewis_panel
+
         self.right_panel_container = QWidget()
         self.right_panel_stack = QStackedLayout()
         self.right_panel_stack.setContentsMargins(0, 0, 0, 0)
@@ -524,6 +532,7 @@ class MainWindow(QWidget):
         self.right_panel_stack.addWidget(self.compound_page)
         self.right_panel_stack.addWidget(self.molar_page)
         self.right_panel_stack.addWidget(self.stoichiometry_page)
+        self.right_panel_stack.addWidget(self.lewis_page)
         self.right_panel_container.setLayout(self.right_panel_stack)
         self.right_panel_container.setMinimumHeight(0)
 
@@ -570,6 +579,7 @@ class MainWindow(QWidget):
         self.compound_panel.setFocusPolicy(Qt.StrongFocus)
         self.molar_mass_panel.setFocusPolicy(Qt.StrongFocus)
         self.stoichiometry_panel.setFocusPolicy(Qt.StrongFocus)
+        self.lewis_panel.setFocusPolicy(Qt.StrongFocus)
 
         # Tab order: about -> language -> search -> trend -> panels -> table -> builder
         def safe_set_tab_order(first, second):
@@ -616,6 +626,7 @@ class MainWindow(QWidget):
         QShortcut(QKeySequence("Ctrl+3"), self, activated=lambda: self.set_right_panel_mode("compound"))
         QShortcut(QKeySequence("Ctrl+4"), self, activated=lambda: self.set_right_panel_mode("molar"))
         QShortcut(QKeySequence("Ctrl+5"), self, activated=lambda: self.set_right_panel_mode("stoichiometry"))
+        QShortcut(QKeySequence("Ctrl+6"), self, activated=lambda: self.set_right_panel_mode("lewis"))
         QShortcut(QKeySequence("Ctrl+L"), self, activated=self.reset_builder)
 
     def _focus_search_input(self):
@@ -723,6 +734,7 @@ class MainWindow(QWidget):
         self.periodic_table_widget.refresh_button_styles()
         self.refresh_info_panel()
         self.refresh_diagram_panel()
+        self.refresh_lewis_panel()
 
         if self.compound_a is not None and self.compound_b is not None:
             self.build_compound()
@@ -769,6 +781,10 @@ class MainWindow(QWidget):
             calc_masses_text=self.tr("stoichiometry_calc_masses"),
             mass_section_text=self.tr("stoichiometry_mass_section"),
             error_prefix=self.tr("stoichiometry_error"),
+        )
+        self.lewis_panel.apply_language(
+            title=self.tr("lewis_title"),
+            prompt=self.tr("lewis_prompt"),
         )
         self.periodic_table_widget.set_language_texts(
             selected_none_text=texts["selected_none"],
@@ -964,6 +980,25 @@ class MainWindow(QWidget):
             build_traditional_name=self.build_traditional_name,
         )
 
+    def refresh_lewis_panel(self):
+        """Refresh the Lewis dot diagram panel based on the selected element and panel mode."""
+        element = self.current_selected_element
+        is_lewis_mode = self.right_panel_mode == "lewis"
+        title = self.tr("lewis_title")
+
+        if is_lewis_mode and element is not None:
+            self.lewis_panel.show_lewis_diagram(
+                element,
+                translate=self.tr,
+                format_value=format_value,
+            )
+        elif is_lewis_mode:
+            self.lewis_panel.set_prompt(title, self.tr("lewis_prompt"))
+        elif element is not None:
+            self.lewis_panel.set_prompt(title, self.tr("lewis_switch_prompt"))
+        else:
+            self.lewis_panel.set_prompt(title, self.tr("lewis_prompt"))
+
     def _refresh_panel_by_mode(self, mode):
         """Refresh a single right-panel page identified by its mode string."""
         if mode == "info":
@@ -972,6 +1007,8 @@ class MainWindow(QWidget):
             self.refresh_diagram_panel()
         elif mode == "compound":
             self.refresh_compound_panel()
+        elif mode == "lewis":
+            self.refresh_lewis_panel()
 
     def _refresh_panel_modes(self, modes):
         """Refresh multiple right-panel pages given an iterable of mode strings."""
@@ -1204,7 +1241,7 @@ class MainWindow(QWidget):
         """Store the selected element and refresh the header and info/diagram panels."""
         self.current_selected_element = element
         self.refresh_selection_header()
-        self._refresh_panel_modes(("info", "diagram"))
+        self._refresh_panel_modes(("info", "diagram", "lewis"))
 
     def parse_oxidation_states(self, oxidation_data):
         """Parse raw oxidation-state data into a sorted list of integers."""
