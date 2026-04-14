@@ -1,8 +1,7 @@
 RIGHT_PANEL_STACK_INDEX = {
     "info": 0,
     "diagram": 1,
-    "compound": 2,
-    "lewis": 3,
+    "lewis": 2,
 }
 
 TOOL_AREA_STACK_INDEX = {
@@ -51,38 +50,6 @@ def build_diagram_panel_state(*, is_diagram_mode, has_selected_element, translat
         "action": "set_prompt",
         "title": title,
         "text": translate(prompt_key),
-    }
-
-
-def build_compound_panel_state(
-    *,
-    has_compound_pair,
-    rebuild,
-    translate,
-    preview_text=None,
-    rebuilt_result_text=None,
-):
-    """Decide what the compound-builder panel should display.
-
-    Returns either a prompt (when no pair is ready), the rebuilt
-    formula result (on recalculation), or a preview with existing
-    pair information.
-    """
-    if rebuild:
-        return {
-            "action": "set_result_text",
-            "text": rebuilt_result_text or "",
-        }
-
-    if not has_compound_pair:
-        return {
-            "action": "set_prompt",
-            "text": translate("compound_prompt"),
-        }
-
-    return {
-        "action": "set_result_text",
-        "text": translate("pair_ready_prompt") + "\n\n" + (preview_text or ""),
     }
 
 

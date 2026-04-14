@@ -65,13 +65,12 @@ from src.ui.main_window_language import (
 )
 from src.ui.main_window_panels import (
     TOOL_AREA_STACK_INDEX,
-    build_compound_panel_state,
     build_diagram_panel_state,
     build_info_panel_prompt,
     build_right_panel_mode_state,
     build_tool_area_mode_state,
 )
-from src.ui.panels.compound_panel import CompoundBuilderPanel, CompoundPanel
+from src.ui.panels.compound_panel import CompoundBuilderPanel
 from src.ui.panels.info_panel import InfoPanel
 from src.ui.panels.molar_mass_panel import MolarMassPanel
 from src.ui.panels.orbital_diagram_panel import OrbitalDiagramPanel
@@ -423,7 +422,6 @@ class MainWindow(QWidget):
         self.compound_builder_panel.build_button.clicked.connect(self.build_compound)
         self.compound_builder_panel.builder_reset_button.clicked.connect(self.reset_builder)
 
-        self.builder_title_label = self.compound_builder_panel.builder_title_label
         self.search_a_input = self.compound_builder_panel.search_a_input
         self.search_b_input = self.compound_builder_panel.search_b_input
         self.a_oxidation_label = self.compound_builder_panel.a_oxidation_label
@@ -542,7 +540,6 @@ class MainWindow(QWidget):
         right_modes = [
             ("info", self.tr("right_info")),
             ("diagram", self.tr("right_diagram")),
-            ("compound", self.tr("right_compound")),
             ("lewis", self.tr("right_lewis")),
         ]
 
@@ -571,15 +568,6 @@ class MainWindow(QWidget):
         self.diagram_title_label = self.orbital_diagram_panel.title_label
         self.diagram_label = self.orbital_diagram_panel.diagram_label
 
-        self.compound_panel = CompoundPanel(
-            self.tr("formula_title"),
-            self.tr("compound_prompt"),
-            self.tr("compound_scope_note"),
-        )
-        self.compound_page = self._wrap_in_scroll_area(self.compound_panel)
-        self.compound_title_label = self.compound_panel.title_label
-        self.compound_result_label = self.compound_panel.result_label
-
         self.lewis_panel = LewisPanel(
             self.tr("lewis_title"),
             self.tr("lewis_prompt"),
@@ -591,7 +579,6 @@ class MainWindow(QWidget):
         self.right_panel_stack.setContentsMargins(0, 0, 0, 0)
         self.right_panel_stack.addWidget(self.info_page)
         self.right_panel_stack.addWidget(self.diagram_page)
-        self.right_panel_stack.addWidget(self.compound_page)
         self.right_panel_stack.addWidget(self.lewis_page)
         self.right_panel_container.setLayout(self.right_panel_stack)
         self.right_panel_container.setMinimumHeight(0)
@@ -636,7 +623,6 @@ class MainWindow(QWidget):
         # Right panel component accessibility
         self.info_panel.setFocusPolicy(Qt.StrongFocus)
         self.orbital_diagram_panel.setFocusPolicy(Qt.StrongFocus)
-        self.compound_panel.setFocusPolicy(Qt.StrongFocus)
         self.lewis_panel.setFocusPolicy(Qt.StrongFocus)
         self.molar_mass_panel.setFocusPolicy(Qt.StrongFocus)
         self.stoichiometry_panel.setFocusPolicy(Qt.StrongFocus)
@@ -683,8 +669,7 @@ class MainWindow(QWidget):
         QShortcut(QKeySequence("Ctrl+R"), self, activated=self._focus_search_input)
         QShortcut(QKeySequence("Ctrl+1"), self, activated=lambda: self.set_right_panel_mode("info"))
         QShortcut(QKeySequence("Ctrl+2"), self, activated=lambda: self.set_right_panel_mode("diagram"))
-        QShortcut(QKeySequence("Ctrl+3"), self, activated=lambda: self.set_right_panel_mode("compound"))
-        QShortcut(QKeySequence("Ctrl+4"), self, activated=lambda: self.set_right_panel_mode("lewis"))
+        QShortcut(QKeySequence("Ctrl+3"), self, activated=lambda: self.set_right_panel_mode("lewis"))
         QShortcut(QKeySequence("Ctrl+L"), self, activated=self.reset_builder)
 
     def _focus_search_input(self):
@@ -757,7 +742,6 @@ class MainWindow(QWidget):
         """Sync the selection state from the table widget and update the builder header."""
         self.selection_state.selected_button = self.periodic_table_widget.selected_button
         self.periodic_table_widget.refresh_selected_element_name()
-        self.refresh_builder_current_selection_text()
 
     def change_language(self, index):
         """Handle language selector change: persist the choice and re-apply all UI text."""
@@ -811,10 +795,6 @@ class MainWindow(QWidget):
         self.search_input.setPlaceholderText(texts["search_placeholder"])
         self.search_button.setText(texts["search_button"])
         self.compound_builder_panel.apply_language(
-            builder_title=texts["builder_title"],
-            scope_note=texts["builder_scope_note"],
-            selection_title=texts["builder_selection_title"],
-            selection_hint=texts["builder_selection_hint"],
             selector_a_title=texts["builder_slot_a_title"],
             selector_b_title=texts["builder_slot_b_title"],
             search_placeholder_a=texts["builder_search_placeholder_a"],
@@ -824,8 +804,6 @@ class MainWindow(QWidget):
             calculate_formula=texts["calculate_formula"],
             reset=texts["reset"],
         )
-        self.compound_panel.set_title(texts["formula_title"])
-        self.compound_panel.set_scope_note(texts["compound_scope_note"])
         self.molar_mass_panel.apply_language(
             title=self.tr("molar_title"),
             prompt=self.tr("molar_prompt"),
@@ -945,30 +923,10 @@ class MainWindow(QWidget):
     def refresh_builder_panel(self, *, update_selectors=True):
         """Refresh all compound builder UI: selection text, status, selectors, and action buttons."""
         self.sync_builder_state_from_controls()
-        self.refresh_builder_current_selection_text()
         self.refresh_builder_status()
         if update_selectors:
             self.refresh_builder_selector_texts()
         self.refresh_builder_action_accessibility()
-
-    def refresh_builder_current_selection_text(self):
-        """Update the builder's 'current selection' label and enable/disable the Use A/B buttons."""
-        has_selection = self.current_selected_element is not None
-        if has_selection:
-            selection_text = self.tr(
-                "builder_selection_current",
-                name=self.get_localized_element_name(self.current_selected_element),
-                symbol=self.current_selected_element.get("symbol"),
-            )
-        else:
-            selection_text = self.tr("builder_selection_empty")
-
-        self.compound_builder_panel.set_current_selection_text(selection_text)
-        self.compound_builder_panel.current_selection_value_label.setToolTip(selection_text)
-        self.compound_builder_panel.selection_summary_card.setToolTip(
-            self.compound_builder_panel.builder_guide_label.text()
-        )
-        # Search inputs are always enabled (no longer button-based)
 
     def refresh_builder_status(self):
         """Update the builder status label showing selected elements and their oxidation states."""
@@ -1026,22 +984,21 @@ class MainWindow(QWidget):
             search_input.setAccessibleDescription(slot_text)
 
     def refresh_compound_panel(self, *, rebuild=False):
-        """Refresh the compound result panel, optionally rebuilding the full formula output."""
+        """Refresh the nomenclature result shown in the builder panel."""
         self.sync_builder_state_from_controls()
         has_compound_pair = self.compound_a is not None and self.compound_b is not None
-        state = build_compound_panel_state(
-            has_compound_pair=has_compound_pair,
-            rebuild=rebuild,
-            translate=self.tr,
-            preview_text=self.format_common_compounds_section() if has_compound_pair and not rebuild else None,
-            rebuilt_result_text=self.compose_compound_result_text() if rebuild else None,
-        )
 
-        if state["action"] == "set_prompt":
-            self.compound_panel.set_prompt(state["text"])
-            return
+        if rebuild:
+            text = self.compose_compound_result_text() or ""
+        elif has_compound_pair:
+            preview = self.format_common_compounds_section()
+            text = self.tr("pair_ready_prompt")
+            if preview:
+                text += "\n\n" + preview
+        else:
+            text = ""
 
-        self.compound_panel.set_result_text(state["text"])
+        self.compound_builder_panel.set_result_text(text)
 
     def compose_compound_result_text(self):
         """Build the full compound result text (formula + IUPAC + traditional names)."""
@@ -1055,6 +1012,8 @@ class MainWindow(QWidget):
             build_binary_formula=self.build_binary_formula,
             build_stock_name=self.build_stock_name,
             build_traditional_name=self.build_traditional_name,
+            nomenclature_data=self.nomenclature_data,
+            language_code=self.current_language,
         )
 
     def refresh_lewis_panel(self):
@@ -1082,8 +1041,6 @@ class MainWindow(QWidget):
             self.refresh_info_panel()
         elif mode == "diagram":
             self.refresh_diagram_panel()
-        elif mode == "compound":
-            self.refresh_compound_panel()
         elif mode == "lewis":
             self.refresh_lewis_panel()
 
@@ -1393,30 +1350,6 @@ class MainWindow(QWidget):
         else:
             self.search_b_input.setText("")
 
-    def set_compound_a(self):
-        """Assign the currently selected element as compound slot A and refresh the builder."""
-        if self.current_selected_element is None:
-            return
-        self.compound_a = self.current_selected_element
-        self.search_a_input.setText(
-            f"{self.get_localized_element_name(self.compound_a)} ({self.compound_a['symbol']})"
-        )
-        self.populate_oxidation_combo(self.a_oxidation_combo, self.compound_a)
-        self.refresh_builder_panel()
-        self.refresh_compound_panel()
-
-    def set_compound_b(self):
-        """Assign the currently selected element as compound slot B and refresh the builder."""
-        if self.current_selected_element is None:
-            return
-        self.compound_b = self.current_selected_element
-        self.search_b_input.setText(
-            f"{self.get_localized_element_name(self.compound_b)} ({self.compound_b['symbol']})"
-        )
-        self.populate_oxidation_combo(self.b_oxidation_combo, self.compound_b)
-        self.refresh_builder_panel()
-        self.refresh_compound_panel()
-
     def reset_builder(self):
         """Clear both compound slots, oxidation selections, and reset the builder UI."""
         self.compound_a = None
@@ -1550,8 +1483,7 @@ class MainWindow(QWidget):
         )
 
     def build_compound(self):
-        """Switch to the compound panel and rebuild the formula result."""
-        self.set_right_panel_mode("compound")
+        """Rebuild the formula result in the nomenclature area."""
         self.refresh_compound_panel(rebuild=True)
 
     def set_right_panel_mode(self, mode):

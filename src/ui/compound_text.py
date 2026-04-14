@@ -1,3 +1,56 @@
+_METAL_CATEGORIES = {
+    "alkali metal",
+    "alkaline earth metal",
+    "transition metal",
+    "post-transition metal",
+    "lanthanide",
+    "lanthanoid",
+    "actinide",
+    "actinoid",
+}
+
+
+def _is_metal(category):
+    return (category or "").lower() in _METAL_CATEGORIES
+
+
+def classify_binary_compound(cation, anion, *, nomenclature_data, language_code):
+    """Classify a binary compound and return (type_key, acid_name_or_None).
+
+    type_key is one of: 'hydracid', 'basic_oxide', 'acidic_oxide', 'binary_salt'.
+    acid_name is the localized hydracid name when the compound is a hydracid.
+    Detects hydracids regardless of which element is assigned as cation/anion.
+    """
+    cation_symbol = cation.get("symbol")
+    anion_symbol = anion.get("symbol")
+    cation_category = cation.get("category", "")
+
+    # Hydracid: one element is H, the other has a known hydracid entry
+    hydracids = nomenclature_data.get("hydracids", {})
+    if cation_symbol == "H":
+        other_symbol = anion_symbol
+    elif anion_symbol == "H":
+        other_symbol = cation_symbol
+    else:
+        other_symbol = None
+
+    if other_symbol is not None:
+        entry = hydracids.get(other_symbol)
+        if entry:
+            field = f"name_{language_code}"
+            acid_name = entry.get(field) or entry.get("name_en")
+            return "hydracid", acid_name
+
+    # Oxides
+    if anion_symbol == "O":
+        if _is_metal(cation_category):
+            return "basic_oxide", None
+        return "acidic_oxide", None
+
+    # Default: binary salt
+    return "binary_salt", None
+
+
 def get_compound_pair_key(symbol_a, symbol_b):
     """Create a unique lookup key for a pair of element symbols.
 
@@ -30,12 +83,12 @@ def get_localized_common_compound_name(compound_entry, language_code):
 def format_common_compounds_section(compounds, *, translate, get_localized_name):
     """Build a human-readable text block listing common compounds.
 
-    If no compounds are available, returns a translated 'no common compounds'
-    message. Otherwise, formats each compound as a bullet line with formula
+    Returns an empty string when no compounds are available.
+    Otherwise, formats each compound as a bullet line with formula
     and localized name.
     """
     if not compounds:
-        return translate("no_common_compounds")
+        return ""
 
     lines = [translate("common_compounds") + ":"]
     for entry in compounds:
@@ -54,11 +107,14 @@ def compose_compound_result_text(
     build_binary_formula,
     build_stock_name,
     build_traditional_name,
+    nomenclature_data=None,
+    language_code="en",
 ):
     """Assemble the full compound-builder result text shown to the user.
 
     Validates the selected elements and oxidation states, then generates
-    the binary formula along with IUPAC (Stock) and traditional names.
+    the binary formula along with IUPAC (Stock) and traditional names,
+    plus acid/base classification when applicable.
     Returns early with an appropriate message when the input is incomplete
     or invalid (same element, missing oxidation, same-sign charges).
     """
@@ -66,13 +122,13 @@ def compose_compound_result_text(
         return translate("must_select_ab")
 
     if compound_a.get("atomic_number") == compound_b.get("atomic_number"):
-        return translate("same_element") + "\n\n" + common_section
+        return translate("same_element") + _append_section(common_section)
 
     if first_oxidation is None or second_oxidation is None:
-        return translate("select_oxidation") + "\n\n" + common_section
+        return translate("select_oxidation") + _append_section(common_section)
 
     if first_oxidation * second_oxidation >= 0:
-        return translate("opposite_sign") + "\n\n" + common_section
+        return translate("opposite_sign") + _append_section(common_section)
 
     if first_oxidation > 0 and second_oxidation < 0:
         cation = compound_a
@@ -94,9 +150,29 @@ def compose_compound_result_text(
     stock_name = build_stock_name(cation, cation_charge, anion)
     traditional_name = build_traditional_name(cation, cation_charge, anion)
 
-    return (
-        f"{translate('formula_label')}: {formula}\n"
-        f"{translate('stock_name')}: {stock_name}\n"
-        f"{translate('traditional_name')}: {traditional_name or translate('traditional_na')}\n\n"
-        f"{common_section}"
-    )
+    lines = [
+        f"{translate('formula_label')}: {formula}",
+        f"{translate('stock_name')}: {stock_name}",
+        f"{translate('traditional_name')}: {traditional_name or translate('traditional_na')}",
+    ]
+
+    if nomenclature_data is not None:
+        type_key, acid_name = classify_binary_compound(
+            cation, anion,
+            nomenclature_data=nomenclature_data,
+            language_code=language_code,
+        )
+        type_label = translate(type_key)
+        lines.append(f"{translate('compound_type')}: {type_label}")
+        if acid_name:
+            lines.append(f"{translate('acid_name_label')}: {acid_name}")
+
+    result = "\n".join(lines)
+    return result + _append_section(common_section)
+
+
+def _append_section(section):
+    """Append a section with double-newline separator, or nothing if empty."""
+    if section:
+        return "\n\n" + section
+    return ""

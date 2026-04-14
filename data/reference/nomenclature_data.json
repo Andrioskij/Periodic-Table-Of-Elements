@@ -447,7 +447,14 @@
         "ru"
       ],
       "name_es": "bromo",
-      "anion_es": "bromuro"
+      "anion_es": "bromuro",
+      "acid_name_en": "hydrobromic acid",
+      "acid_name_it": "acido bromidrico",
+      "acid_name_es": "ácido bromhídrico",
+      "acid_name_fr": "acide bromhydrique",
+      "acid_name_de": "Bromwasserstoffsäure",
+      "acid_name_zh": "氢溴酸",
+      "acid_name_ru": "бромоводородная кислота"
     },
     "C": {
       "name_en": "carbon",
@@ -597,7 +604,14 @@
         "ru"
       ],
       "name_es": "cloro",
-      "anion_es": "cloruro"
+      "anion_es": "cloruro",
+      "acid_name_en": "hydrochloric acid",
+      "acid_name_it": "acido cloridrico",
+      "acid_name_es": "ácido clorhídrico",
+      "acid_name_fr": "acide chlorhydrique",
+      "acid_name_de": "Salzsäure",
+      "acid_name_zh": "盐酸",
+      "acid_name_ru": "соляная кислота"
     },
     "Cm": {
       "name_en": "curium",
@@ -880,7 +894,14 @@
         "ru"
       ],
       "name_es": "flúor",
-      "anion_es": "fluoruro"
+      "anion_es": "fluoruro",
+      "acid_name_en": "hydrofluoric acid",
+      "acid_name_it": "acido fluoridrico",
+      "acid_name_es": "ácido fluorhídrico",
+      "acid_name_fr": "acide fluorhydrique",
+      "acid_name_de": "Flusssäure",
+      "acid_name_zh": "氢氟酸",
+      "acid_name_ru": "фтороводородная кислота"
     },
     "Fe": {
       "name_en": "iron",
@@ -1205,7 +1226,14 @@
         "ru"
       ],
       "name_es": "yodo",
-      "anion_es": "yoduro"
+      "anion_es": "yoduro",
+      "acid_name_en": "hydroiodic acid",
+      "acid_name_it": "acido iodidrico",
+      "acid_name_es": "ácido yodhídrico",
+      "acid_name_fr": "acide iodhydrique",
+      "acid_name_de": "Iodwasserstoffsäure",
+      "acid_name_zh": "氢碘酸",
+      "acid_name_ru": "иодоводородная кислота"
     },
     "In": {
       "name_en": "indium",
@@ -2175,7 +2203,14 @@
         "ru"
       ],
       "name_es": "azufre",
-      "anion_es": "sulfuro"
+      "anion_es": "sulfuro",
+      "acid_name_en": "hydrosulfuric acid",
+      "acid_name_it": "acido solfidrico",
+      "acid_name_es": "ácido sulfhídrico",
+      "acid_name_fr": "acide sulfhydrique",
+      "acid_name_de": "Schwefelwasserstoffsäure",
+      "acid_name_zh": "氢硫酸",
+      "acid_name_ru": "сероводородная кислота"
     },
     "Sb": {
       "name_en": "antimony",
@@ -2265,7 +2300,14 @@
         "ru"
       ],
       "name_es": "selenio",
-      "anion_es": "seleniuro"
+      "anion_es": "seleniuro",
+      "acid_name_en": "hydroselenic acid",
+      "acid_name_it": "acido selenidrico",
+      "acid_name_es": "ácido selenhídrico",
+      "acid_name_fr": "acide sélénhydrique",
+      "acid_name_de": "Selenwasserstoffsäure",
+      "acid_name_zh": "氢硒酸",
+      "acid_name_ru": "селеноводородная кислота"
     },
     "Sg": {
       "name_en": "seaborgium",
@@ -2476,7 +2518,14 @@
         "ru"
       ],
       "name_es": "teluro",
-      "anion_es": "telururo"
+      "anion_es": "telururo",
+      "acid_name_en": "hydrotelluric acid",
+      "acid_name_it": "acido telluridrico",
+      "acid_name_es": "ácido telurhídrico",
+      "acid_name_fr": "acide tellurhydrique",
+      "acid_name_de": "Tellurwasserstoffsäure",
+      "acid_name_zh": "氢碲酸",
+      "acid_name_ru": "теллуроводородная кислота"
     },
     "Th": {
       "name_en": "thorium",
@@ -2748,6 +2797,71 @@
       ],
       "verified_anion_languages": [],
       "name_es": "zirconio"
+    }
+  },
+  "hydracids": {
+    "F": {
+      "name_en": "hydrofluoric acid",
+      "name_it": "acido fluoridrico",
+      "name_es": "ácido fluorhídrico",
+      "name_fr": "acide fluorhydrique",
+      "name_de": "Flusssäure",
+      "name_zh": "氢氟酸",
+      "name_ru": "плавиковая кислота"
+    },
+    "Cl": {
+      "name_en": "hydrochloric acid",
+      "name_it": "acido cloridrico",
+      "name_es": "ácido clorhídrico",
+      "name_fr": "acide chlorhydrique",
+      "name_de": "Salzsäure",
+      "name_zh": "盐酸",
+      "name_ru": "соляная кислота"
+    },
+    "Br": {
+      "name_en": "hydrobromic acid",
+      "name_it": "acido bromidrico",
+      "name_es": "ácido bromhídrico",
+      "name_fr": "acide bromhydrique",
+      "name_de": "Bromwasserstoffsäure",
+      "name_zh": "氢溴酸",
+      "name_ru": "бромоводородная кислота"
+    },
+    "I": {
+      "name_en": "hydroiodic acid",
+      "name_it": "acido iodidrico",
+      "name_es": "ácido yodhídrico",
+      "name_fr": "acide iodhydrique",
+      "name_de": "Iodwasserstoffsäure",
+      "name_zh": "氢碘酸",
+      "name_ru": "иодоводородная кислота"
+    },
+    "S": {
+      "name_en": "hydrosulfuric acid",
+      "name_it": "acido solfidrico",
+      "name_es": "ácido sulfhídrico",
+      "name_fr": "acide sulfhydrique",
+      "name_de": "Schwefelwasserstoffsäure",
+      "name_zh": "氢硫酸",
+      "name_ru": "сероводородная кислота"
+    },
+    "Se": {
+      "name_en": "hydroselenic acid",
+      "name_it": "acido selenidrico",
+      "name_es": "ácido selenhídrico",
+      "name_fr": "acide sélénhydrique",
+      "name_de": "Selenwasserstoffsäure",
+      "name_zh": "氢硒酸",
+      "name_ru": "селеноводородная кислота"
+    },
+    "Te": {
+      "name_en": "hydrotelluric acid",
+      "name_it": "acido telluridrico",
+      "name_es": "ácido telurhídrico",
+      "name_fr": "acide tellurhydrique",
+      "name_de": "Tellurwasserstoffsäure",
+      "name_zh": "氢碲酸",
+      "name_ru": "теллуроводородная кислота"
     }
   },
   "common_compounds": {
