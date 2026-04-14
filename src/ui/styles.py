@@ -41,14 +41,14 @@ APP_STYLESHEET = """
     QWidget#compoundBuilderPanel {
         background-color: #23272f;
         border: 1px solid #404854;
-        border-radius: 14px;
+        border-radius: 10px;
     }
 
     QWidget#builderSelectionCard,
     QWidget#builderSelectorCard {
         background-color: #20252c;
         border: 1px solid #404854;
-        border-radius: 12px;
+        border-radius: 8px;
     }
 
     QLabel#searchTitleLabel {
@@ -87,12 +87,19 @@ APP_STYLESHEET = """
     }
 
     QLabel#infoLabel,
-    QLabel#infoPromptLabel,
-    QLabel#compoundResultLabel {
+    QLabel#infoPromptLabel {
         background-color: #252526;
         border: 1px solid #3c3c3c;
         border-radius: 12px;
         padding: 12px;
+        font-size: 13px;
+    }
+
+    QLabel#compoundResultLabel {
+        background-color: #252526;
+        border: 1px solid #3c3c3c;
+        border-radius: 8px;
+        padding: 6px 8px;
         font-size: 13px;
     }
 
