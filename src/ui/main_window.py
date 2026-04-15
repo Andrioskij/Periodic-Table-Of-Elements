@@ -81,6 +81,7 @@ from src.ui.search_helpers import (
     compute_match_score as compute_search_match_score,
     get_ranked_matches as get_ranked_search_matches,
 )
+from src.ui.context import AppContext
 from src.ui.state import (
     CompoundBuilderState,
     LanguageState,
@@ -89,9 +90,10 @@ from src.ui.state import (
     TrendState,
 )
 from src.ui.styles import (
-    APP_STYLESHEET,
+    DEFAULT_UI_COLOR,
     get_category_color as get_ui_category_color,
     get_current_button_colors as get_ui_button_colors,
+    get_stylesheet,
     get_text_color as get_ui_text_color,
     interpolate_color as interpolate_ui_color,
 )
@@ -126,25 +128,22 @@ class MainWindow(QWidget):
     geometry, trend mode, panel mode) via a SettingsService.
     """
 
-    def __init__(self, elements, nomenclature_data, settings_service=None):
-        """Initialize the main window with element data and nomenclature tables.
+    def __init__(self, context: AppContext):
+        """Initialize the main window with AppContext.
 
         Args:
-            elements: List of element dicts, each containing at least
-                ``atomic_number``, ``symbol``, and property fields.
-            nomenclature_data: Localization / nomenclature lookup tables
-                used for element names, anion names, and compound naming.
-            settings_service: Optional SettingsService for persisting user
-                preferences.  A default instance is created when *None*.
+            context: AppContext containing elements, nomenclature_data,
+                settings_service, localization_service, and all managers.
         """
         super().__init__()
 
-        self.elements = sorted(elements, key=lambda element: element["atomic_number"])
+        self.context = context
+        self.elements = sorted(context.elements, key=lambda element: element["atomic_number"])
         assert len({e["atomic_number"] for e in self.elements}) == len(self.elements), (
             "Duplicate atomic_number values detected in element data"
         )
         self.element_index = {element["atomic_number"]: element for element in self.elements}
-        self.nomenclature_data = nomenclature_data
+        self.nomenclature_data = context.nomenclature_data
 
         self.selection_state = SelectionState()
         self.trend_state = TrendState()
@@ -152,7 +151,7 @@ class MainWindow(QWidget):
         self.compound_builder_state = CompoundBuilderState()
         self.language_state = LanguageState()
 
-        self.settings_service = settings_service or SettingsService()
+        self.settings_service = context.settings_service
         self.about_dialog = None
 
         self.cell_size = 50
@@ -269,7 +268,7 @@ class MainWindow(QWidget):
             self.setWindowIcon(app.windowIcon())
         self.resize(1500, 960)
         self.setMinimumSize(560, 480)
-        self.setStyleSheet(APP_STYLESHEET)
+        self.setStyleSheet(get_stylesheet())
 
     @staticmethod
     def _wrap_in_scroll_area(widget):

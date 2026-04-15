@@ -23,6 +23,8 @@ from src.error_handling import (
     report_fatal_exception,
 )
 from src.services.data_loader import load_elements, load_nomenclature_data
+from src.services.settings_service import SettingsService
+from src.ui.context import AppContext
 from src.ui.main_window import MainWindow
 
 STARTUP_SMOKE_EXIT_MS_ENV_VAR = "PERIODIC_TABLE_SMOKE_EXIT_MS"
@@ -58,7 +60,15 @@ def load_application_data():
 
 
 def create_main_window(elements=None, nomenclature_data=None):
-    """Instantiate the MainWindow, loading data from disk if not provided."""
+    """Instantiate the MainWindow with AppContext, loading data from disk if not provided.
+
+    Args:
+        elements: Optional list of element records. If None, loaded from disk.
+        nomenclature_data: Optional nomenclature data. If None, loaded from disk.
+
+    Returns:
+        Initialized MainWindow with AppContext
+    """
     if elements is None or nomenclature_data is None:
         loaded_elements, loaded_nomenclature_data = load_application_data()
         if elements is None:
@@ -66,7 +76,16 @@ def create_main_window(elements=None, nomenclature_data=None):
         if nomenclature_data is None:
             nomenclature_data = loaded_nomenclature_data
 
-    return MainWindow(elements, nomenclature_data)
+    # Create services and context
+    settings_service = SettingsService()
+
+    context = AppContext.create(
+        elements=elements,
+        nomenclature_data=nomenclature_data,
+        settings_service=settings_service,
+    )
+
+    return MainWindow(context)
 
 
 def get_startup_smoke_exit_delay_ms():
