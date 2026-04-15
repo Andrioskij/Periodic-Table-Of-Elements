@@ -202,7 +202,7 @@ class MainWindow(QWidget):
     @property
     def current_search_matches(self):
         """Return the set of atomic numbers matching the current search."""
-        return self.selection_state.search_matches
+        return self.context.search_manager.matches
 
     @current_search_matches.setter
     def current_search_matches(self, value):
@@ -212,11 +212,12 @@ class MainWindow(QWidget):
     @property
     def active_trend_mode(self):
         """Return the active trend-coloring mode (e.g. 'normal', 'radius')."""
-        return self.trend_state.mode
+        return self.context.trend_manager.current_mode
 
     @active_trend_mode.setter
     def active_trend_mode(self, value):
         """Set the active trend-coloring mode."""
+        self.context.trend_manager.set_trend_mode(value)
         self.trend_state.mode = value
 
     @property
@@ -733,9 +734,26 @@ class MainWindow(QWidget):
             self.language_selector.blockSignals(False)
 
     def sync_builder_state_from_controls(self):
-        """Read the currently selected oxidation states from the combo boxes into builder state."""
-        self.compound_builder_state.first_oxidation = self.get_current_oxidation(self.a_oxidation_combo)
-        self.compound_builder_state.second_oxidation = self.get_current_oxidation(self.b_oxidation_combo)
+        """Read the currently selected oxidation states from the combo boxes and sync with manager."""
+        oxidation_a = self.get_current_oxidation(self.a_oxidation_combo)
+        oxidation_b = self.get_current_oxidation(self.b_oxidation_combo)
+
+        # Update local state
+        self.compound_builder_state.first_oxidation = oxidation_a
+        self.compound_builder_state.second_oxidation = oxidation_b
+
+        # Delegate to manager if both elements are selected
+        if self.compound_a is not None and oxidation_a is not None:
+            self.context.compound_builder_manager.set_element_a(
+                self.compound_a["atomic_number"],
+                oxidation_a
+            )
+
+        if self.compound_b is not None and oxidation_b is not None:
+            self.context.compound_builder_manager.set_element_b(
+                self.compound_b["atomic_number"],
+                oxidation_b
+            )
 
     def refresh_selection_header(self):
         """Sync the selection state from the table widget and update the builder header."""
@@ -1124,17 +1142,25 @@ class MainWindow(QWidget):
         return get_macro_class_color(macro_class)
 
     def set_trend_mode(self, mode):
-        """Activate a trend mode: update state, persist, repaint buttons, and refresh overlays."""
-        self.active_trend_mode = mode
+        """Activate a trend mode: delegate to manager, update UI, and refresh overlays."""
+        # Delegate to manager (validates and sets the mode)
+        self.context.trend_manager.set_trend_mode(mode)
+        self.trend_state.mode = mode
+
+        # Persist the choice
         self.settings_service.set_trend_mode(mode)
 
+        # Update UI buttons
         for button_mode, button in self.trend_buttons.items():
             button.blockSignals(True)
             button.setChecked(button_mode == mode)
             button.blockSignals(False)
 
+        # Update periodic table visual
         self.periodic_table_widget.set_trend_mode(mode)
         self.update_trend_status_text()
+
+        # Refresh search highlights with new colors
         self.highlight_search_matches(
             [self.element_index[atomic_number] for atomic_number in self.current_search_matches]
         )
@@ -1168,22 +1194,22 @@ class MainWindow(QWidget):
 
     def update_search_suggestions(self, text):
         """Update the suggestion dropdown and search highlights as the user types."""
-        query = text.strip()
+        # Delegate to SearchManager to track search state
+        matches_atomic_numbers = self.context.search_manager.search(text.strip())
         self.suggestions_list.clear()
 
-        if not query:
+        if not matches_atomic_numbers:
             self.suggestions_list.hide()
             self.set_search_status_text("")
             self.highlight_search_matches([])
             return
 
-        matches = self.get_ranked_matches(query)
-        if not matches:
-            self.suggestions_list.hide()
-            self.highlight_search_matches([])
-            return
+        # Convert atomic numbers to elements and rank for display
+        matched_elements = [self.element_index[num] for num in matches_atomic_numbers if num in self.element_index]
+        ranked_matches = self.get_ranked_matches(text.strip())
 
-        for element in matches:
+        # Show top matches in ranked order
+        for element in ranked_matches:
             item_text = (
                 f"{element['atomic_number']} - "
                 f"{self.get_localized_element_name(element)} ({element['symbol']})"
@@ -1193,7 +1219,7 @@ class MainWindow(QWidget):
             self.suggestions_list.addItem(item)
 
         self.suggestions_list.show()
-        self.highlight_search_matches(matches)
+        self.highlight_search_matches(matched_elements)
 
     def compute_match_score(self, element, query):
         """Compute a relevance score for an element against a search query string."""
@@ -1322,11 +1348,16 @@ class MainWindow(QWidget):
             return
         matches = self.get_ranked_matches(query, limit=1)
         if matches:
-            self.compound_a = matches[0]
+            element = matches[0]
+            self.compound_a = element
             self.search_a_input.setText(
-                f"{self.get_localized_element_name(self.compound_a)} ({self.compound_a['symbol']})"
+                f"{self.get_localized_element_name(element)} ({element['symbol']})"
             )
-            self.populate_oxidation_combo(self.a_oxidation_combo, self.compound_a)
+            self.populate_oxidation_combo(self.a_oxidation_combo, element)
+
+            # Delegate to manager (without oxidation state yet)
+            self.context.compound_builder_manager.set_element_a(element["atomic_number"], 1)
+
             self.refresh_builder_panel()
             self.refresh_compound_panel()
         else:
@@ -1339,11 +1370,16 @@ class MainWindow(QWidget):
             return
         matches = self.get_ranked_matches(query, limit=1)
         if matches:
-            self.compound_b = matches[0]
+            element = matches[0]
+            self.compound_b = element
             self.search_b_input.setText(
-                f"{self.get_localized_element_name(self.compound_b)} ({self.compound_b['symbol']})"
+                f"{self.get_localized_element_name(element)} ({element['symbol']})"
             )
-            self.populate_oxidation_combo(self.b_oxidation_combo, self.compound_b)
+            self.populate_oxidation_combo(self.b_oxidation_combo, element)
+
+            # Delegate to manager (without oxidation state yet)
+            self.context.compound_builder_manager.set_element_b(element["atomic_number"], -1)
+
             self.refresh_builder_panel()
             self.refresh_compound_panel()
         else:
@@ -1351,6 +1387,10 @@ class MainWindow(QWidget):
 
     def reset_builder(self):
         """Clear both compound slots, oxidation selections, and reset the builder UI."""
+        # Delegate reset to manager
+        self.context.compound_builder_manager.reset()
+
+        # Clear MainWindow state
         self.compound_a = None
         self.compound_b = None
         self.compound_builder_state.first_oxidation = None
