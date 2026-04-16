@@ -1,0 +1,307 @@
+{
+  "H": [
+    {"category": "Chemical synthesis", "use": "Ammonia production (Haber process)"},
+    {"category": "Energy", "use": "Fuel for rockets and clean energy applications"},
+    {"category": "Metallurgy", "use": "Steel and metal welding, reducing metal ores"}
+  ],
+  "He": [
+    {"category": "Cryogenics", "use": "Cooling superconducting magnets in MRI machines"},
+    {"category": "Aerospace", "use": "Pressurization of spacecraft and rocket fuel tanks"},
+    {"category": "Medical", "use": "Breathing mixtures for deep-sea diving"}
+  ],
+  "Li": [
+    {"category": "Batteries", "use": "Lithium-ion rechargeable batteries for electronics"},
+    {"category": "Ceramics", "use": "Glass and ceramics manufacturing"},
+    {"category": "Pharmaceuticals", "use": "Treatment for bipolar disorder"}
+  ],
+  "Be": [
+    {"category": "Aerospace", "use": "Aircraft components due to high strength-to-weight ratio"},
+    {"category": "X-ray equipment", "use": "Windows for X-ray tubes"},
+    {"category": "Nuclear", "use": "Neutron moderator in nuclear reactors"}
+  ],
+  "B": [
+    {"category": "Glass", "use": "Borosilicate glass for laboratory and kitchenware"},
+    {"category": "Detergents", "use": "Borax in laundry products"},
+    {"category": "Composites", "use": "Boron fibers in aerospace materials"}
+  ],
+  "C": [
+    {"category": "Steel", "use": "Carbon steel production (90% of all steel)"},
+    {"category": "Energy", "use": "Coal for power generation and heating"},
+    {"category": "Diamonds", "use": "Cutting tools, jewelry, high-pressure research"}
+  ],
+  "N": [
+    {"category": "Fertilizers", "use": "Ammonia and nitrate-based agricultural fertilizers"},
+    {"category": "Explosives", "use": "TNT, dynamite, ammonium nitrate explosives"},
+    {"category": "Chemical synthesis", "use": "Nylon and other nitrogen-containing polymers"}
+  ],
+  "O": [
+    {"category": "Medical", "use": "Oxygen therapy for respiratory patients"},
+    {"category": "Chemical synthesis", "use": "Oxidation reactions in chemical industry"},
+    {"category": "Combustion", "use": "Essential for all fuel burning and welding"}
+  ],
+  "F": [
+    {"category": "Refrigerants", "use": "Fluorocarbon refrigerants and aerosol propellants"},
+    {"category": "Polymers", "use": "Production of PTFE (Teflon) non-stick coatings"},
+    {"category": "Pharmaceuticals", "use": "Fluorinated drugs and toothpaste fluoride compounds"}
+  ],
+  "Ne": [
+    {"category": "Lighting", "use": "Neon signs and high-voltage indicator lamps"},
+    {"category": "Lasers", "use": "Helium-neon gas lasers for scientific and industrial use"},
+    {"category": "Cryogenics", "use": "Refrigerant for cryogenic cooling applications"}
+  ],
+  "Na": [
+    {"category": "Chemicals", "use": "Sodium hydroxide (caustic soda) in paper and textile production"},
+    {"category": "Food", "use": "Sodium chloride for salt production and food preservation"},
+    {"category": "Glass", "use": "Soda ash (sodium carbonate) in glass manufacturing"}
+  ],
+  "Mg": [
+    {"category": "Alloys", "use": "Lightweight aluminum-magnesium alloys for aerospace"},
+    {"category": "Metallurgy", "use": "Reduction of heavy metal ores"},
+    {"category": "Medical", "use": "Magnesium sulfate (Epsom salt) for healthcare"}
+  ],
+  "Al": [
+    {"category": "Aerospace", "use": "Aircraft and spacecraft structural materials"},
+    {"category": "Packaging", "use": "Aluminum foil and beverage cans"},
+    {"category": "Electrical", "use": "Electrical transmission cables due to high conductivity"}
+  ],
+  "Si": [
+    {"category": "Electronics", "use": "Semiconductor material for computer chips and solar cells"},
+    {"category": "Glass", "use": "Silicon dioxide (silica) in glass production"},
+    {"category": "Construction", "use": "Concrete and brick production"}
+  ],
+  "P": [
+    {"category": "Fertilizers", "use": "Phosphate fertilizers (phosphoric acid)"},
+    {"category": "Chemicals", "use": "Phosphorus compounds in detergents and flame retardants"},
+    {"category": "Military", "use": "Incendiary ammunition and smoke screens"}
+  ],
+  "S": [
+    {"category": "Chemicals", "use": "Sulfuric acid production (largest industrial chemical)"},
+    {"category": "Rubber", "use": "Vulcanization of rubber for tires and gaskets"},
+    {"category": "Medicine", "use": "Sulfur-based compounds for skin treatments"}
+  ],
+  "Cl": [
+    {"category": "Water treatment", "use": "Disinfection of drinking water and swimming pools"},
+    {"category": "PVC", "use": "Production of polyvinyl chloride plastic"},
+    {"category": "Chemicals", "use": "Hydrochloric acid and other industrial chemicals"}
+  ],
+  "Ar": [
+    {"category": "Welding", "use": "Inert shielding gas for MIG and TIG arc welding"},
+    {"category": "Lighting", "use": "Filler gas in incandescent and fluorescent lamps"},
+    {"category": "Insulation", "use": "Thermal insulation filling for double-glazed windows"}
+  ],
+  "K": [
+    {"category": "Fertilizers", "use": "Potassium compounds as essential plant nutrients"},
+    {"category": "Chemicals", "use": "Potassium hydroxide in soap and detergent production"},
+    {"category": "Medical", "use": "Potassium salts for treating potassium deficiency"}
+  ],
+  "Ca": [
+    {"category": "Construction", "use": "Limestone and calcium carbonate in cement and concrete"},
+    {"category": "Steel", "use": "Calcium additives in steelmaking"},
+    {"category": "Medical", "use": "Calcium supplements for bone health"}
+  ],
+  "Sc": [
+    {"category": "Alloys", "use": "Aluminum-scandium alloys for aerospace and sports equipment"},
+    {"category": "Lighting", "use": "Metal halide lamps for film and stadium lighting"},
+    {"category": "Electronics", "use": "Solid oxide fuel cell electrolytes"}
+  ],
+  "Ti": [
+    {"category": "Aerospace", "use": "Jet engines and airframes for high strength-to-weight ratio"},
+    {"category": "Medical", "use": "Biocompatible surgical implants and dental fixtures"},
+    {"category": "Pigments", "use": "Titanium dioxide as white pigment in paints and plastics"}
+  ],
+  "V": [
+    {"category": "Steel", "use": "Ferrovanadium additive for high-strength structural steels"},
+    {"category": "Catalysts", "use": "Vanadium pentoxide catalyst in sulfuric acid production"},
+    {"category": "Batteries", "use": "Vanadium redox flow batteries for grid energy storage"}
+  ],
+  "Cr": [
+    {"category": "Stainless steel", "use": "Chromium for corrosion resistance in steel"},
+    {"category": "Leather tanning", "use": "Chromium salts in leather manufacturing"},
+    {"category": "Paints", "use": "Chromium compounds as pigments and dyes"}
+  ],
+  "Mn": [
+    {"category": "Steel", "use": "Ferromanganese additive to remove oxygen and sulfur in steelmaking"},
+    {"category": "Batteries", "use": "Manganese dioxide cathode in alkaline and dry-cell batteries"},
+    {"category": "Alloys", "use": "Hadfield steel for railway tracks and heavy-duty wear parts"}
+  ],
+  "Fe": [
+    {"category": "Steel", "use": "Primary component of steel (about 99% of global metal production)"},
+    {"category": "Construction", "use": "Reinforced concrete and structural components"},
+    {"category": "Medical", "use": "Iron supplements for treating anemia"}
+  ],
+  "Co": [
+    {"category": "Alloys", "use": "Cobalt in high-strength super-alloys for jet engines"},
+    {"category": "Magnets", "use": "Cobalt in powerful permanent magnets"},
+    {"category": "Medical", "use": "Cobalt-60 for cancer radiotherapy"}
+  ],
+  "Ni": [
+    {"category": "Stainless steel", "use": "Nickel in corrosion-resistant stainless steel"},
+    {"category": "Batteries", "use": "Nickel-cadmium and nickel-metal hydride batteries"},
+    {"category": "Plating", "use": "Nickel plating for protective and decorative coating"}
+  ],
+  "Cu": [
+    {"category": "Electrical", "use": "Electrical wiring and power distribution cables"},
+    {"category": "Plumbing", "use": "Water and heating pipes in buildings"},
+    {"category": "Electronics", "use": "Circuit boards and electronic components"}
+  ],
+  "Zn": [
+    {"category": "Galvanization", "use": "Coating steel to prevent rust"},
+    {"category": "Brass", "use": "Brass alloy for decorative and functional items"},
+    {"category": "Medical", "use": "Zinc supplements for immune system support"}
+  ],
+  "Ga": [
+    {"category": "Electronics", "use": "Gallium arsenide and gallium nitride semiconductors for LEDs and RF chips"},
+    {"category": "Lighting", "use": "Blue and white high-brightness LEDs"},
+    {"category": "Solar cells", "use": "High-efficiency multi-junction solar cells for space applications"}
+  ],
+  "Ge": [
+    {"category": "Optics", "use": "Infrared optics for thermal imaging and night-vision systems"},
+    {"category": "Fiber optics", "use": "Germanium-doped core glass in optical fiber"},
+    {"category": "Electronics", "use": "Silicon-germanium chips for high-speed telecommunications"}
+  ],
+  "As": [
+    {"category": "Semiconductors", "use": "Gallium arsenide wafers for RF and optoelectronic devices"},
+    {"category": "Alloys", "use": "Hardening additive for lead-acid battery grids and ammunition"},
+    {"category": "Wood preservation", "use": "Chromated copper arsenate for industrial timber (restricted use)"}
+  ],
+  "Se": [
+    {"category": "Electronics", "use": "Photoreceptor drums in photocopiers and laser printers"},
+    {"category": "Glass", "use": "Decolorizer and red pigment in specialty glass"},
+    {"category": "Nutrition", "use": "Selenium supplements and animal feed additive"}
+  ],
+  "Br": [
+    {"category": "Flame retardants", "use": "Bromine compounds in fire-resistant textiles and foams"},
+    {"category": "Pharmaceuticals", "use": "Bromine in various medicinal compounds"},
+    {"category": "Photography", "use": "Silver bromide in photographic emulsions"}
+  ],
+  "Kr": [
+    {"category": "Lighting", "use": "High-efficiency krypton-filled incandescent and photographic flash lamps"},
+    {"category": "Lasers", "use": "Krypton fluoride excimer lasers for lithography and research"},
+    {"category": "Insulation", "use": "Thermal insulation gas in high-performance window glazing"}
+  ],
+  "Rb": [
+    {"category": "Electronics", "use": "Rubidium atomic clocks for GPS and telecommunications timing"},
+    {"category": "Research", "use": "Laser cooling experiments and Bose-Einstein condensate studies"},
+    {"category": "Medical", "use": "Rubidium-82 PET imaging tracer for cardiac perfusion"}
+  ],
+  "Sr": [
+    {"category": "Pyrotechnics", "use": "Strontium salts provide red color in fireworks and flares"},
+    {"category": "Magnets", "use": "Strontium ferrite in ceramic permanent magnets"},
+    {"category": "Medical", "use": "Strontium ranelate for osteoporosis treatment"}
+  ],
+  "Y": [
+    {"category": "Lasers", "use": "Yttrium aluminum garnet (YAG) hosts for solid-state lasers"},
+    {"category": "Phosphors", "use": "Red phosphor in LED and legacy CRT displays"},
+    {"category": "Superconductors", "use": "YBCO high-temperature superconductor wires and tapes"}
+  ],
+  "Zr": [
+    {"category": "Nuclear", "use": "Zircaloy fuel-rod cladding in nuclear reactors"},
+    {"category": "Ceramics", "use": "Zirconia refractory ceramics and cubic zirconia gemstones"},
+    {"category": "Medical", "use": "Zirconium alloys for dental crowns and joint implants"}
+  ],
+  "Nb": [
+    {"category": "Superconductors", "use": "Niobium-titanium magnets in MRI and particle accelerators"},
+    {"category": "Steel", "use": "Microalloying element for high-strength low-alloy pipeline steels"},
+    {"category": "Electronics", "use": "Niobium capacitors and thin-film electronic components"}
+  ],
+  "Mo": [
+    {"category": "Steel", "use": "Molybdenum alloys for high-temperature and corrosion resistance"},
+    {"category": "Catalysts", "use": "Molybdenum catalysts in petroleum refining"},
+    {"category": "Lubricants", "use": "Molybdenum disulfide as dry lubricant"}
+  ],
+  "Pd": [
+    {"category": "Catalysis", "use": "Catalytic converters for automotive emission control"},
+    {"category": "Electronics", "use": "Multilayer ceramic capacitors and plating for connectors"},
+    {"category": "Hydrogen", "use": "Palladium membranes for hydrogen purification and storage"}
+  ],
+  "Ag": [
+    {"category": "Electronics", "use": "Silver contacts in switches and circuit boards"},
+    {"category": "Photography", "use": "Silver halide in photographic film (legacy use)"},
+    {"category": "Jewelry", "use": "Sterling silver for decorative and valuable items"}
+  ],
+  "Cd": [
+    {"category": "Batteries", "use": "Nickel-cadmium rechargeable batteries (declining use)"},
+    {"category": "Pigments", "use": "Cadmium sulfide pigments for bright yellow and orange paints"},
+    {"category": "Solar cells", "use": "Cadmium telluride thin-film photovoltaic panels"}
+  ],
+  "In": [
+    {"category": "Electronics", "use": "Indium tin oxide (ITO) transparent coatings for touch screens"},
+    {"category": "Solder", "use": "Low-melting indium solders for cryogenic and vacuum seals"},
+    {"category": "Semiconductors", "use": "Indium compounds in LEDs, laser diodes and photovoltaics"}
+  ],
+  "Sn": [
+    {"category": "Solder", "use": "Tin-lead solder for joining electronic components"},
+    {"category": "Plating", "use": "Tin plating to prevent corrosion of steel"},
+    {"category": "Bronze", "use": "Bronze alloys for decorative objects and bells"}
+  ],
+  "Sb": [
+    {"category": "Flame retardants", "use": "Antimony trioxide synergist in plastic and textile flame retardants"},
+    {"category": "Batteries", "use": "Antimony-lead grids in automotive lead-acid batteries"},
+    {"category": "Alloys", "use": "Hardening additive in type metal, pewter and ammunition alloys"}
+  ],
+  "Te": [
+    {"category": "Solar cells", "use": "Cadmium telluride thin-film photovoltaic modules"},
+    {"category": "Alloys", "use": "Machinability additive for free-cutting steel and copper"},
+    {"category": "Electronics", "use": "Thermoelectric cooling and phase-change memory materials"}
+  ],
+  "I": [
+    {"category": "Medical", "use": "Iodine disinfectant for wounds and skin sterilization"},
+    {"category": "Nutrition", "use": "Iodized salt for preventing iodine deficiency diseases"},
+    {"category": "Photography", "use": "Silver iodide in photographic and cloud seeding"}
+  ],
+  "Xe": [
+    {"category": "Lighting", "use": "Xenon arc and HID lamps for cinema projectors and automotive headlights"},
+    {"category": "Aerospace", "use": "Xenon ion thrusters for satellite propulsion"},
+    {"category": "Medical", "use": "Xenon anesthesia and hyperpolarized xenon MRI imaging"}
+  ],
+  "Cs": [
+    {"category": "Electronics", "use": "Cesium atomic clocks define the SI unit of the second"},
+    {"category": "Oil and gas", "use": "Cesium formate high-density drilling and completion fluids"},
+    {"category": "Photocells", "use": "Cesium photocathodes in night-vision and photomultiplier tubes"}
+  ],
+  "Ba": [
+    {"category": "Oil and gas", "use": "Barite (barium sulfate) weighting agent in drilling muds"},
+    {"category": "Electronics", "use": "Barium titanate in ceramic capacitors and piezoelectric sensors"},
+    {"category": "Medical", "use": "Barium sulfate contrast agent for gastrointestinal X-rays"}
+  ],
+  "W": [
+    {"category": "Light bulbs", "use": "Tungsten filaments in incandescent bulbs"},
+    {"category": "Alloys", "use": "High-strength tungsten in aerospace and military"},
+    {"category": "Electronics", "use": "Tungsten contacts and electrodes"}
+  ],
+  "Pt": [
+    {"category": "Catalysis", "use": "Platinum catalysts in chemical industry and vehicles"},
+    {"category": "Jewelry", "use": "Platinum for luxury items and watches"},
+    {"category": "Electronics", "use": "Platinum electrodes in various applications"}
+  ],
+  "Au": [
+    {"category": "Jewelry", "use": "Gold for luxury and decorative items"},
+    {"category": "Electronics", "use": "Gold plating on circuit boards and connectors"},
+    {"category": "Medicine", "use": "Gold salts in arthritis treatment"}
+  ],
+  "Hg": [
+    {"category": "Lighting", "use": "Mercury vapor in fluorescent and high-intensity discharge lamps"},
+    {"category": "Chemicals", "use": "Chlor-alkali process for chlorine and sodium hydroxide (being phased out)"},
+    {"category": "Instruments", "use": "Thermometers, barometers and manometers (largely replaced)"}
+  ],
+  "Pb": [
+    {"category": "Batteries", "use": "Lead-acid batteries in vehicles"},
+    {"category": "Radiation shielding", "use": "Lead barriers in X-ray and nuclear facilities"},
+    {"category": "Paints", "use": "Lead compounds as pigments (restricted in modern use)"}
+  ],
+  "Bi": [
+    {"category": "Pharmaceuticals", "use": "Bismuth subsalicylate in antacid and antidiarrheal medicines"},
+    {"category": "Alloys", "use": "Low-melting fusible alloys for fire sprinklers and fuses"},
+    {"category": "Cosmetics", "use": "Bismuth oxychloride pigment for pearlescent finishes"}
+  ],
+  "Th": [
+    {"category": "Nuclear", "use": "Thorium-232 fuel in next-generation nuclear reactors"},
+    {"category": "Welding", "use": "Thoriated tungsten electrodes for TIG welding"},
+    {"category": "Industrial", "use": "Thorium compounds in catalysts and refractories"}
+  ],
+  "U": [
+    {"category": "Nuclear energy", "use": "Fuel for nuclear power plants"},
+    {"category": "Military", "use": "Nuclear weapons (fissile material)"},
+    {"category": "Industrial", "use": "Uranium enrichment for research and medical isotopes"}
+  ]
+}

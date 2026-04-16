@@ -1,0 +1,320 @@
+{
+  "H": [
+    {"mass_number": 1, "abundance": 99.9885, "half_life": null, "name": "Protium"},
+    {"mass_number": 2, "abundance": 0.0115, "half_life": null, "name": "Deuterium"},
+    {"mass_number": 3, "abundance": null, "half_life": "12.3 years", "name": "Tritium"}
+  ],
+  "He": [
+    {"mass_number": 3, "abundance": 0.000134, "half_life": null, "name": "Helium-3"},
+    {"mass_number": 4, "abundance": 99.999866, "half_life": null, "name": "Helium-4"}
+  ],
+  "Li": [
+    {"mass_number": 6, "abundance": 7.59, "half_life": null, "name": "Lithium-6"},
+    {"mass_number": 7, "abundance": 92.41, "half_life": null, "name": "Lithium-7"}
+  ],
+  "Be": [
+    {"mass_number": 9, "abundance": 100.0, "half_life": null, "name": "Beryllium-9"}
+  ],
+  "B": [
+    {"mass_number": 10, "abundance": 19.9, "half_life": null, "name": "Boron-10"},
+    {"mass_number": 11, "abundance": 80.1, "half_life": null, "name": "Boron-11"}
+  ],
+  "C": [
+    {"mass_number": 12, "abundance": 98.93, "half_life": null, "name": "Carbon-12"},
+    {"mass_number": 13, "abundance": 1.07, "half_life": null, "name": "Carbon-13"},
+    {"mass_number": 14, "abundance": null, "half_life": "5730 years", "name": "Carbon-14"}
+  ],
+  "N": [
+    {"mass_number": 14, "abundance": 99.632, "half_life": null, "name": "Nitrogen-14"},
+    {"mass_number": 15, "abundance": 0.368, "half_life": null, "name": "Nitrogen-15"}
+  ],
+  "O": [
+    {"mass_number": 16, "abundance": 99.757, "half_life": null, "name": "Oxygen-16"},
+    {"mass_number": 17, "abundance": 0.038, "half_life": null, "name": "Oxygen-17"},
+    {"mass_number": 18, "abundance": 0.205, "half_life": null, "name": "Oxygen-18"}
+  ],
+  "F": [
+    {"mass_number": 19, "abundance": 100.0, "half_life": null, "name": "Fluorine-19"}
+  ],
+  "Ne": [
+    {"mass_number": 20, "abundance": 90.48, "half_life": null, "name": "Neon-20"},
+    {"mass_number": 21, "abundance": 0.27, "half_life": null, "name": "Neon-21"},
+    {"mass_number": 22, "abundance": 9.25, "half_life": null, "name": "Neon-22"}
+  ],
+  "Na": [
+    {"mass_number": 23, "abundance": 100.0, "half_life": null, "name": "Sodium-23"}
+  ],
+  "Mg": [
+    {"mass_number": 24, "abundance": 78.99, "half_life": null, "name": "Magnesium-24"},
+    {"mass_number": 25, "abundance": 10.0, "half_life": null, "name": "Magnesium-25"},
+    {"mass_number": 26, "abundance": 11.01, "half_life": null, "name": "Magnesium-26"}
+  ],
+  "Al": [
+    {"mass_number": 27, "abundance": 100.0, "half_life": null, "name": "Aluminium-27"}
+  ],
+  "Si": [
+    {"mass_number": 28, "abundance": 92.223, "half_life": null, "name": "Silicon-28"},
+    {"mass_number": 29, "abundance": 4.685, "half_life": null, "name": "Silicon-29"},
+    {"mass_number": 30, "abundance": 3.092, "half_life": null, "name": "Silicon-30"}
+  ],
+  "P": [
+    {"mass_number": 31, "abundance": 100.0, "half_life": null, "name": "Phosphorus-31"}
+  ],
+  "S": [
+    {"mass_number": 32, "abundance": 94.99, "half_life": null, "name": "Sulfur-32"},
+    {"mass_number": 33, "abundance": 0.75, "half_life": null, "name": "Sulfur-33"},
+    {"mass_number": 34, "abundance": 4.25, "half_life": null, "name": "Sulfur-34"},
+    {"mass_number": 36, "abundance": 0.01, "half_life": null, "name": "Sulfur-36"}
+  ],
+  "Cl": [
+    {"mass_number": 35, "abundance": 75.76, "half_life": null, "name": "Chlorine-35"},
+    {"mass_number": 37, "abundance": 24.24, "half_life": null, "name": "Chlorine-37"}
+  ],
+  "Ar": [
+    {"mass_number": 36, "abundance": 0.3365, "half_life": null, "name": "Argon-36"},
+    {"mass_number": 38, "abundance": 0.0632, "half_life": null, "name": "Argon-38"},
+    {"mass_number": 40, "abundance": 99.6035, "half_life": null, "name": "Argon-40"}
+  ],
+  "K": [
+    {"mass_number": 39, "abundance": 93.258, "half_life": null, "name": "Potassium-39"},
+    {"mass_number": 40, "abundance": 0.0117, "half_life": "1.248e9 years", "name": "Potassium-40"},
+    {"mass_number": 41, "abundance": 6.730, "half_life": null, "name": "Potassium-41"}
+  ],
+  "Ca": [
+    {"mass_number": 40, "abundance": 96.941, "half_life": null, "name": "Calcium-40"},
+    {"mass_number": 42, "abundance": 0.647, "half_life": null, "name": "Calcium-42"},
+    {"mass_number": 44, "abundance": 2.086, "half_life": null, "name": "Calcium-44"},
+    {"mass_number": 48, "abundance": 0.187, "half_life": null, "name": "Calcium-48"}
+  ],
+  "Sc": [
+    {"mass_number": 45, "abundance": 100.0, "half_life": null, "name": "Scandium-45"}
+  ],
+  "Ti": [
+    {"mass_number": 46, "abundance": 8.25, "half_life": null, "name": "Titanium-46"},
+    {"mass_number": 47, "abundance": 7.44, "half_life": null, "name": "Titanium-47"},
+    {"mass_number": 48, "abundance": 73.72, "half_life": null, "name": "Titanium-48"},
+    {"mass_number": 49, "abundance": 5.41, "half_life": null, "name": "Titanium-49"},
+    {"mass_number": 50, "abundance": 5.18, "half_life": null, "name": "Titanium-50"}
+  ],
+  "V": [
+    {"mass_number": 50, "abundance": 0.25, "half_life": "2.1e17 years", "name": "Vanadium-50"},
+    {"mass_number": 51, "abundance": 99.75, "half_life": null, "name": "Vanadium-51"}
+  ],
+  "Cr": [
+    {"mass_number": 50, "abundance": 4.345, "half_life": null, "name": "Chromium-50"},
+    {"mass_number": 52, "abundance": 83.789, "half_life": null, "name": "Chromium-52"},
+    {"mass_number": 53, "abundance": 9.501, "half_life": null, "name": "Chromium-53"},
+    {"mass_number": 54, "abundance": 2.365, "half_life": null, "name": "Chromium-54"}
+  ],
+  "Mn": [
+    {"mass_number": 55, "abundance": 100.0, "half_life": null, "name": "Manganese-55"}
+  ],
+  "Fe": [
+    {"mass_number": 54, "abundance": 5.845, "half_life": null, "name": "Iron-54"},
+    {"mass_number": 56, "abundance": 91.754, "half_life": null, "name": "Iron-56"},
+    {"mass_number": 57, "abundance": 2.119, "half_life": null, "name": "Iron-57"},
+    {"mass_number": 58, "abundance": 0.282, "half_life": null, "name": "Iron-58"}
+  ],
+  "Co": [
+    {"mass_number": 59, "abundance": 100.0, "half_life": null, "name": "Cobalt-59"},
+    {"mass_number": 60, "abundance": null, "half_life": "5.27 years", "name": "Cobalt-60"}
+  ],
+  "Ni": [
+    {"mass_number": 58, "abundance": 68.077, "half_life": null, "name": "Nickel-58"},
+    {"mass_number": 60, "abundance": 26.223, "half_life": null, "name": "Nickel-60"},
+    {"mass_number": 61, "abundance": 1.140, "half_life": null, "name": "Nickel-61"},
+    {"mass_number": 62, "abundance": 3.634, "half_life": null, "name": "Nickel-62"},
+    {"mass_number": 64, "abundance": 0.926, "half_life": null, "name": "Nickel-64"}
+  ],
+  "Cu": [
+    {"mass_number": 63, "abundance": 69.17, "half_life": null, "name": "Copper-63"},
+    {"mass_number": 65, "abundance": 30.83, "half_life": null, "name": "Copper-65"}
+  ],
+  "Zn": [
+    {"mass_number": 64, "abundance": 49.17, "half_life": null, "name": "Zinc-64"},
+    {"mass_number": 66, "abundance": 27.73, "half_life": null, "name": "Zinc-66"},
+    {"mass_number": 67, "abundance": 4.04, "half_life": null, "name": "Zinc-67"},
+    {"mass_number": 68, "abundance": 18.45, "half_life": null, "name": "Zinc-68"},
+    {"mass_number": 70, "abundance": 0.61, "half_life": null, "name": "Zinc-70"}
+  ],
+  "Ga": [
+    {"mass_number": 69, "abundance": 60.108, "half_life": null, "name": "Gallium-69"},
+    {"mass_number": 71, "abundance": 39.892, "half_life": null, "name": "Gallium-71"}
+  ],
+  "Ge": [
+    {"mass_number": 70, "abundance": 20.52, "half_life": null, "name": "Germanium-70"},
+    {"mass_number": 72, "abundance": 27.45, "half_life": null, "name": "Germanium-72"},
+    {"mass_number": 73, "abundance": 7.76, "half_life": null, "name": "Germanium-73"},
+    {"mass_number": 74, "abundance": 36.52, "half_life": null, "name": "Germanium-74"},
+    {"mass_number": 76, "abundance": 7.75, "half_life": "1.78e21 years", "name": "Germanium-76"}
+  ],
+  "As": [
+    {"mass_number": 75, "abundance": 100.0, "half_life": null, "name": "Arsenic-75"}
+  ],
+  "Se": [
+    {"mass_number": 74, "abundance": 0.89, "half_life": null, "name": "Selenium-74"},
+    {"mass_number": 76, "abundance": 9.37, "half_life": null, "name": "Selenium-76"},
+    {"mass_number": 77, "abundance": 7.63, "half_life": null, "name": "Selenium-77"},
+    {"mass_number": 78, "abundance": 23.77, "half_life": null, "name": "Selenium-78"},
+    {"mass_number": 80, "abundance": 49.61, "half_life": null, "name": "Selenium-80"},
+    {"mass_number": 82, "abundance": 8.73, "half_life": "9.2e19 years", "name": "Selenium-82"}
+  ],
+  "Br": [
+    {"mass_number": 79, "abundance": 50.69, "half_life": null, "name": "Bromine-79"},
+    {"mass_number": 81, "abundance": 49.31, "half_life": null, "name": "Bromine-81"}
+  ],
+  "Kr": [
+    {"mass_number": 78, "abundance": 0.355, "half_life": null, "name": "Krypton-78"},
+    {"mass_number": 80, "abundance": 2.286, "half_life": null, "name": "Krypton-80"},
+    {"mass_number": 82, "abundance": 11.593, "half_life": null, "name": "Krypton-82"},
+    {"mass_number": 83, "abundance": 11.500, "half_life": null, "name": "Krypton-83"},
+    {"mass_number": 84, "abundance": 56.987, "half_life": null, "name": "Krypton-84"},
+    {"mass_number": 86, "abundance": 17.279, "half_life": null, "name": "Krypton-86"}
+  ],
+  "Rb": [
+    {"mass_number": 85, "abundance": 72.17, "half_life": null, "name": "Rubidium-85"},
+    {"mass_number": 87, "abundance": 27.83, "half_life": "4.97e10 years", "name": "Rubidium-87"}
+  ],
+  "Sr": [
+    {"mass_number": 84, "abundance": 0.56, "half_life": null, "name": "Strontium-84"},
+    {"mass_number": 86, "abundance": 9.86, "half_life": null, "name": "Strontium-86"},
+    {"mass_number": 87, "abundance": 7.00, "half_life": null, "name": "Strontium-87"},
+    {"mass_number": 88, "abundance": 82.58, "half_life": null, "name": "Strontium-88"},
+    {"mass_number": 90, "abundance": null, "half_life": "28.9 years", "name": "Strontium-90"}
+  ],
+  "Y": [
+    {"mass_number": 89, "abundance": 100.0, "half_life": null, "name": "Yttrium-89"}
+  ],
+  "Zr": [
+    {"mass_number": 90, "abundance": 51.45, "half_life": null, "name": "Zirconium-90"},
+    {"mass_number": 91, "abundance": 11.22, "half_life": null, "name": "Zirconium-91"},
+    {"mass_number": 92, "abundance": 17.15, "half_life": null, "name": "Zirconium-92"},
+    {"mass_number": 94, "abundance": 17.38, "half_life": null, "name": "Zirconium-94"},
+    {"mass_number": 96, "abundance": 2.80, "half_life": "2.0e19 years", "name": "Zirconium-96"}
+  ],
+  "Nb": [
+    {"mass_number": 93, "abundance": 100.0, "half_life": null, "name": "Niobium-93"}
+  ],
+  "Mo": [
+    {"mass_number": 92, "abundance": 14.84, "half_life": null, "name": "Molybdenum-92"},
+    {"mass_number": 94, "abundance": 9.25, "half_life": null, "name": "Molybdenum-94"},
+    {"mass_number": 95, "abundance": 15.92, "half_life": null, "name": "Molybdenum-95"},
+    {"mass_number": 96, "abundance": 16.68, "half_life": null, "name": "Molybdenum-96"},
+    {"mass_number": 97, "abundance": 9.55, "half_life": null, "name": "Molybdenum-97"},
+    {"mass_number": 98, "abundance": 24.13, "half_life": null, "name": "Molybdenum-98"},
+    {"mass_number": 100, "abundance": 9.63, "half_life": "7.3e18 years", "name": "Molybdenum-100"}
+  ],
+  "Pd": [
+    {"mass_number": 102, "abundance": 1.02, "half_life": null, "name": "Palladium-102"},
+    {"mass_number": 104, "abundance": 11.14, "half_life": null, "name": "Palladium-104"},
+    {"mass_number": 105, "abundance": 22.33, "half_life": null, "name": "Palladium-105"},
+    {"mass_number": 106, "abundance": 27.33, "half_life": null, "name": "Palladium-106"},
+    {"mass_number": 108, "abundance": 26.46, "half_life": null, "name": "Palladium-108"},
+    {"mass_number": 110, "abundance": 11.72, "half_life": null, "name": "Palladium-110"}
+  ],
+  "Ag": [
+    {"mass_number": 107, "abundance": 51.84, "half_life": null, "name": "Silver-107"},
+    {"mass_number": 109, "abundance": 48.16, "half_life": null, "name": "Silver-109"}
+  ],
+  "Cd": [
+    {"mass_number": 106, "abundance": 1.25, "half_life": null, "name": "Cadmium-106"},
+    {"mass_number": 108, "abundance": 0.89, "half_life": null, "name": "Cadmium-108"},
+    {"mass_number": 110, "abundance": 12.49, "half_life": null, "name": "Cadmium-110"},
+    {"mass_number": 111, "abundance": 12.80, "half_life": null, "name": "Cadmium-111"},
+    {"mass_number": 112, "abundance": 24.13, "half_life": null, "name": "Cadmium-112"},
+    {"mass_number": 113, "abundance": 12.22, "half_life": "8.04e15 years", "name": "Cadmium-113"},
+    {"mass_number": 114, "abundance": 28.73, "half_life": null, "name": "Cadmium-114"},
+    {"mass_number": 116, "abundance": 7.49, "half_life": "2.8e19 years", "name": "Cadmium-116"}
+  ],
+  "In": [
+    {"mass_number": 113, "abundance": 4.28, "half_life": null, "name": "Indium-113"},
+    {"mass_number": 115, "abundance": 95.72, "half_life": "4.41e14 years", "name": "Indium-115"}
+  ],
+  "Sn": [
+    {"mass_number": 116, "abundance": 14.54, "half_life": null, "name": "Tin-116"},
+    {"mass_number": 118, "abundance": 24.22, "half_life": null, "name": "Tin-118"},
+    {"mass_number": 120, "abundance": 32.59, "half_life": null, "name": "Tin-120"},
+    {"mass_number": 122, "abundance": 4.63, "half_life": null, "name": "Tin-122"},
+    {"mass_number": 124, "abundance": 5.79, "half_life": null, "name": "Tin-124"}
+  ],
+  "Sb": [
+    {"mass_number": 121, "abundance": 57.21, "half_life": null, "name": "Antimony-121"},
+    {"mass_number": 123, "abundance": 42.79, "half_life": null, "name": "Antimony-123"}
+  ],
+  "Te": [
+    {"mass_number": 122, "abundance": 2.55, "half_life": null, "name": "Tellurium-122"},
+    {"mass_number": 124, "abundance": 4.74, "half_life": null, "name": "Tellurium-124"},
+    {"mass_number": 125, "abundance": 7.07, "half_life": null, "name": "Tellurium-125"},
+    {"mass_number": 126, "abundance": 18.84, "half_life": null, "name": "Tellurium-126"},
+    {"mass_number": 128, "abundance": 31.74, "half_life": "2.2e24 years", "name": "Tellurium-128"},
+    {"mass_number": 130, "abundance": 34.08, "half_life": "8.2e20 years", "name": "Tellurium-130"}
+  ],
+  "I": [
+    {"mass_number": 127, "abundance": 100.0, "half_life": null, "name": "Iodine-127"},
+    {"mass_number": 131, "abundance": null, "half_life": "8.02 days", "name": "Iodine-131"}
+  ],
+  "Xe": [
+    {"mass_number": 128, "abundance": 1.91, "half_life": null, "name": "Xenon-128"},
+    {"mass_number": 129, "abundance": 26.40, "half_life": null, "name": "Xenon-129"},
+    {"mass_number": 130, "abundance": 4.07, "half_life": null, "name": "Xenon-130"},
+    {"mass_number": 131, "abundance": 21.23, "half_life": null, "name": "Xenon-131"},
+    {"mass_number": 132, "abundance": 26.91, "half_life": null, "name": "Xenon-132"},
+    {"mass_number": 134, "abundance": 10.44, "half_life": null, "name": "Xenon-134"},
+    {"mass_number": 136, "abundance": 8.86, "half_life": "2.2e21 years", "name": "Xenon-136"}
+  ],
+  "Cs": [
+    {"mass_number": 133, "abundance": 100.0, "half_life": null, "name": "Cesium-133"},
+    {"mass_number": 137, "abundance": null, "half_life": "30.17 years", "name": "Cesium-137"}
+  ],
+  "Ba": [
+    {"mass_number": 132, "abundance": 0.101, "half_life": null, "name": "Barium-132"},
+    {"mass_number": 134, "abundance": 2.417, "half_life": null, "name": "Barium-134"},
+    {"mass_number": 135, "abundance": 6.592, "half_life": null, "name": "Barium-135"},
+    {"mass_number": 136, "abundance": 7.854, "half_life": null, "name": "Barium-136"},
+    {"mass_number": 137, "abundance": 11.232, "half_life": null, "name": "Barium-137"},
+    {"mass_number": 138, "abundance": 71.698, "half_life": null, "name": "Barium-138"}
+  ],
+  "W": [
+    {"mass_number": 180, "abundance": 0.12, "half_life": "1.8e18 years", "name": "Tungsten-180"},
+    {"mass_number": 182, "abundance": 26.50, "half_life": null, "name": "Tungsten-182"},
+    {"mass_number": 183, "abundance": 14.31, "half_life": null, "name": "Tungsten-183"},
+    {"mass_number": 184, "abundance": 30.64, "half_life": null, "name": "Tungsten-184"},
+    {"mass_number": 186, "abundance": 28.43, "half_life": null, "name": "Tungsten-186"}
+  ],
+  "Pt": [
+    {"mass_number": 192, "abundance": 0.782, "half_life": null, "name": "Platinum-192"},
+    {"mass_number": 194, "abundance": 32.967, "half_life": null, "name": "Platinum-194"},
+    {"mass_number": 195, "abundance": 33.832, "half_life": null, "name": "Platinum-195"},
+    {"mass_number": 196, "abundance": 25.242, "half_life": null, "name": "Platinum-196"},
+    {"mass_number": 198, "abundance": 7.163, "half_life": null, "name": "Platinum-198"}
+  ],
+  "Au": [
+    {"mass_number": 197, "abundance": 100.0, "half_life": null, "name": "Gold-197"}
+  ],
+  "Hg": [
+    {"mass_number": 196, "abundance": 0.15, "half_life": null, "name": "Mercury-196"},
+    {"mass_number": 198, "abundance": 9.97, "half_life": null, "name": "Mercury-198"},
+    {"mass_number": 199, "abundance": 16.87, "half_life": null, "name": "Mercury-199"},
+    {"mass_number": 200, "abundance": 23.10, "half_life": null, "name": "Mercury-200"},
+    {"mass_number": 201, "abundance": 13.18, "half_life": null, "name": "Mercury-201"},
+    {"mass_number": 202, "abundance": 29.86, "half_life": null, "name": "Mercury-202"},
+    {"mass_number": 204, "abundance": 6.87, "half_life": null, "name": "Mercury-204"}
+  ],
+  "Pb": [
+    {"mass_number": 204, "abundance": 1.4, "half_life": null, "name": "Lead-204"},
+    {"mass_number": 206, "abundance": 24.1, "half_life": null, "name": "Lead-206"},
+    {"mass_number": 207, "abundance": 22.1, "half_life": null, "name": "Lead-207"},
+    {"mass_number": 208, "abundance": 52.4, "half_life": null, "name": "Lead-208"}
+  ],
+  "Th": [
+    {"mass_number": 232, "abundance": 100.0, "half_life": "1.4e10 years", "name": "Thorium-232"}
+  ],
+  "U": [
+    {"mass_number": 235, "abundance": 0.72, "half_life": "7.04e8 years", "name": "Uranium-235"},
+    {"mass_number": 238, "abundance": 99.27, "half_life": "4.468e9 years", "name": "Uranium-238"}
+  ],
+  "Pu": [
+    {"mass_number": 239, "abundance": null, "half_life": "24110 years", "name": "Plutonium-239"},
+    {"mass_number": 244, "abundance": null, "half_life": "8.08e7 years", "name": "Plutonium-244"}
+  ]
+}
