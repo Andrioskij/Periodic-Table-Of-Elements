@@ -1171,7 +1171,7 @@ class MainWindow(QWidget):
 
     def highlight_search_matches(self, matches):
         """Store matched atomic numbers and highlight the corresponding table buttons."""
-        self.current_search_matches = {element["atomic_number"] for element in matches}
+        self.context.search_manager.matches = {element["atomic_number"] for element in matches}
         self.periodic_table_widget.highlight_search_matches(matches)
 
     def create_element_button(self, element):
