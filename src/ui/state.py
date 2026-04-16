@@ -1,6 +1,11 @@
-"""Immutable state containers for the main window's reactive data flow."""
+"""Immutable state containers for the main window's presentation layer.
 
-from dataclasses import dataclass, field
+These classes maintain UI/presentation state only. Domain state (search matches,
+active trend mode, compound builder selections) is managed by the respective managers
+and accessed via properties in MainWindow.
+"""
+
+from dataclasses import dataclass
 from typing import Any
 
 
@@ -9,25 +14,17 @@ ElementRecord = dict[str, Any]
 
 @dataclass
 class SelectionState:
-    """Track which element is currently selected and which buttons match a search."""
+    """Track UI presentation state for element selection (for display purposes only).
+
+    Domain state (search_matches) is maintained by SearchManager, not here.
+    Domain state (compound builder state) is maintained by CompoundBuilderManager.
+    This state tracks UI-specific info like which button widget is selected,
+    and the element records for presentation (e.g., showing names in search fields).
+    """
     element: ElementRecord | None = None
     selected_button: Any = None
-    search_matches: set[int] = field(default_factory=set)
-
-
-@dataclass
-class TrendState:
-    """Track the active trend-overlay visualization mode."""
-    mode: str = "normal"
-
-
-@dataclass
-class CompoundBuilderState:
-    """Hold the two elements and their chosen oxidation states for the compound builder."""
-    first_element: ElementRecord | None = None
-    second_element: ElementRecord | None = None
-    first_oxidation: int | None = None
-    second_oxidation: int | None = None
+    compound_a: ElementRecord | None = None
+    compound_b: ElementRecord | None = None
 
 
 @dataclass
@@ -43,10 +40,8 @@ class RightPanelState:
 
 
 __all__ = [
-    "CompoundBuilderState",
     "ElementRecord",
     "LanguageState",
     "RightPanelState",
     "SelectionState",
-    "TrendState",
 ]

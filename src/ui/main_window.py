@@ -83,11 +83,9 @@ from src.ui.search_helpers import (
 )
 from src.ui.context import AppContext
 from src.ui.state import (
-    CompoundBuilderState,
     LanguageState,
     RightPanelState,
     SelectionState,
-    TrendState,
 )
 from src.ui.styles import (
     DEFAULT_UI_COLOR,
@@ -146,9 +144,7 @@ class MainWindow(QWidget):
         self.nomenclature_data = context.nomenclature_data
 
         self.selection_state = SelectionState()
-        self.trend_state = TrendState()
         self.right_panel_state = RightPanelState()
-        self.compound_builder_state = CompoundBuilderState()
         self.language_state = LanguageState()
 
         self.settings_service = context.settings_service
@@ -204,11 +200,6 @@ class MainWindow(QWidget):
         """Return the set of atomic numbers matching the current search."""
         return self.context.search_manager.matches
 
-    @current_search_matches.setter
-    def current_search_matches(self, value):
-        """Set the search-match atomic numbers from an iterable."""
-        self.selection_state.search_matches = set(value or ())
-
     @property
     def active_trend_mode(self):
         """Return the active trend-coloring mode (e.g. 'normal', 'radius')."""
@@ -216,9 +207,8 @@ class MainWindow(QWidget):
 
     @active_trend_mode.setter
     def active_trend_mode(self, value):
-        """Set the active trend-coloring mode."""
+        """Set the active trend-coloring mode (delegates to TrendManager)."""
         self.context.trend_manager.set_trend_mode(value)
-        self.trend_state.mode = value
 
     @property
     def right_panel_mode(self):
@@ -232,23 +222,23 @@ class MainWindow(QWidget):
 
     @property
     def compound_a(self):
-        """Return the first element chosen for the compound builder."""
-        return self.compound_builder_state.first_element
+        """Return the first element chosen for the compound builder (for presentation)."""
+        return self.selection_state.compound_a
 
     @compound_a.setter
     def compound_a(self, value):
-        """Set the first element for the compound builder."""
-        self.compound_builder_state.first_element = value
+        """Set the first element for the compound builder (for presentation)."""
+        self.selection_state.compound_a = value
 
     @property
     def compound_b(self):
-        """Return the second element chosen for the compound builder."""
-        return self.compound_builder_state.second_element
+        """Return the second element chosen for the compound builder (for presentation)."""
+        return self.selection_state.compound_b
 
     @compound_b.setter
     def compound_b(self, value):
-        """Set the second element for the compound builder."""
-        self.compound_builder_state.second_element = value
+        """Set the second element for the compound builder (for presentation)."""
+        self.selection_state.compound_b = value
 
     @property
     def current_language(self):
@@ -738,10 +728,6 @@ class MainWindow(QWidget):
         oxidation_a = self.get_current_oxidation(self.a_oxidation_combo)
         oxidation_b = self.get_current_oxidation(self.b_oxidation_combo)
 
-        # Update local state
-        self.compound_builder_state.first_oxidation = oxidation_a
-        self.compound_builder_state.second_oxidation = oxidation_b
-
         # Delegate to manager if both elements are selected
         if self.compound_a is not None and oxidation_a is not None:
             self.context.compound_builder_manager.set_element_a(
@@ -950,7 +936,7 @@ class MainWindow(QWidget):
         if self.compound_a is None:
             text_a = self.tr("not_selected")
         else:
-            oxidation_a = self.compound_builder_state.first_oxidation
+            oxidation_a = self.context.compound_builder_manager.state.element_a_oxidation
             text_a = (
                 f"{self.compound_a['symbol']} "
                 f"{self.format_oxidation_state(oxidation_a) if oxidation_a is not None else self.tr('traditional_na')}"
@@ -959,7 +945,7 @@ class MainWindow(QWidget):
         if self.compound_b is None:
             text_b = self.tr("not_selected")
         else:
-            oxidation_b = self.compound_builder_state.second_oxidation
+            oxidation_b = self.context.compound_builder_manager.state.element_b_oxidation
             text_b = (
                 f"{self.compound_b['symbol']} "
                 f"{self.format_oxidation_state(oxidation_b) if oxidation_b is not None else self.tr('traditional_na')}"
@@ -1019,11 +1005,12 @@ class MainWindow(QWidget):
 
     def compose_compound_result_text(self):
         """Build the full compound result text (formula + IUPAC + traditional names)."""
+        manager_state = self.context.compound_builder_manager.state
         return compose_compound_panel_text(
             compound_a=self.compound_a,
             compound_b=self.compound_b,
-            first_oxidation=self.compound_builder_state.first_oxidation,
-            second_oxidation=self.compound_builder_state.second_oxidation,
+            first_oxidation=manager_state.element_a_oxidation,
+            second_oxidation=manager_state.element_b_oxidation,
             common_section=self.format_common_compounds_section(),
             translate=self.tr,
             build_binary_formula=self.build_binary_formula,
@@ -1145,7 +1132,6 @@ class MainWindow(QWidget):
         """Activate a trend mode: delegate to manager, update UI, and refresh overlays."""
         # Delegate to manager (validates and sets the mode)
         self.context.trend_manager.set_trend_mode(mode)
-        self.trend_state.mode = mode
 
         # Persist the choice
         self.settings_service.set_trend_mode(mode)
@@ -1390,11 +1376,9 @@ class MainWindow(QWidget):
         # Delegate reset to manager
         self.context.compound_builder_manager.reset()
 
-        # Clear MainWindow state
+        # Clear MainWindow presentation state
         self.compound_a = None
         self.compound_b = None
-        self.compound_builder_state.first_oxidation = None
-        self.compound_builder_state.second_oxidation = None
         self.search_a_input.setText("")
         self.search_b_input.setText("")
         self.populate_oxidation_combo(self.a_oxidation_combo, None)
