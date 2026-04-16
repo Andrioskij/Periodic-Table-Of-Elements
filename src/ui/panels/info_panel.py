@@ -617,6 +617,9 @@ class InfoPanel(QScrollArea):
                 values=values,
             )
 
+        # Import here to avoid circular dependency
+        from src.services.element_properties import get_isotopes, get_industrial_uses
+
         # Update isotopes section
         isotopes = get_isotopes(element.get("symbol", ""))
         isotopes_title = translate("isotopes")

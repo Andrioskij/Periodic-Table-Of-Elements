@@ -54,6 +54,11 @@ class SearchManager:
         """Return set of atomic numbers of currently matching elements."""
         return self._matches
 
+    @matches.setter
+    def matches(self, value: Set[int]) -> None:
+        """Set the set of atomic numbers matching the current search."""
+        self._matches = value
+
     @property
     def current_query(self) -> str:
         """Return the current search query string."""
