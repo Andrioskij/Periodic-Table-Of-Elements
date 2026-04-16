@@ -145,7 +145,9 @@
     "close_dialog": "Schließen",
     "compound_scope_note": "Umfang: nur einfache binäre Verbindungen. Paare desselben Elements und Kombinationen mit Oxidationszahlen gleichen Vorzeichens werden noch nicht unterstützt.",
     "scientific_data_partial_note": "Datensatzhinweis: Einige wissenschaftliche Werte sind für dieses Element derzeit nicht verfügbar: {fields}.",
-    "scientific_data_partial_note_more": "Datensatzhinweis: Einige wissenschaftliche Werte sind für dieses Element derzeit nicht verfügbar, darunter {fields}, sowie {count} weitere."
+    "scientific_data_partial_note_more": "Datensatzhinweis: Einige wissenschaftliche Werte sind für dieses Element derzeit nicht verfügbar, darunter {fields}, sowie {count} weitere.",
+    "isotopes": "Isotope",
+    "industrial_uses": "Industrielle Anwendungen"
   },
   "localized_category_texts": {
     "actinide": "Actinoid",

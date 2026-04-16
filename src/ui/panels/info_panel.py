@@ -177,6 +177,122 @@ class _MetricVisual(QWidget):
         )
 
 
+class _IsotopesSection(QWidget):
+    """A section displaying common isotopes for an element.
+
+    Shows isotope name, mass number, natural abundance (if stable),
+    and half-life (if radioactive) in a list layout.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.setObjectName("infoSectionCard")
+        self.setAttribute(Qt.WA_StyledBackground, True)
+
+        layout = QVBoxLayout()
+        layout.setContentsMargins(12, 12, 12, 12)
+        layout.setSpacing(10)
+
+        self.title_label = QLabel()
+        self.title_label.setObjectName("infoSectionTitle")
+
+        self.isotopes_layout = QVBoxLayout()
+        self.isotopes_layout.setContentsMargins(0, 0, 0, 0)
+        self.isotopes_layout.setSpacing(8)
+
+        layout.addWidget(self.title_label)
+        layout.addLayout(self.isotopes_layout)
+        layout.addStretch()
+        self.setLayout(layout)
+
+    def set_content(self, *, title, isotopes):
+        # Clear existing isotope labels
+        while self.isotopes_layout.count():
+            widget = self.isotopes_layout.takeAt(0).widget()
+            if widget:
+                widget.deleteLater()
+
+        self.title_label.setText(title)
+
+        if not isotopes:
+            empty_label = QLabel("No isotope data available")
+            empty_label.setObjectName("infoFieldValue")
+            empty_label.setStyleSheet("color: #999;")
+            self.isotopes_layout.addWidget(empty_label)
+            return
+
+        for iso in isotopes:
+            iso_text = f"{iso['name']} (mass {iso['mass_number']})"
+            if iso["abundance"] is not None:
+                iso_text += f" — {iso['abundance']:.2f}% abundant"
+            elif iso["half_life"]:
+                iso_text += f" — Half-life: {iso['half_life']}"
+
+            iso_label = QLabel(iso_text)
+            iso_label.setObjectName("infoFieldValue")
+            iso_label.setWordWrap(True)
+            self.isotopes_layout.addWidget(iso_label)
+
+
+class _IndustrialUsesSection(QWidget):
+    """A section displaying industrial and commercial uses for an element.
+
+    Shows use category and description in a list layout.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.setObjectName("infoSectionCard")
+        self.setAttribute(Qt.WA_StyledBackground, True)
+
+        layout = QVBoxLayout()
+        layout.setContentsMargins(12, 12, 12, 12)
+        layout.setSpacing(10)
+
+        self.title_label = QLabel()
+        self.title_label.setObjectName("infoSectionTitle")
+
+        self.uses_layout = QVBoxLayout()
+        self.uses_layout.setContentsMargins(0, 0, 0, 0)
+        self.uses_layout.setSpacing(8)
+
+        layout.addWidget(self.title_label)
+        layout.addLayout(self.uses_layout)
+        layout.addStretch()
+        self.setLayout(layout)
+
+    def set_content(self, *, title, uses):
+        # Clear existing use labels
+        while self.uses_layout.count():
+            widget = self.uses_layout.takeAt(0).widget()
+            if widget:
+                widget.deleteLater()
+
+        self.title_label.setText(title)
+
+        if not uses:
+            empty_label = QLabel("No industrial use data available")
+            empty_label.setObjectName("infoFieldValue")
+            empty_label.setStyleSheet("color: #999;")
+            self.uses_layout.addWidget(empty_label)
+            return
+
+        for use in uses:
+            use_text = f"{use['use']}"
+            use_category = f"[{use['category']}]"
+
+            category_label = QLabel(use_category)
+            category_label.setObjectName("infoFieldLabel")
+            category_label.setStyleSheet("font-weight: bold; font-size: 10px; color: #888;")
+
+            use_label = QLabel(use_text)
+            use_label.setObjectName("infoFieldValue")
+            use_label.setWordWrap(True)
+
+            self.uses_layout.addWidget(category_label)
+            self.uses_layout.addWidget(use_label)
+
+
 class InfoPanel(QScrollArea):
     """Scrollable panel showing detailed information about the selected element.
 
@@ -403,6 +519,14 @@ class InfoPanel(QScrollArea):
             setattr(self, f"{section_name}_title_label", section.title_label)
             card_layout.addWidget(section)
 
+        # Add isotopes section
+        self.isotopes_section = _IsotopesSection()
+        card_layout.addWidget(self.isotopes_section)
+
+        # Add industrial uses section
+        self.industrial_uses_section = _IndustrialUsesSection()
+        card_layout.addWidget(self.industrial_uses_section)
+
         self.footer_label = QLabel()
         self.footer_label.setObjectName("infoFooterLabel")
         self.footer_label.setWordWrap(True)
@@ -492,6 +616,16 @@ class InfoPanel(QScrollArea):
                 translate=translate,
                 values=values,
             )
+
+        # Update isotopes section
+        isotopes = get_isotopes(element.get("symbol", ""))
+        isotopes_title = translate("isotopes")
+        self.isotopes_section.set_content(title=isotopes_title, isotopes=isotopes)
+
+        # Update industrial uses section
+        uses = get_industrial_uses(element.get("symbol", ""))
+        uses_title = translate("industrial_uses")
+        self.industrial_uses_section.set_content(title=uses_title, uses=uses)
 
         self._update_metric_visuals(element)
         self._apply_accent_styles(element, values)

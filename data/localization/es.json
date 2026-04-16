@@ -145,7 +145,9 @@
     "close_dialog": "Cerrar",
     "compound_scope_note": "Alcance: solo compuestos binarios simples. Las parejas del mismo elemento y las combinaciones con números de oxidación del mismo signo todavía no están disponibles.",
     "scientific_data_partial_note": "Nota del conjunto de datos: algunos valores científicos no están disponibles por ahora para este elemento: {fields}.",
-    "scientific_data_partial_note_more": "Nota del conjunto de datos: algunos valores científicos no están disponibles por ahora para este elemento, incluidos {fields}, y {count} más."
+    "scientific_data_partial_note_more": "Nota del conjunto de datos: algunos valores científicos no están disponibles por ahora para este elemento, incluidos {fields}, y {count} más.",
+    "isotopes": "Isótopos",
+    "industrial_uses": "Usos industriales"
   },
   "localized_category_texts": {
     "actinide": "Actínido",

@@ -145,7 +145,9 @@
     "close_dialog": "Fermer",
     "compound_scope_note": "Portée : composés binaires simples uniquement. Les paires formées du même élément et les combinaisons avec des états d'oxydation de même signe ne sont pas encore prises en charge.",
     "scientific_data_partial_note": "Note du jeu de données : certaines valeurs scientifiques ne sont pas encore disponibles pour cet élément : {fields}.",
-    "scientific_data_partial_note_more": "Note du jeu de données : certaines valeurs scientifiques ne sont pas encore disponibles pour cet élément, notamment {fields}, ainsi que {count} autres."
+    "scientific_data_partial_note_more": "Note du jeu de données : certaines valeurs scientifiques ne sont pas encore disponibles pour cet élément, notamment {fields}, ainsi que {count} autres.",
+    "isotopes": "Isotopes",
+    "industrial_uses": "Utilisations industrielles"
   },
   "localized_category_texts": {
     "actinide": "Actinide",
