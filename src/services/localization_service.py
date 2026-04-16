@@ -1,9 +1,35 @@
+"""
+Core localization service module.
+
+Central hub for managing multi-language UI text, loading language data from JSON,
+and providing translation functionality. Delegates specialized tasks to:
+- element_names: Element nomenclature lookups
+- compound_names: Compound naming with language-specific rules
+- ui_localization: UI text lookups for categories, states, classes
+"""
+
 import json
-import os
-import unicodedata
 from pathlib import Path
 
+# Import from specialized modules for re-export
+from .element_names import (
+    get_localized_element_name,
+    get_localized_anion_name,
+    get_support_entry,
+    get_localized_support_text,
+)
+from .compound_names import (
+    format_stock_compound_name,
+    format_traditional_compound_name,
+    RUSSIAN_GENITIVE_EXCEPTIONS,
+)
+from .ui_localization import (
+    get_localized_category_text,
+    get_localized_standard_state_text,
+    get_localized_macro_class_text,
+)
 
+# Language configuration constants
 ALL_LANGUAGE_OPTIONS = [
     ("en", "English"),
     ("it", "Italiano"),
@@ -15,6 +41,12 @@ ALL_LANGUAGE_OPTIONS = [
 ]
 
 VISIBLE_LANGUAGE_CODES = tuple(code for code, _ in ALL_LANGUAGE_OPTIONS)
+
+LANGUAGE_OPTIONS = [
+    (code, label)
+    for code, label in ALL_LANGUAGE_OPTIONS
+    if code in VISIBLE_LANGUAGE_CODES
+]
 
 LANGUAGE_READINESS_REQUIRED_TEXT_KEYS = (
     "about_button",
@@ -164,22 +196,11 @@ LANGUAGE_READINESS_REQUIRED_TEXT_KEYS = (
     "year_discovered",
 )
 
-LANGUAGE_OPTIONS = [
-    (code, label)
-    for code, label in ALL_LANGUAGE_OPTIONS
-    if code in VISIBLE_LANGUAGE_CODES
-]
-
 # Global data structures - loaded from JSON
 UI_TEXTS = {}
 LOCALIZED_CATEGORY_TEXTS = {}
 LOCALIZED_STANDARD_STATE_TEXTS = {}
 LOCALIZED_MACRO_CLASS_TEXTS = {}
-
-RUSSIAN_GENITIVE_EXCEPTIONS = {
-    "медь": "меди",
-    "ртуть": "ртути",
-}
 
 
 def _get_localization_data_dir():
@@ -227,64 +248,22 @@ def _load_all_languages():
 
 
 def _normalize_language_code(language_code):
+    """Normalize language code with 'en' as default."""
     return language_code or "en"
 
 
-def _get_localized_lookup_text(lookup, key, language_code, traditional_na="n/a"):
-    code = _normalize_language_code(language_code)
-    _ensure_language_loaded(code)
-
-    localized_map = lookup.get(code, {})
-    if key in localized_map:
-        return localized_map[key]
-
-    # Fallback to English
-    _ensure_language_loaded("en")
-    en_map = lookup.get("en", {})
-    return en_map.get(key, key)
-
-
-def _first_letter_without_accents(text):
-    normalized = unicodedata.normalize("NFKD", text or "")
-    for char in normalized:
-        if char.isalpha():
-            return char.lower()
-    return ""
-
-
-def _needs_french_elision(word):
-    return _first_letter_without_accents(word) in {"a", "e", "i", "o", "u", "y", "h"}
-
-
-def _to_russian_genitive(name):
-    word = (name or "").strip()
-    if not word:
-        return word
-
-    if word in RUSSIAN_GENITIVE_EXCEPTIONS:
-        return RUSSIAN_GENITIVE_EXCEPTIONS[word]
-
-    if word.endswith("ий"):
-        return f"{word[:-2]}ия"
-    if word.endswith("й"):
-        return f"{word[:-1]}я"
-    if word.endswith("ь"):
-        return f"{word[:-1]}и"
-    if word.endswith("я"):
-        return f"{word[:-1]}и"
-    if word.endswith("а"):
-        return (
-            f"{word[:-1]}и"
-            if word[-2:-1] in {"г", "к", "х", "ж", "ч", "ш", "щ", "ц"}
-            else f"{word[:-1]}ы"
-        )
-    if word.endswith("о"):
-        return f"{word[:-1]}а"
-    return f"{word}а"
-
-
 def tr(language_code, key, **kwargs):
-    """Translate key for the given language code."""
+    """
+    Translate key for the given language code.
+
+    Args:
+        language_code: Language code (e.g., 'en', 'it', 'ru')
+        key: Text key to translate
+        **kwargs: Format arguments for the translated string
+
+    Returns:
+        Translated text with format applied, or fallback to key name
+    """
     code = language_code or "en"
     _ensure_language_loaded(code)
     _ensure_language_loaded("en")
@@ -296,14 +275,47 @@ def tr(language_code, key, **kwargs):
 
 
 def get_all_language_codes():
+    """Get all available language codes (including disabled ones)."""
     return tuple(code for code, _ in ALL_LANGUAGE_OPTIONS)
 
 
 def get_visible_language_codes():
+    """Get visible language codes for UI selection."""
     return tuple(code for code, _ in LANGUAGE_OPTIONS)
 
 
+def get_language_naming_rules(nomenclature_data, language_code=None):
+    """
+    Get compound naming rules for a language from nomenclature metadata.
+
+    Args:
+        nomenclature_data: Full nomenclature dataset
+        language_code: Language code (uses fallback_language from metadata if None)
+
+    Returns:
+        Dictionary with naming patterns for the language
+    """
+    meta = nomenclature_data.get("meta", {})
+    patterns = meta.get("naming_patterns", {})
+    fallback_code = meta.get("fallback_language", "en")
+    code = language_code or fallback_code
+    return patterns.get(code, patterns.get(fallback_code, {}))
+
+
 def audit_language_readiness(nomenclature_data, language_code):
+    """
+    Audit language readiness for UI display.
+
+    Checks if language has all required UI strings, verified element names,
+    and compound localizations in the dataset.
+
+    Args:
+        nomenclature_data: Full nomenclature dataset
+        language_code: Language code to audit
+
+    Returns:
+        Dictionary with audit results and ready_for_ui flag
+    """
     code = language_code or "en"
     _ensure_language_loaded(code)
     ui_texts = UI_TEXTS.get(code, {})
@@ -351,100 +363,40 @@ def audit_language_readiness(nomenclature_data, language_code):
     }
 
 
-def get_support_entry(nomenclature_data, symbol):
-    return nomenclature_data.get("elements", {}).get(symbol, {})
-
-
-def get_language_naming_rules(nomenclature_data, language_code=None):
-    meta = nomenclature_data.get("meta", {})
-    patterns = meta.get("naming_patterns", {})
-    fallback_code = meta.get("fallback_language", "en")
-    code = language_code or fallback_code
-    return patterns.get(code, patterns.get(fallback_code, {}))
-
-
-def get_localized_support_text(entry, field_prefix, language_code):
-    code = language_code or "en"
-    localized_field = f"{field_prefix}_{code}"
-    fallback_field = f"{field_prefix}_en"
-    localized_value = entry.get(localized_field)
-    if localized_value:
-        return localized_value
-
-    if field_prefix.startswith("traditional_") and code not in {"en", "it"}:
-        return None
-
-    return entry.get(fallback_field)
-
-
-def get_localized_element_name(element, nomenclature_data, language_code):
-    entry = get_support_entry(nomenclature_data, element.get("symbol"))
-    code = language_code or "en"
-    field = f"name_{code}"
-    if field in entry:
-        return entry[field]
-    if "name_en" in entry:
-        return entry["name_en"]
-    return str(element.get("name", "element"))
-
-
-def get_localized_anion_name(element, nomenclature_data, language_code):
-    entry = get_support_entry(nomenclature_data, element.get("symbol"))
-    code = language_code or "en"
-    field = f"anion_{code}"
-    if field in entry:
-        return entry[field]
-    return entry.get("anion_en")
-
-
-def get_localized_category_text(category, language_code, traditional_na="n/a"):
-    return _get_localized_lookup_text(
-        LOCALIZED_CATEGORY_TEXTS,
-        category,
-        language_code,
-        traditional_na=traditional_na,
-    )
-
-
-def get_localized_standard_state_text(standard_state, language_code, traditional_na="n/a"):
-    return _get_localized_lookup_text(
-        LOCALIZED_STANDARD_STATE_TEXTS,
-        standard_state,
-        language_code,
-        traditional_na=traditional_na,
-    )
-
-
-def get_localized_macro_class_text(macro_class, language_code, traditional_na="n/a"):
-    return _get_localized_lookup_text(
-        LOCALIZED_MACRO_CLASS_TEXTS,
-        macro_class,
-        language_code,
-        traditional_na=traditional_na,
-    )
-
-
-def format_stock_compound_name(nomenclature_data, language_code, anion_name, cation_name, roman=None):
-    code = _normalize_language_code(language_code)
-    if code == "fr":
-        connector = "d'" if _needs_french_elision(cation_name) else "de "
-        suffix = f" ({roman})" if roman else ""
-        return f"{anion_name} {connector}{cation_name}{suffix}"
-
-    if code == "ru":
-        cation_name = _to_russian_genitive(cation_name)
-
-    rules = get_language_naming_rules(nomenclature_data, language_code)
-    key = "stock_roman" if roman else "stock_simple"
-    template = rules.get(key, "{anion} of {cation}" if not roman else "{anion} of {cation} ({roman})")
-    return template.format(anion=anion_name, cation=cation_name, roman=roman or "")
-
-
-def format_traditional_compound_name(nomenclature_data, language_code, anion_name, epithet):
-    rules = get_language_naming_rules(nomenclature_data, language_code)
-    template = rules.get("traditional", "{anion} {epithet}")
-    return template.format(anion=anion_name, epithet=epithet)
-
+# Explicit public API
+__all__ = [
+    # Constants
+    "ALL_LANGUAGE_OPTIONS",
+    "VISIBLE_LANGUAGE_CODES",
+    "LANGUAGE_OPTIONS",
+    "LANGUAGE_READINESS_REQUIRED_TEXT_KEYS",
+    "RUSSIAN_GENITIVE_EXCEPTIONS",
+    # Global data
+    "UI_TEXTS",
+    "LOCALIZED_CATEGORY_TEXTS",
+    "LOCALIZED_STANDARD_STATE_TEXTS",
+    "LOCALIZED_MACRO_CLASS_TEXTS",
+    # Core translation
+    "tr",
+    # Language code utilities
+    "get_all_language_codes",
+    "get_visible_language_codes",
+    # Element naming (from element_names module)
+    "get_localized_element_name",
+    "get_localized_anion_name",
+    "get_support_entry",
+    "get_localized_support_text",
+    # Compound naming (from compound_names module)
+    "format_stock_compound_name",
+    "format_traditional_compound_name",
+    # UI localization (from ui_localization module)
+    "get_localized_category_text",
+    "get_localized_standard_state_text",
+    "get_localized_macro_class_text",
+    # Metadata and audit
+    "get_language_naming_rules",
+    "audit_language_readiness",
+]
 
 # Load all languages at module import time
 try:
