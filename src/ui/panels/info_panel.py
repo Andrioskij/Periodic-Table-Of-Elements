@@ -291,7 +291,15 @@ class _IndustrialUsesSection(QWidget):
 
         for use in uses:
             use_text = use.get("use", "Unknown")
-            use_category = f"[{use.get('category', 'General')}]"
+            raw_category = use.get("category", "General")
+            if translate:
+                slug = raw_category.lower().replace(" ", "_").replace("-", "_")
+                key = f"industrial_category_{slug}"
+                localized = translate(key)
+                display_category = localized if localized != key else raw_category
+            else:
+                display_category = raw_category
+            use_category = f"[{display_category}]"
 
             category_label = QLabel(use_category)
             category_label.setObjectName("infoFieldLabel")

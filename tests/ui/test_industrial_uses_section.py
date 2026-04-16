@@ -60,6 +60,42 @@ class TestIndustrialUsesSection(unittest.TestCase):
         self.assertEqual(label.text(), "Nessun dato industriale")
         self.assertEqual(self.section.title_label.text(), "Usi industriali")
 
+    def test_category_translated_when_key_present(self):
+        tr = lambda key: {
+            "industrial_category_chemical_synthesis": "Sintesi chimica",
+        }.get(key, key)
+        data = [{"category": "Chemical synthesis", "use": "Ammonia production"}]
+        self.section.set_content(title="Usi industriali", uses=data, translate=tr)
+        self.assertEqual(self.section.uses_layout.count(), 2)
+        self.assertEqual(
+            self.section.uses_layout.itemAt(0).widget().text(),
+            "[Sintesi chimica]",
+        )
+        self.assertEqual(
+            self.section.uses_layout.itemAt(1).widget().text(),
+            "Ammonia production",
+        )
+
+    def test_category_falls_back_when_translate_returns_key(self):
+        tr = lambda key: key
+        data = [{"category": "Chemical synthesis", "use": "Ammonia production"}]
+        self.section.set_content(title="Industrial uses", uses=data, translate=tr)
+        self.assertEqual(
+            self.section.uses_layout.itemAt(0).widget().text(),
+            "[Chemical synthesis]",
+        )
+
+    def test_unknown_category_falls_back_to_raw_value(self):
+        tr = lambda key: {
+            "industrial_category_energy": "Energia",
+        }.get(key, key)
+        data = [{"category": "Foo bar", "use": "Unmapped category"}]
+        self.section.set_content(title="Usi industriali", uses=data, translate=tr)
+        self.assertEqual(
+            self.section.uses_layout.itemAt(0).widget().text(),
+            "[Foo bar]",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
