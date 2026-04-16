@@ -147,7 +147,9 @@
     "scientific_data_partial_note": "Nota del conjunto de datos: algunos valores científicos no están disponibles por ahora para este elemento: {fields}.",
     "scientific_data_partial_note_more": "Nota del conjunto de datos: algunos valores científicos no están disponibles por ahora para este elemento, incluidos {fields}, y {count} más.",
     "isotopes": "Isótopos",
-    "industrial_uses": "Usos industriales"
+    "industrial_uses": "Usos industriales",
+    "no_isotope_data": "No hay datos de isótopos disponibles",
+    "no_industrial_data": "No hay datos de usos industriales disponibles"
   },
   "localized_category_texts": {
     "actinide": "Actínido",

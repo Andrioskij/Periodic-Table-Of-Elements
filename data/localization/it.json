@@ -147,7 +147,9 @@
     "scientific_data_partial_note": "Nota dataset: alcuni valori scientifici non sono al momento disponibili per questo elemento: {fields}.",
     "scientific_data_partial_note_more": "Nota dataset: alcuni valori scientifici non sono al momento disponibili per questo elemento, inclusi {fields}, e altri {count}.",
     "isotopes": "Isotopi",
-    "industrial_uses": "Usi industriali"
+    "industrial_uses": "Usi industriali",
+    "no_isotope_data": "Nessun dato sugli isotopi disponibile",
+    "no_industrial_data": "Nessun dato sugli usi industriali disponibile"
   },
   "localized_category_texts": {
     "actinide": "Attinide",

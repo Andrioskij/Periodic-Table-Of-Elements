@@ -147,7 +147,9 @@
     "scientific_data_partial_note": "数据集说明：此元素当前缺少以下科学数值：{fields}。",
     "scientific_data_partial_note_more": "数据集说明：此元素当前缺少以下科学数值：{fields}，以及另外 {count} 项。",
     "isotopes": "同位素",
-    "industrial_uses": "工业用途"
+    "industrial_uses": "工业用途",
+    "no_isotope_data": "暂无同位素数据",
+    "no_industrial_data": "暂无工业用途数据"
   },
   "localized_category_texts": {
     "actinide": "锕系元素",

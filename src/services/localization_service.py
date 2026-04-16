@@ -9,7 +9,10 @@ and providing translation functionality. Delegates specialized tasks to:
 """
 
 import json
+import logging
 from pathlib import Path
+
+_logger = logging.getLogger(__name__)
 
 # Import from specialized modules for re-export
 from .element_names import (
@@ -402,4 +405,4 @@ __all__ = [
 try:
     _load_all_languages()
 except FileNotFoundError as e:
-    print(f"Warning: Could not load localization files: {e}")
+    _logger.warning("Could not load localization files: %s", e)

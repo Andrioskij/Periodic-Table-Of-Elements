@@ -1,3 +1,5 @@
+import logging
+
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QGridLayout,
@@ -11,6 +13,8 @@ from PySide6.QtWidgets import (
 
 from src.domain.trends import get_macro_class, get_macro_class_color
 from src.ui.scientific_data_notes import build_scientific_data_note
+
+_logger = logging.getLogger(__name__)
 from src.ui.styles import (
     DEFAULT_UI_COLOR,
     get_category_color,
@@ -205,7 +209,7 @@ class _IsotopesSection(QWidget):
         layout.addStretch()
         self.setLayout(layout)
 
-    def set_content(self, *, title, isotopes):
+    def set_content(self, *, title, isotopes, translate=None):
         # Clear existing isotope labels
         while self.isotopes_layout.count():
             widget = self.isotopes_layout.takeAt(0).widget()
@@ -215,18 +219,24 @@ class _IsotopesSection(QWidget):
         self.title_label.setText(title)
 
         if not isotopes:
-            empty_label = QLabel("No isotope data available")
+            fallback = "No isotope data available"
+            empty_text = translate("no_isotope_data") if translate else fallback
+            empty_label = QLabel(empty_text)
             empty_label.setObjectName("infoFieldValue")
             empty_label.setStyleSheet("color: #999;")
             self.isotopes_layout.addWidget(empty_label)
             return
 
         for iso in isotopes:
-            iso_text = f"{iso['name']} (mass {iso['mass_number']})"
-            if iso["abundance"] is not None:
-                iso_text += f" — {iso['abundance']:.2f}% abundant"
-            elif iso["half_life"]:
-                iso_text += f" — Half-life: {iso['half_life']}"
+            name = iso.get("name", f"Isotope-{iso.get('mass_number', '?')}")
+            mass = iso.get("mass_number", "?")
+            iso_text = f"{name} (mass {mass})"
+            abundance = iso.get("abundance")
+            half_life = iso.get("half_life")
+            if abundance is not None:
+                iso_text += f" — {abundance:.2f}% abundant"
+            elif half_life:
+                iso_text += f" — Half-life: {half_life}"
 
             iso_label = QLabel(iso_text)
             iso_label.setObjectName("infoFieldValue")
@@ -261,7 +271,7 @@ class _IndustrialUsesSection(QWidget):
         layout.addStretch()
         self.setLayout(layout)
 
-    def set_content(self, *, title, uses):
+    def set_content(self, *, title, uses, translate=None):
         # Clear existing use labels
         while self.uses_layout.count():
             widget = self.uses_layout.takeAt(0).widget()
@@ -271,15 +281,17 @@ class _IndustrialUsesSection(QWidget):
         self.title_label.setText(title)
 
         if not uses:
-            empty_label = QLabel("No industrial use data available")
+            fallback = "No industrial use data available"
+            empty_text = translate("no_industrial_data") if translate else fallback
+            empty_label = QLabel(empty_text)
             empty_label.setObjectName("infoFieldValue")
             empty_label.setStyleSheet("color: #999;")
             self.uses_layout.addWidget(empty_label)
             return
 
         for use in uses:
-            use_text = f"{use['use']}"
-            use_category = f"[{use['category']}]"
+            use_text = use.get("use", "Unknown")
+            use_category = f"[{use.get('category', 'General')}]"
 
             category_label = QLabel(use_category)
             category_label.setObjectName("infoFieldLabel")
@@ -558,10 +570,11 @@ class InfoPanel(QScrollArea):
         self.hero_badges_layout.addWidget(label)
         return label
 
-    def set_prompt(self, text):
+    def set_prompt(self, text, prompt_text=None):
         self._clear_metric_visuals()
-        self.info_label.setText(text)
-        self.prompt_label.setText(text)
+        display_text = prompt_text if prompt_text is not None else text
+        self.info_label.setText(display_text)
+        self.prompt_label.setText(display_text)
         self.prompt_label.show()
         self.card_widget.hide()
 
@@ -618,17 +631,27 @@ class InfoPanel(QScrollArea):
             )
 
         # Import here to avoid circular dependency
-        from src.services.element_properties import get_isotopes, get_industrial_uses
+        try:
+            from src.services.element_properties import get_isotopes, get_industrial_uses
+
+            isotopes = get_isotopes(element.get("symbol", ""))
+            uses = get_industrial_uses(element.get("symbol", ""))
+        except Exception:
+            _logger.exception("Failed to load supplementary element data")
+            isotopes = []
+            uses = []
 
         # Update isotopes section
-        isotopes = get_isotopes(element.get("symbol", ""))
         isotopes_title = translate("isotopes")
-        self.isotopes_section.set_content(title=isotopes_title, isotopes=isotopes)
+        self.isotopes_section.set_content(
+            title=isotopes_title, isotopes=isotopes, translate=translate,
+        )
 
         # Update industrial uses section
-        uses = get_industrial_uses(element.get("symbol", ""))
         uses_title = translate("industrial_uses")
-        self.industrial_uses_section.set_content(title=uses_title, uses=uses)
+        self.industrial_uses_section.set_content(
+            title=uses_title, uses=uses, translate=translate,
+        )
 
         self._update_metric_visuals(element)
         self._apply_accent_styles(element, values)

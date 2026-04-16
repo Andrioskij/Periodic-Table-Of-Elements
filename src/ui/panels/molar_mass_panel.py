@@ -89,9 +89,9 @@ class MolarMassPanel(QWidget):
         """Update the panel title."""
         self.title_label.setText(text)
 
-    def set_prompt(self, text):
+    def set_prompt(self, text, prompt_text=None):
         """Show a prompt message in the result area."""
-        self.result_label.setText(text)
+        self.result_label.setText(prompt_text if prompt_text is not None else text)
 
     def set_button_text(self, text):
         """Update the calculate button label."""

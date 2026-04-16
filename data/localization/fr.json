@@ -147,7 +147,9 @@
     "scientific_data_partial_note": "Note du jeu de données : certaines valeurs scientifiques ne sont pas encore disponibles pour cet élément : {fields}.",
     "scientific_data_partial_note_more": "Note du jeu de données : certaines valeurs scientifiques ne sont pas encore disponibles pour cet élément, notamment {fields}, ainsi que {count} autres.",
     "isotopes": "Isotopes",
-    "industrial_uses": "Utilisations industrielles"
+    "industrial_uses": "Utilisations industrielles",
+    "no_isotope_data": "Aucune donnée isotopique disponible",
+    "no_industrial_data": "Aucune donnée sur les utilisations industrielles disponible"
   },
   "localized_category_texts": {
     "actinide": "Actinide",

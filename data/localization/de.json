@@ -147,7 +147,9 @@
     "scientific_data_partial_note": "Datensatzhinweis: Einige wissenschaftliche Werte sind für dieses Element derzeit nicht verfügbar: {fields}.",
     "scientific_data_partial_note_more": "Datensatzhinweis: Einige wissenschaftliche Werte sind für dieses Element derzeit nicht verfügbar, darunter {fields}, sowie {count} weitere.",
     "isotopes": "Isotope",
-    "industrial_uses": "Industrielle Anwendungen"
+    "industrial_uses": "Industrielle Anwendungen",
+    "no_isotope_data": "Keine Isotopendaten verfügbar",
+    "no_industrial_data": "Keine Daten zu industriellen Anwendungen verfügbar"
   },
   "localized_category_texts": {
     "actinide": "Actinoid",

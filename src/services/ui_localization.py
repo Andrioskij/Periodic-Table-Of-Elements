@@ -49,7 +49,7 @@ def get_localized_category_text(category, language_code, traditional_na="n/a"):
     Args:
         category: Category key (e.g., 'metal', 'nonmetal')
         language_code: Language code (e.g., 'en', 'it')
-        traditional_na: Fallback text (unused, kept for API compatibility)
+        traditional_na: Fallback text returned when no localized value is found
 
     Returns:
         Localized category text
@@ -71,7 +71,7 @@ def get_localized_standard_state_text(standard_state, language_code, traditional
     Args:
         standard_state: State key (e.g., 'gas', 'liquid', 'solid')
         language_code: Language code (e.g., 'en', 'it')
-        traditional_na: Fallback text (unused, kept for API compatibility)
+        traditional_na: Fallback text returned when no localized value is found
 
     Returns:
         Localized standard state text
@@ -93,7 +93,7 @@ def get_localized_macro_class_text(macro_class, language_code, traditional_na="n
     Args:
         macro_class: Macro class key (e.g., 'alkali_metal', 'halogen')
         language_code: Language code (e.g., 'en', 'it')
-        traditional_na: Fallback text (unused, kept for API compatibility)
+        traditional_na: Fallback text returned when no localized value is found
 
     Returns:
         Localized macro class text

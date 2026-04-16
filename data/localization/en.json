@@ -147,7 +147,9 @@
     "scientific_data_partial_note": "Dataset note: some scientific values are currently unavailable for this element: {fields}.",
     "scientific_data_partial_note_more": "Dataset note: some scientific values are currently unavailable for this element, including {fields}, and {count} more.",
     "isotopes": "Isotopes",
-    "industrial_uses": "Industrial uses"
+    "industrial_uses": "Industrial uses",
+    "no_isotope_data": "No isotope data available",
+    "no_industrial_data": "No industrial use data available"
   },
   "localized_category_texts": {
     "actinide": "Actinide",

@@ -147,9 +147,9 @@ class StoichiometryPanel(QWidget):
         """Update the panel title."""
         self.title_label.setText(text)
 
-    def set_prompt(self, text):
+    def set_prompt(self, text, prompt_text=None):
         """Show a prompt message in the result area."""
-        self.result_label.setText(text)
+        self.result_label.setText(prompt_text if prompt_text is not None else text)
         self.mass_section.setVisible(False)
         self.mass_result_label.setVisible(False)
 
