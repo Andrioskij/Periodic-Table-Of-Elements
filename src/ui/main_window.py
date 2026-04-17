@@ -3,17 +3,7 @@ from PySide6.QtGui import QKeySequence, QShortcut
 from PySide6.QtWidgets import (
     QApplication,
     QBoxLayout,
-    QComboBox,
-    QHBoxLayout,
-    QLabel,
-    QLineEdit,
-    QListWidget,
     QListWidgetItem,
-    QPushButton,
-    QScrollArea,
-    QSizePolicy,
-    QStackedLayout,
-    QVBoxLayout,
     QWidget,
 )
 
@@ -70,13 +60,17 @@ from src.ui.main_window_panels import (
     build_right_panel_mode_state,
     build_tool_area_mode_state,
 )
-from src.ui.panels.compound_panel import CompoundBuilderPanel
-from src.ui.panels.info_panel import InfoPanel
-from src.ui.panels.molar_mass_panel import MolarMassPanel
-from src.ui.panels.orbital_diagram_panel import OrbitalDiagramPanel
-from src.ui.panels.lewis_panel import LewisPanel
-from src.ui.panels.solubility_panel import SolubilityPanel
-from src.ui.panels.stoichiometry_panel import StoichiometryPanel
+from src.ui.main_window_builder import (
+    build_builder_widget,
+    build_content_layout,
+    build_periodic_table_widget,
+    build_right_panel_area,
+    build_search_widget,
+    build_shell,
+    build_title_row,
+    build_top_controls_layout,
+    build_trend_controls,
+)
 from src.ui.search_helpers import (
     compute_match_score as compute_search_match_score,
     get_ranked_matches as get_ranked_search_matches,
@@ -95,8 +89,6 @@ from src.ui.styles import (
     get_text_color as get_ui_text_color,
     interpolate_color as interpolate_ui_color,
 )
-from src.ui.widgets.flow_layout import FlowLayout
-from src.ui.widgets.periodic_table_widget import PeriodicTableWidget
 
 
 TREND_BUTTON_SPECS = (
@@ -160,11 +152,7 @@ class MainWindow(QWidget):
         self.numeric_ranges = self.compute_numeric_ranges()
 
         self._configure_window()
-        self._build_shell()
-        self._build_title_row()
-        self._build_top_controls()
-        self._build_trend_controls()
-        self._build_content_area()
+        self._assemble_layout()
         self._configure_focus_and_shortcuts()
         self._finalize_layout()
 
@@ -174,6 +162,136 @@ class MainWindow(QWidget):
         self.load_preferences()
         self.apply_language()
         self.update_responsive_layout()
+
+    def _assemble_layout(self):
+        """Invoke stateless builders and wire the returned widgets into the window."""
+        shell = build_shell()
+        self.outer_layout = shell["outer_layout"]
+        self.main_scroll_area = shell["main_scroll_area"]
+        self.content_widget = shell["content_widget"]
+        self.main_layout = shell["main_layout"]
+
+        title = build_title_row(
+            about_text=self.tr("about_button"),
+            language_options=LANGUAGE_OPTIONS,
+            on_about_clicked=self.open_about_dialog,
+            on_language_changed=self.change_language,
+        )
+        self.title_label = title["title_label"]
+        self.about_button = title["about_button"]
+        self.language_selector = title["language_selector"]
+        self.main_layout.addLayout(title["title_row"])
+
+        search = build_search_widget(
+            placeholder=self.tr("search_placeholder"),
+            search_button_text=self.tr("search_button"),
+            on_text_changed=self.update_search_suggestions,
+            on_search=self.search_element,
+            on_suggestion_clicked=self.handle_suggestion_clicked,
+        )
+        self.search_widget = search["search_widget"]
+        self.search_title_label = search["search_title_label"]
+        self.search_help_label = search["search_help_label"]
+        self.search_input = search["search_input"]
+        self.search_button = search["search_button"]
+        self.suggestions_list = search["suggestions_list"]
+        self.search_status_label = search["search_status_label"]
+
+        builder = build_builder_widget(
+            self.elements,
+            tr=self.tr,
+            on_tool_mode_clicked=self.set_tool_area_mode,
+            on_search_a=self._on_search_element_a,
+            on_search_b=self._on_search_element_b,
+            on_oxidation_changed=self.update_builder_status,
+            on_build=self.build_compound,
+            on_reset=self.reset_builder,
+        )
+        self.tool_area_mode = builder["tool_area_mode"]
+        self.tool_area_buttons = builder["tool_area_buttons"]
+        self.tool_area_buttons_widget = builder["tool_area_buttons_widget"]
+        self.tool_area_buttons_layout = builder["tool_area_buttons_layout"]
+        self.compound_builder_panel = builder["compound_builder_panel"]
+        self.search_a_input = builder["search_a_input"]
+        self.search_b_input = builder["search_b_input"]
+        self.a_oxidation_label = builder["a_oxidation_label"]
+        self.b_oxidation_label = builder["b_oxidation_label"]
+        self.a_oxidation_combo = builder["a_oxidation_combo"]
+        self.b_oxidation_combo = builder["b_oxidation_combo"]
+        self.build_button = builder["build_button"]
+        self.builder_reset_button = builder["builder_reset_button"]
+        self.builder_status_label = builder["builder_status_label"]
+        self.molar_mass_panel = builder["molar_mass_panel"]
+        self.stoichiometry_panel = builder["stoichiometry_panel"]
+        self.solubility_panel = builder["solubility_panel"]
+        self.tool_area_stack = builder["tool_area_stack"]
+        self.builder_widget = builder["builder_widget"]
+
+        self.top_controls_layout = build_top_controls_layout(self.search_widget)
+        self.main_layout.addLayout(self.top_controls_layout)
+
+        trend = build_trend_controls(
+            tr=self.tr,
+            trend_specs=TREND_BUTTON_SPECS,
+            on_trend_clicked=self.set_trend_mode,
+        )
+        self.trend_buttons = trend["trend_buttons"]
+        self.trend_container = trend["trend_container"]
+        self.trend_flow_layout = trend["trend_flow_layout"]
+        self.trend_status_label = trend["trend_status_label"]
+        self.main_layout.addWidget(self.trend_container)
+        self.main_layout.addWidget(self.trend_status_label)
+        self.refresh_control_accessibility()
+
+        self.periodic_table_widget = build_periodic_table_widget(
+            self.elements,
+            self.element_index,
+            format_value=format_value,
+            get_macro_class=self.get_macro_class,
+            get_display_category=self.get_display_category,
+            get_display_macro_class=self.get_display_macro_class,
+            get_button_colors=self.get_current_button_colors,
+            name_provider=self.get_localized_element_name,
+            on_element_selected=self._handle_table_selection,
+        )
+        self.element_buttons = self.periodic_table_widget.element_buttons
+        self.group_header_labels = self.periodic_table_widget.group_header_labels
+        self.period_labels = self.periodic_table_widget.period_labels
+        self.series_labels = self.periodic_table_widget.series_labels
+        self.corner_label = self.periodic_table_widget.corner_label
+        self.transition_label = self.periodic_table_widget.transition_label
+        self.selected_element_name_label = self.periodic_table_widget.selected_element_name_label
+        self.trends_overlay = self.periodic_table_widget.trends_overlay
+        self.table_stack_container = self.periodic_table_widget.table_stack_container
+        self.grid_layout = self.periodic_table_widget.grid_layout
+
+        right = build_right_panel_area(
+            tr=self.tr,
+            numeric_ranges=self.numeric_ranges,
+            on_right_mode_clicked=self.set_right_panel_mode,
+        )
+        self.right_panel_buttons = right["right_panel_buttons"]
+        self.right_panel_buttons_widget = right["right_panel_buttons_widget"]
+        self.right_panel_buttons_layout = right["right_panel_buttons_layout"]
+        self.info_panel = right["info_panel"]
+        self.info_page = right["info_page"]
+        self.info_label = right["info_label"]
+        self.orbital_diagram_panel = right["orbital_diagram_panel"]
+        self.diagram_page = right["diagram_page"]
+        self.diagram_title_label = right["diagram_title_label"]
+        self.diagram_label = right["diagram_label"]
+        self.lewis_panel = right["lewis_panel"]
+        self.lewis_page = right["lewis_page"]
+        self.right_panel_container = right["right_panel_container"]
+        self.right_panel_stack = right["right_panel_stack"]
+        self.right_column_widget = right["right_column_widget"]
+
+        self.content_layout = build_content_layout(
+            self.periodic_table_widget, self.right_column_widget,
+        )
+        self.main_layout.addLayout(self.content_layout)
+        self.main_layout.addWidget(self.builder_widget)
+        self.refresh_control_accessibility()
 
     @property
     def selected_button(self):
@@ -260,328 +378,6 @@ class MainWindow(QWidget):
         self.resize(1500, 960)
         self.setMinimumSize(560, 480)
         self.setStyleSheet(get_stylesheet())
-
-    @staticmethod
-    def _wrap_in_scroll_area(widget):
-        """Wrap a widget in a QScrollArea with vertical scrolling."""
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        scroll.setWidget(widget)
-        return scroll
-
-    def _build_shell(self):
-        """Create the outermost layout and scrollable content container."""
-        self.outer_layout = QVBoxLayout()
-        self.outer_layout.setContentsMargins(0, 0, 0, 0)
-        self.outer_layout.setSpacing(0)
-
-        self.main_scroll_area = QScrollArea()
-        self.main_scroll_area.setWidgetResizable(True)
-        self.main_scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.main_scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-
-        self.content_widget = QWidget()
-        self.main_layout = QVBoxLayout()
-        self.main_layout.setContentsMargins(8, 8, 8, 8)
-        self.main_layout.setSpacing(6)
-
-    def _build_title_row(self):
-        """Build the top title bar with app title, About button, and language selector."""
-        self.title_label = QLabel()
-        self.title_label.setObjectName("titleLabel")
-        self.title_label.setAlignment(Qt.AlignCenter)
-
-        self.about_button = QPushButton(self.tr("about_button"))
-        self.about_button.setObjectName("panelMiniButton")
-        self.about_button.clicked.connect(self.open_about_dialog)
-
-        self.language_selector = QComboBox()
-        for code, label in LANGUAGE_OPTIONS:
-            self.language_selector.addItem(label, code)
-        self.language_selector.currentIndexChanged.connect(self.change_language)
-
-        title_row = QHBoxLayout()
-        title_row.setContentsMargins(0, 0, 0, 0)
-        title_row.setSpacing(8)
-        title_row.addStretch()
-        title_row.addWidget(self.title_label, 1)
-        title_row.addWidget(self.about_button, 0)
-        title_row.addWidget(self.language_selector, 0)
-        self.main_layout.addLayout(title_row)
-
-    def _build_top_controls(self):
-        """Build the top controls row containing the search card."""
-        self.top_controls_layout = QBoxLayout(QBoxLayout.LeftToRight)
-        self.top_controls_layout.setContentsMargins(0, 0, 0, 0)
-        self.top_controls_layout.setSpacing(10)
-
-        self._build_search_widget()
-        self._build_builder_widget()
-
-        self.top_controls_layout.addWidget(self.search_widget, 0, Qt.AlignTop | Qt.AlignLeft)
-        self.top_controls_layout.addStretch(1)
-        self.main_layout.addLayout(self.top_controls_layout)
-
-    def _build_search_widget(self):
-        """Build the element search card with input, button, suggestion list, and status label."""
-        self.search_widget = QWidget()
-        self.search_widget.setObjectName("searchCard")
-        self.search_widget.setAttribute(Qt.WA_StyledBackground, True)
-        search_widget_layout = QVBoxLayout()
-        search_widget_layout.setContentsMargins(12, 12, 12, 12)
-        search_widget_layout.setSpacing(6)
-
-        self.search_title_label = QLabel()
-        self.search_title_label.setObjectName("searchTitleLabel")
-        self.search_help_label = QLabel()
-        self.search_help_label.setObjectName("searchHelpLabel")
-        self.search_help_label.setWordWrap(True)
-        self.search_help_label.hide()
-
-        search_row = QHBoxLayout()
-        search_row.setContentsMargins(0, 0, 0, 0)
-        search_row.setSpacing(8)
-
-        self.search_input = QLineEdit()
-        self.search_input.setObjectName("searchInput")
-        self.search_input.setClearButtonEnabled(True)
-        self.search_input.setPlaceholderText(self.tr("search_placeholder"))
-        self.search_input.textChanged.connect(self.update_search_suggestions)
-        self.search_input.returnPressed.connect(self.search_element)
-
-        self.search_button = QPushButton(self.tr("search_button"))
-        self.search_button.setObjectName("searchButton")
-        self.search_button.clicked.connect(self.search_element)
-
-        search_row.addWidget(self.search_input, 1)
-        search_row.addWidget(self.search_button, 0)
-
-        self.suggestions_list = QListWidget()
-        self.suggestions_list.setMaximumHeight(90)
-        self.suggestions_list.hide()
-        self.suggestions_list.itemClicked.connect(self.handle_suggestion_clicked)
-
-        self.search_status_label = QLabel("")
-        self.search_status_label.setObjectName("searchStatusLabel")
-        self.search_status_label.hide()
-
-        search_widget_layout.addWidget(self.search_title_label)
-        search_widget_layout.addWidget(self.search_help_label)
-        search_widget_layout.addLayout(search_row)
-        search_widget_layout.addWidget(self.suggestions_list)
-        search_widget_layout.addWidget(self.search_status_label)
-        self.search_widget.setLayout(search_widget_layout)
-        self.search_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-
-    def _build_builder_widget(self):
-        """Build the tool area with compound builder, molar mass, and stoichiometry panels."""
-        self.tool_area_mode = "compounds"
-
-        # Tool area tab buttons
-        self.tool_area_buttons = {}
-        tool_buttons_widget = QWidget()
-        self.tool_area_buttons_widget = tool_buttons_widget
-        self.tool_area_buttons_layout = FlowLayout(spacing=6)
-
-        tool_modes = [
-            ("compounds", self.tr("tool_compounds")),
-            ("molar", self.tr("tool_molar")),
-            ("stoichiometry", self.tr("tool_stoichiometry")),
-            ("solubility", self.tr("tool_solubility")),
-        ]
-
-        for mode, text_button in tool_modes:
-            button = QPushButton(text_button)
-            button.setObjectName("panelMiniButton")
-            button.setCheckable(True)
-            button.clicked.connect(lambda checked=False, m=mode: self.set_tool_area_mode(m))
-            self.tool_area_buttons[mode] = button
-            self.tool_area_buttons_layout.addWidget(button)
-
-        self.tool_area_buttons["compounds"].setChecked(True)
-        tool_buttons_widget.setLayout(self.tool_area_buttons_layout)
-
-        # Compound builder panel
-        self.compound_builder_panel = CompoundBuilderPanel()
-        self.compound_builder_panel.search_a_input.returnPressed.connect(self._on_search_element_a)
-        self.compound_builder_panel.search_b_input.returnPressed.connect(self._on_search_element_b)
-        self.compound_builder_panel.a_oxidation_combo.currentIndexChanged.connect(self.update_builder_status)
-        self.compound_builder_panel.b_oxidation_combo.currentIndexChanged.connect(self.update_builder_status)
-        self.compound_builder_panel.build_button.clicked.connect(self.build_compound)
-        self.compound_builder_panel.builder_reset_button.clicked.connect(self.reset_builder)
-
-        self.search_a_input = self.compound_builder_panel.search_a_input
-        self.search_b_input = self.compound_builder_panel.search_b_input
-        self.a_oxidation_label = self.compound_builder_panel.a_oxidation_label
-        self.b_oxidation_label = self.compound_builder_panel.b_oxidation_label
-        self.a_oxidation_combo = self.compound_builder_panel.a_oxidation_combo
-        self.b_oxidation_combo = self.compound_builder_panel.b_oxidation_combo
-        self.build_button = self.compound_builder_panel.build_button
-        self.builder_reset_button = self.compound_builder_panel.builder_reset_button
-        self.builder_status_label = self.compound_builder_panel.builder_status_label
-
-        # Molar mass panel
-        self.molar_mass_panel = MolarMassPanel(
-            self.tr("molar_title"),
-            self.tr("molar_prompt"),
-            self.elements,
-        )
-
-        # Stoichiometry panel
-        self.stoichiometry_panel = StoichiometryPanel(
-            self.tr("stoichiometry_title"),
-            self.tr("stoichiometry_prompt"),
-            self.elements,
-        )
-
-        # Solubility panel
-        self.solubility_panel = SolubilityPanel(
-            self.tr("solubility_title"),
-            self.tr("solubility_prompt"),
-        )
-
-        # Stacked layout for tool area pages
-        self.tool_area_stack = QStackedLayout()
-        self.tool_area_stack.setContentsMargins(0, 0, 0, 0)
-        self.tool_area_stack.addWidget(self.compound_builder_panel)
-        self.tool_area_stack.addWidget(self.molar_mass_panel)
-        self.tool_area_stack.addWidget(self.stoichiometry_panel)
-        self.tool_area_stack.addWidget(self.solubility_panel)
-
-        tool_area_container = QWidget()
-        tool_area_layout = QVBoxLayout()
-        tool_area_layout.setContentsMargins(0, 0, 0, 0)
-        tool_area_layout.setSpacing(6)
-        tool_area_layout.addWidget(tool_buttons_widget)
-        tool_area_layout.addLayout(self.tool_area_stack)
-        tool_area_container.setLayout(tool_area_layout)
-
-        self.builder_widget = tool_area_container
-
-    def _build_trend_controls(self):
-        """Build the trend-mode toggle buttons and the trend status label."""
-        self.trend_buttons = {}
-        trend_container = QWidget()
-        self.trend_container = trend_container
-        self.trend_flow_layout = FlowLayout(spacing=6)
-
-        for mode, label_key in TREND_BUTTON_SPECS:
-            button = QPushButton(self.tr(label_key))
-            button.setObjectName("trendButton")
-            button.setCheckable(True)
-            button.clicked.connect(lambda checked=False, m=mode: self.set_trend_mode(m))
-            self.trend_flow_layout.addWidget(button)
-            self.trend_buttons[mode] = button
-
-        self.trend_buttons["normal"].setChecked(True)
-        trend_container.setLayout(self.trend_flow_layout)
-        self.main_layout.addWidget(trend_container)
-
-        self.trend_status_label = QLabel(self.tr("current_view_normal"))
-        self.trend_status_label.setObjectName("trendStatusLabel")
-        self.main_layout.addWidget(self.trend_status_label)
-        self.refresh_control_accessibility()
-
-    def _build_content_area(self):
-        """Build the main content area: periodic table widget and right panel column."""
-        self.content_layout = QBoxLayout(QBoxLayout.LeftToRight)
-        self.content_layout.setContentsMargins(0, 0, 0, 0)
-        self.content_layout.setSpacing(12)
-
-        self.periodic_table_widget = PeriodicTableWidget(
-            self.elements,
-            self.element_index,
-            format_value=format_value,
-            get_macro_class=self.get_macro_class,
-            get_display_category=self.get_display_category,
-            get_display_macro_class=self.get_display_macro_class,
-            get_button_colors=self.get_current_button_colors,
-        )
-        self.periodic_table_widget.set_name_provider(self.get_localized_element_name)
-        self.periodic_table_widget.element_selected.connect(self._handle_table_selection)
-
-        self.element_buttons = self.periodic_table_widget.element_buttons
-        self.group_header_labels = self.periodic_table_widget.group_header_labels
-        self.period_labels = self.periodic_table_widget.period_labels
-        self.series_labels = self.periodic_table_widget.series_labels
-        self.corner_label = self.periodic_table_widget.corner_label
-        self.transition_label = self.periodic_table_widget.transition_label
-        self.selected_element_name_label = self.periodic_table_widget.selected_element_name_label
-        self.trends_overlay = self.periodic_table_widget.trends_overlay
-        self.table_stack_container = self.periodic_table_widget.table_stack_container
-        self.grid_layout = self.periodic_table_widget.grid_layout
-
-        self.content_layout.addWidget(self.periodic_table_widget, 0, Qt.AlignTop | Qt.AlignLeft)
-
-        self._build_right_panel_area()
-        self.content_layout.addWidget(self.right_column_widget, 1)
-        self.main_layout.addLayout(self.content_layout)
-        self.main_layout.addWidget(self.builder_widget)
-
-    def _build_right_panel_area(self):
-        """Build the right-side panel area with info, diagram, and compound pages in a stacked layout."""
-        self.right_panel_buttons = {}
-        right_panel_buttons_widget = QWidget()
-        self.right_panel_buttons_widget = right_panel_buttons_widget
-        self.right_panel_buttons_layout = FlowLayout(spacing=6)
-
-        right_modes = [
-            ("info", self.tr("right_info")),
-            ("diagram", self.tr("right_diagram")),
-            ("lewis", self.tr("right_lewis")),
-        ]
-
-        for mode, text_button in right_modes:
-            button = QPushButton(text_button)
-            button.setObjectName("panelMiniButton")
-            button.setCheckable(True)
-            button.clicked.connect(lambda checked=False, m=mode: self.set_right_panel_mode(m))
-            self.right_panel_buttons[mode] = button
-            self.right_panel_buttons_layout.addWidget(button)
-
-        right_panel_buttons_widget.setLayout(self.right_panel_buttons_layout)
-
-        self.info_panel = InfoPanel(
-            self.tr("info_prompt"),
-            numeric_ranges=self.numeric_ranges,
-        )
-        self.info_page = self.info_panel
-        self.info_label = self.info_panel.info_label
-
-        self.orbital_diagram_panel = OrbitalDiagramPanel(
-            self.tr("diagram_title"),
-            self.tr("diagram_prompt"),
-        )
-        self.diagram_page = self._wrap_in_scroll_area(self.orbital_diagram_panel)
-        self.diagram_title_label = self.orbital_diagram_panel.title_label
-        self.diagram_label = self.orbital_diagram_panel.diagram_label
-
-        self.lewis_panel = LewisPanel(
-            self.tr("lewis_title"),
-            self.tr("lewis_prompt"),
-        )
-        self.lewis_page = self._wrap_in_scroll_area(self.lewis_panel)
-
-        self.right_panel_container = QWidget()
-        self.right_panel_stack = QStackedLayout()
-        self.right_panel_stack.setContentsMargins(0, 0, 0, 0)
-        self.right_panel_stack.addWidget(self.info_page)
-        self.right_panel_stack.addWidget(self.diagram_page)
-        self.right_panel_stack.addWidget(self.lewis_page)
-        self.right_panel_container.setLayout(self.right_panel_stack)
-        self.right_panel_container.setMinimumHeight(0)
-
-        self.right_column_widget = QWidget()
-        right_column_layout = QVBoxLayout()
-        right_column_layout.setContentsMargins(0, 0, 0, 0)
-        right_column_layout.setSpacing(8)
-        right_column_layout.addWidget(right_panel_buttons_widget)
-        right_column_layout.addWidget(self.right_panel_container, 1)
-        self.right_column_widget.setLayout(right_column_layout)
-        self.right_column_widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
-        self.refresh_control_accessibility()
 
     def _finalize_layout(self):
         """Finalize the widget tree by attaching the content widget to the scroll area."""
