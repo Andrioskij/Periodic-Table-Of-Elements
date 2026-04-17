@@ -392,8 +392,10 @@ __all__ = [
     "audit_language_readiness",
 ]
 
-# Load all languages at module import time
+# Load only English (required fallback) at import time. Other languages are
+# loaded on-demand via _ensure_language_loaded() when first requested.
 try:
-    _load_all_languages()
-except FileNotFoundError as e:
-    _logger.warning("Could not load localization files: %s", e)
+    _load_language_from_json("en")
+except FileNotFoundError:
+    _logger.error("Critical: English localization file not found")
+    raise
