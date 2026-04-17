@@ -4,7 +4,7 @@ from PySide6.QtCore import QSettings
 
 from src.app_metadata import APP_EXECUTABLE_NAME, APP_VENDOR
 from src.config.static_data import NUMERIC_TREND_PROPERTIES
-from src.services.localization_service import LANGUAGE_OPTIONS
+from src.config.languages import LANGUAGE_OPTIONS
 
 DEFAULT_LANGUAGE = "en"
 DEFAULT_RIGHT_PANEL_MODE = "info"

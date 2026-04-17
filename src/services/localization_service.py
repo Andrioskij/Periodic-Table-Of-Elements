@@ -32,24 +32,14 @@ from .ui_localization import (
     get_localized_macro_class_text,
 )
 
-# Language configuration constants
-ALL_LANGUAGE_OPTIONS = [
-    ("en", "English"),
-    ("it", "Italiano"),
-    ("es", "Español"),
-    ("fr", "Français"),
-    ("de", "Deutsch"),
-    ("zh", "中文（简体）"),
-    ("ru", "Русский"),
-]
-
-VISIBLE_LANGUAGE_CODES = tuple(code for code, _ in ALL_LANGUAGE_OPTIONS)
-
-LANGUAGE_OPTIONS = [
-    (code, label)
-    for code, label in ALL_LANGUAGE_OPTIONS
-    if code in VISIBLE_LANGUAGE_CODES
-]
+# Language configuration constants are defined in src/config/languages.py to
+# avoid potential circular imports between settings_service and this module.
+# They are re-exported here for backward compatibility (see __all__ below).
+from src.config.languages import (
+    ALL_LANGUAGE_OPTIONS,
+    VISIBLE_LANGUAGE_CODES,
+    LANGUAGE_OPTIONS,
+)
 
 LANGUAGE_READINESS_REQUIRED_TEXT_KEYS = (
     "about_button",
