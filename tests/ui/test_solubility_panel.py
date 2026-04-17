@@ -71,6 +71,25 @@ class TestSolubilityPanel(unittest.TestCase):
         self.panel._on_check()
         self.assertIn("Insolubile", self.panel.verdict_label.text())
 
+    def test_matrix_cells_accessibility_non_empty(self):
+        entries = self.panel._matrix_cell_accessibility
+        self.assertGreater(len(entries), 0)
+        for entry in entries:
+            self.assertTrue(entry)
+        joined = " | ".join(entries)
+        self.assertIn("Na\u207a", joined)
+        self.assertIn("Cl\u207b", joined)
+        self.assertIn("Na\u207a + Cl\u207b", joined)
+
+    def test_matrix_description_includes_localized_verdict(self):
+        self.panel.apply_language(**_LANG_KWARGS)
+        entries = self.panel._matrix_cell_accessibility
+        joined = " | ".join(entries)
+        self.assertIn("Solubile", joined)
+        description = self.panel.matrix_label.accessibleDescription()
+        self.assertIn("Na\u207a", description)
+        self.assertIn("Cl\u207b", description)
+
 
 if __name__ == "__main__":
     unittest.main()

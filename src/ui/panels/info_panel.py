@@ -192,6 +192,8 @@ class _IsotopesSection(QWidget):
         super().__init__()
         self.setObjectName("infoSectionCard")
         self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setAccessibleName("Isotopes Section")
+        self.setAccessibleDescription("Shows common isotopes for the selected element.")
 
         layout = QVBoxLayout()
         layout.setContentsMargins(12, 12, 12, 12)
@@ -254,6 +256,10 @@ class _IndustrialUsesSection(QWidget):
         super().__init__()
         self.setObjectName("infoSectionCard")
         self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setAccessibleName("Industrial Uses Section")
+        self.setAccessibleDescription(
+            "Shows industrial and commercial applications for the selected element."
+        )
 
         layout = QVBoxLayout()
         layout.setContentsMargins(12, 12, 12, 12)

@@ -85,6 +85,7 @@ LANGUAGE_READINESS_REQUIRED_TEXT_KEYS = (
     "current_view_nonmetallic",
     "current_view_normal",
     "density",
+    "diagram_accessible_name",
     "diagram_not_available",
     "diagram_prompt",
     "diagram_switch_prompt",

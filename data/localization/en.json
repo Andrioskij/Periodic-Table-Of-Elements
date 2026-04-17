@@ -73,6 +73,7 @@
     "diagram_title": "Electron configuration",
     "diagram_title_symbol": "Electron configuration - {symbol}",
     "diagram_not_available": "Electron configuration not available.",
+    "diagram_accessible_name": "Orbital diagram for {symbol}: {config}",
     "formula_title": "Simple compounds",
     "formula_label": "Formula",
     "stock_name": "Stock name",

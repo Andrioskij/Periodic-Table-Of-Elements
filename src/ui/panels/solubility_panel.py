@@ -172,6 +172,7 @@ class SolubilityPanel(QWidget):
 
         # Initial render
         self._highlight_cations = []
+        self._matrix_cell_accessibility = []
         self._render_matrix()
 
     # ------------------------------------------------------------------
@@ -237,6 +238,9 @@ class SolubilityPanel(QWidget):
         self._legend_labels[0].setText(soluble_text)
         self._legend_labels[1].setText(insoluble_text)
         self._legend_labels[2].setText(slightly_text)
+
+        # Refresh matrix so its accessibility description picks up the new verdict labels.
+        self._render_matrix()
 
     # ------------------------------------------------------------------
     # Quick check
@@ -401,3 +405,17 @@ class SolubilityPanel(QWidget):
 
         painter.end()
         self.matrix_label.setPixmap(pixmap)
+
+        verdict_label_map = {
+            "soluble": self._soluble_text,
+            "insoluble": self._insoluble_text,
+            "slightly_soluble": self._slightly_text,
+        }
+        cell_entries = []
+        for i, cation in enumerate(CATIONS):
+            for j, anion in enumerate(ANIONS):
+                verdict = matrix[i][j]
+                result_text = verdict_label_map.get(verdict, verdict)
+                cell_entries.append(f"{cation} + {anion}: {result_text}")
+        self._matrix_cell_accessibility = cell_entries
+        self.matrix_label.setAccessibleDescription("; ".join(cell_entries))

@@ -73,6 +73,7 @@
     "diagram_title": "Elektronenkonfiguration",
     "diagram_title_symbol": "Elektronenkonfiguration - {symbol}",
     "diagram_not_available": "Elektronenkonfiguration nicht verfügbar.",
+    "diagram_accessible_name": "Orbitaldiagramm für {symbol}: {config}",
     "formula_title": "Einfache Verbindungen",
     "formula_label": "Formel",
     "stock_name": "Stock-Name",

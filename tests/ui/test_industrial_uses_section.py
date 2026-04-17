@@ -96,6 +96,10 @@ class TestIndustrialUsesSection(unittest.TestCase):
             "[Foo bar]",
         )
 
+    def test_section_has_accessible_name_and_description(self):
+        self.assertEqual(self.section.accessibleName(), "Industrial Uses Section")
+        self.assertIn("industrial", self.section.accessibleDescription().lower())
+
 
 if __name__ == "__main__":
     unittest.main()

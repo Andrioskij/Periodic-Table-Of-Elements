@@ -57,6 +57,10 @@ class TestIsotopesSection(unittest.TestCase):
         self.assertEqual(label.text(), "Nessun dato sugli isotopi")
         self.assertEqual(self.section.title_label.text(), "Isotopi")
 
+    def test_section_has_accessible_name_and_description(self):
+        self.assertEqual(self.section.accessibleName(), "Isotopes Section")
+        self.assertIn("isotopes", self.section.accessibleDescription().lower())
+
 
 if __name__ == "__main__":
     unittest.main()

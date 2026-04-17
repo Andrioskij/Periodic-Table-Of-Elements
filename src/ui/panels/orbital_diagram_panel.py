@@ -71,9 +71,17 @@ class OrbitalDiagramPanel(QWidget):
         if pixmap is None:
             self.diagram_label.setPixmap(QPixmap())
             self.diagram_label.setText(translate("diagram_not_available"))
+            self.diagram_label.setAccessibleName(translate("diagram_not_available"))
         else:
             self.diagram_label.setText("")
             self.diagram_label.setPixmap(pixmap)
+            self.diagram_label.setAccessibleName(
+                translate(
+                    "diagram_accessible_name",
+                    symbol=symbol,
+                    config=config_text or "",
+                )
+            )
 
     def create_orbital_diagram_pixmap(self, config_text, symbol, cell_size):
         """Render the orbital box diagram as a QPixmap image.

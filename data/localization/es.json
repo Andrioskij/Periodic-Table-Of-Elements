@@ -73,6 +73,7 @@
     "diagram_title": "Configuracion electronica",
     "diagram_title_symbol": "Configuracion electronica - {symbol}",
     "diagram_not_available": "Configuracion electronica no disponible.",
+    "diagram_accessible_name": "Diagrama orbital para {symbol}: {config}",
     "formula_title": "Compuestos simples",
     "formula_label": "Fórmula",
     "stock_name": "Nombre de Stock",

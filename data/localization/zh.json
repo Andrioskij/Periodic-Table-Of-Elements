@@ -73,6 +73,7 @@
     "diagram_title": "电子排布",
     "diagram_title_symbol": "电子排布 - {symbol}",
     "diagram_not_available": "电子排布不可用。",
+    "diagram_accessible_name": "{symbol} 的轨道图：{config}",
     "formula_title": "简单化合物",
     "formula_label": "化学式",
     "stock_name": "斯托克命名法",

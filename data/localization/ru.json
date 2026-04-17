@@ -73,6 +73,7 @@
     "diagram_title": "Электронная конфигурация",
     "diagram_title_symbol": "Электронная конфигурация - {symbol}",
     "diagram_not_available": "Электронная конфигурация недоступна.",
+    "diagram_accessible_name": "Орбитальная диаграмма для {symbol}: {config}",
     "formula_title": "Простые соединения",
     "formula_label": "Формула",
     "stock_name": "Название по Стоку",
