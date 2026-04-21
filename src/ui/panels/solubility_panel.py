@@ -27,6 +27,7 @@ from src.domain.solubility import (
     get_solubility_matrix,
     get_solubility_rule,
 )
+from src.ui.theme import get_theme
 
 # Cell and layout constants
 _CELL_W = 36
@@ -36,25 +37,19 @@ _HEADER_FONT_SIZE = 8
 _CELL_FONT_SIZE = 8
 _ANION_ROTATE_DEG = -60
 
-_COLOR_SOLUBLE = "#2d8a4e"
-_COLOR_INSOLUBLE = "#c0392b"
-_COLOR_SLIGHTLY = "#d4a017"
-_COLOR_BG = "#20252c"
-_COLOR_TEXT = "#eef3f8"
-_COLOR_HEADER = "#bec7d2"
-_COLOR_HIGHLIGHT = "#4fa3ff"
-
 _VERDICT_SYMBOL = {
     "soluble": "S",
     "insoluble": "I",
     "slightly_soluble": "~",
 }
 
-_VERDICT_COLOR = {
-    "soluble": _COLOR_SOLUBLE,
-    "insoluble": _COLOR_INSOLUBLE,
-    "slightly_soluble": _COLOR_SLIGHTLY,
-}
+
+def _verdict_color(theme, verdict):
+    """Return the theme-specific background color for a verdict category."""
+    return theme["solubility_soluble"] if verdict == "soluble" else (
+        theme["solubility_insoluble"] if verdict == "insoluble"
+        else theme["solubility_slightly"]
+    )
 
 _RULE_TEXT_KEY = {
     "alkali_ammonium": "solubility_rule_alkali",
@@ -74,6 +69,7 @@ class SolubilityPanel(QWidget):
         self.setObjectName("solubilityPanel")
         self.setFocusPolicy(Qt.StrongFocus)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Ignored)
+        self._theme = get_theme("dark")
 
         # --- Localized string storage ---
         self._soluble_text = "Soluble"
@@ -189,6 +185,12 @@ class SolubilityPanel(QWidget):
         self._highlight_cations = []
         self._render_matrix()
 
+    def apply_theme(self, theme_name):
+        """Switch the painter palette and redraw the matrix and legend swatches."""
+        self._theme = get_theme(theme_name)
+        self._refresh_legend_swatches()
+        self._render_matrix()
+
     def apply_language(
         self,
         *,
@@ -258,7 +260,7 @@ class SolubilityPanel(QWidget):
             "insoluble": self._insoluble_text,
             "slightly_soluble": self._slightly_text,
         }[verdict]
-        color = _VERDICT_COLOR[verdict]
+        color = _verdict_color(self._theme, verdict)
 
         lines = [
             f'<span style="color:{color}; font-size:14px;">\u25cf</span> '
@@ -295,14 +297,12 @@ class SolubilityPanel(QWidget):
         layout.addWidget(self._legend_title_label)
 
         self._legend_labels = []
-        for color, text in [
-            (_COLOR_SOLUBLE, self._soluble_text),
-            (_COLOR_INSOLUBLE, self._insoluble_text),
-            (_COLOR_SLIGHTLY, self._slightly_text),
-        ]:
+        self._legend_swatches = []
+        texts = [self._soluble_text, self._insoluble_text, self._slightly_text]
+        for text in texts:
             swatch = QLabel()
             swatch.setFixedSize(16, 12)
-            swatch.setStyleSheet(f"background-color: {color}; border-radius: 2px;")
+            self._legend_swatches.append(swatch)
 
             label = QLabel(text)
             self._legend_labels.append(label)
@@ -310,9 +310,22 @@ class SolubilityPanel(QWidget):
             layout.addWidget(swatch)
             layout.addWidget(label)
 
+        self._refresh_legend_swatches()
         layout.addStretch()
         widget.setLayout(layout)
         return widget
+
+    def _refresh_legend_swatches(self):
+        """Apply the current theme colors to the three legend swatches."""
+        if not getattr(self, "_legend_swatches", None):
+            return
+        colors = [
+            self._theme["solubility_soluble"],
+            self._theme["solubility_insoluble"],
+            self._theme["solubility_slightly"],
+        ]
+        for swatch, color in zip(self._legend_swatches, colors):
+            swatch.setStyleSheet(f"background-color: {color}; border-radius: 2px;")
 
     # ------------------------------------------------------------------
     # Matrix rendering
@@ -342,17 +355,21 @@ class SolubilityPanel(QWidget):
         total_w = row_header_w + grid_w + 4
         total_h = col_header_h + grid_h + 4
 
+        theme = self._theme
         pixmap = QPixmap(total_w, total_h)
-        pixmap.fill(QColor(_COLOR_BG))
+        pixmap.fill(QColor(theme["painter_bg"]))
 
         painter = QPainter(pixmap)
         painter.setRenderHint(QPainter.Antialiasing)
 
         highlight_set = set(self._highlight_cations)
+        header_color = QColor(theme["painter_subtext"])
+        text_color = QColor(theme["painter_text"])
+        highlight_color = QColor(theme["solubility_highlight"])
 
         # --- Draw column headers (anions, rotated) ---
         painter.setFont(header_font)
-        painter.setPen(QColor(_COLOR_HEADER))
+        painter.setPen(header_color)
         for j, anion in enumerate(ANIONS):
             x = row_header_w + j * (_CELL_W + _GAP) + _CELL_W // 2
             y = col_header_h - 4
@@ -369,7 +386,7 @@ class SolubilityPanel(QWidget):
 
             # Row header
             painter.setFont(header_font)
-            painter.setPen(QColor(_COLOR_HEADER))
+            painter.setPen(header_color)
             painter.drawText(
                 0, cy, row_header_w - 4, _CELL_H,
                 Qt.AlignRight | Qt.AlignVCenter, cation,
@@ -379,7 +396,7 @@ class SolubilityPanel(QWidget):
             for j, anion in enumerate(ANIONS):
                 cx = row_header_w + j * (_CELL_W + _GAP)
                 verdict = matrix[i][j]
-                cell_color = QColor(_VERDICT_COLOR[verdict])
+                cell_color = QColor(_verdict_color(theme, verdict))
 
                 painter.setPen(Qt.NoPen)
                 painter.setBrush(cell_color)
@@ -387,7 +404,7 @@ class SolubilityPanel(QWidget):
 
                 # Cell symbol
                 painter.setFont(cell_font)
-                painter.setPen(QColor(_COLOR_TEXT))
+                painter.setPen(text_color)
                 painter.drawText(
                     cx, cy, _CELL_W, _CELL_H,
                     Qt.AlignCenter, _VERDICT_SYMBOL[verdict],
@@ -395,7 +412,7 @@ class SolubilityPanel(QWidget):
 
             # Highlight border for row
             if is_highlighted:
-                pen = QPen(QColor(_COLOR_HIGHLIGHT), 2)
+                pen = QPen(highlight_color, 2)
                 painter.setPen(pen)
                 painter.setBrush(Qt.NoBrush)
                 painter.drawRect(

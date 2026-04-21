@@ -140,6 +140,7 @@ class MainWindow(QWidget):
         self.language_state = LanguageState()
 
         self.settings_service = context.settings_service
+        self.current_theme = self.settings_service.get_theme()
         self.about_dialog = None
 
         self.cell_size = 50
@@ -173,12 +174,16 @@ class MainWindow(QWidget):
 
         title = build_title_row(
             about_text=self.tr("about_button"),
+            theme_button_text=self._theme_button_text(),
+            theme_button_tooltip=self._theme_button_tooltip(),
             language_options=LANGUAGE_OPTIONS,
             on_about_clicked=self.open_about_dialog,
+            on_theme_toggle=self.toggle_theme,
             on_language_changed=self.change_language,
         )
         self.title_label = title["title_label"]
         self.about_button = title["about_button"]
+        self.theme_button = title["theme_button"]
         self.language_selector = title["language_selector"]
         self.main_layout.addLayout(title["title_row"])
 
@@ -377,7 +382,7 @@ class MainWindow(QWidget):
             self.setWindowIcon(app.windowIcon())
         self.resize(1500, 960)
         self.setMinimumSize(560, 480)
-        self.setStyleSheet(get_stylesheet())
+        self.setStyleSheet(get_stylesheet(self.current_theme))
 
     def _finalize_layout(self):
         """Finalize the widget tree by attaching the content widget to the scroll area."""
@@ -549,6 +554,38 @@ class MainWindow(QWidget):
             self.current_language = code
             self.settings_service.set_language(code)
             self.apply_language()
+
+    def _theme_button_text(self):
+        """Return the icon shown on the toggle button for the current theme."""
+        return "\u263C" if self.current_theme == "dark" else "\u263D"
+
+    def _theme_button_tooltip(self):
+        """Return the tooltip describing what toggling does from the current theme."""
+        target = "light" if self.current_theme == "dark" else "dark"
+        return f"Switch to {target} theme"
+
+    def toggle_theme(self):
+        """Swap the active theme, persist the choice, and re-apply styles live."""
+        new_theme = "light" if self.current_theme == "dark" else "dark"
+        self.current_theme = new_theme
+        self.settings_service.set_theme(new_theme)
+        self.apply_theme()
+
+    def apply_theme(self):
+        """Reload the stylesheet and refresh every widget that paints with theme colors."""
+        self.setStyleSheet(get_stylesheet(self.current_theme))
+        if hasattr(self, "theme_button"):
+            self.theme_button.setText(self._theme_button_text())
+            self.theme_button.setToolTip(self._theme_button_tooltip())
+
+        self.orbital_diagram_panel.apply_theme(self.current_theme)
+        self.lewis_panel.apply_theme(self.current_theme)
+        self.solubility_panel.apply_theme(self.current_theme)
+
+        self.periodic_table_widget.refresh_button_styles()
+        self.refresh_info_panel()
+        self.refresh_diagram_panel()
+        self.refresh_lewis_panel()
 
     def open_about_dialog(self):
         """Open (or reuse) the About dialog, applying the current language."""
@@ -949,7 +986,7 @@ class MainWindow(QWidget):
 
     def get_category_color(self, category):
         """Return the hex background color for a given element category."""
-        return get_ui_category_color(category)
+        return get_ui_category_color(category, theme=self.current_theme)
 
     def get_current_button_colors(self, element):
         """Compute the background and text colors for an element button under the active trend."""
@@ -959,6 +996,7 @@ class MainWindow(QWidget):
             numeric_ranges=self.numeric_ranges,
             get_macro_class=self.get_macro_class,
             get_macro_class_color=self.get_macro_class_color,
+            theme=self.current_theme,
         )
 
     def get_text_color(self, hex_color):

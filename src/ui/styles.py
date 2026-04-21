@@ -1,23 +1,31 @@
 import os
 from pathlib import Path
 from src.config.static_data import NUMERIC_TREND_PROPERTIES
+from src.ui.theme import get_theme
 
 
 def _get_stylesheet_path():
-    """Get path to the QSS stylesheet file."""
+    """Get path to the QSS template file."""
     base_dir = Path(__file__).parent.parent.parent  # Navigate to project root
-    return base_dir / "assets" / "styles" / "default.qss"
+    return base_dir / "assets" / "styles" / "theme.qss"
 
 
-def get_stylesheet():
-    """Load stylesheet from external QSS file."""
+def get_stylesheet(theme="dark"):
+    """Load the QSS template and substitute theme placeholders.
+
+    The template at ``assets/styles/theme.qss`` uses ``{{key}}`` tokens
+    that are replaced with values from the requested theme palette.
+    """
     qss_path = _get_stylesheet_path()
 
     if not qss_path.exists():
         raise FileNotFoundError(f"Stylesheet file not found: {qss_path}")
 
-    with open(qss_path, "r", encoding="utf-8") as f:
-        return f.read()
+    template = qss_path.read_text(encoding="utf-8")
+    palette = get_theme(theme)
+    for key, value in palette.items():
+        template = template.replace(f"{{{{{key}}}}}", value)
+    return template
 
 
 DEFAULT_UI_COLOR = "#7A7A7A"
@@ -41,6 +49,20 @@ PERIODIC_TABLE_CATEGORY_COLORS = {
     "lanthanoid": "#CDB4DB",
     "actinide": "#9D4EDD",
     "actinoid": "#9D4EDD",
+}
+PERIODIC_TABLE_CATEGORY_COLORS_LIGHT = {
+    "alkali metal": "#C46A12",
+    "alkaline earth metal": "#9C8418",
+    "transition metal": "#2E5380",
+    "post-transition metal": "#1F7368",
+    "metalloid": "#7F4F77",
+    "nonmetal": "#A38B47",
+    "halogen": "#C44099",
+    "noble gas": "#1F8AB3",
+    "lanthanide": "#9077A4",
+    "lanthanoid": "#9077A4",
+    "actinide": "#6E2DA0",
+    "actinoid": "#6E2DA0",
 }
 BUTTON_BORDER_COLORS = {
     "default": "#202020",
@@ -96,10 +118,19 @@ def get_text_color(hex_color):
     return "#111111" if luminance > 160 else "#FFFFFF"
 
 
-def get_category_color(category):
-    """Return the hex color assigned to an element category (e.g. 'noble gas')."""
+def get_category_color(category, theme="dark"):
+    """Return the hex color for an element category, tuned for the given theme.
+
+    The light-theme variants use the same hue with reduced luminosity so
+    contrast against a white background still meets WCAG AA.
+    """
     category = (category or "").lower()
-    return PERIODIC_TABLE_CATEGORY_COLORS.get(category, DEFAULT_UI_COLOR)
+    palette = (
+        PERIODIC_TABLE_CATEGORY_COLORS_LIGHT
+        if theme == "light"
+        else PERIODIC_TABLE_CATEGORY_COLORS
+    )
+    return palette.get(category, DEFAULT_UI_COLOR)
 
 
 def get_trend_overlay_color(mode):
@@ -114,15 +145,18 @@ def get_current_button_colors(
     numeric_ranges,
     get_macro_class,
     get_macro_class_color,
+    theme="dark",
 ):
     """Compute the (background, text) color pair for an element button.
 
     Selects the coloring strategy based on the active trend mode:
     category colors for 'normal', macro-class colors for 'macroclass',
     or a gradient-interpolated color for numeric trend properties.
+    The ``theme`` parameter selects the category palette tuned for
+    either the dark or the light UI mode.
     """
     if trend_mode == "normal" or trend_mode in {"metallic", "nonmetallic"}:
-        background_color = get_category_color(element.get("category"))
+        background_color = get_category_color(element.get("category"), theme=theme)
         return background_color, get_text_color(background_color)
 
     if trend_mode == "macroclass":

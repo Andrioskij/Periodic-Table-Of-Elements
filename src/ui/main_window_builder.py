@@ -70,11 +70,14 @@ def build_shell():
 def build_title_row(
     *,
     about_text,
+    theme_button_text,
+    theme_button_tooltip,
     language_options,
     on_about_clicked,
+    on_theme_toggle,
     on_language_changed,
 ):
-    """Create the title label, About button, and language selector."""
+    """Create the title label, About button, theme toggle, and language selector."""
     title_label = QLabel()
     title_label.setObjectName("titleLabel")
     title_label.setAlignment(Qt.AlignCenter)
@@ -82,6 +85,13 @@ def build_title_row(
     about_button = QPushButton(about_text)
     about_button.setObjectName("panelMiniButton")
     about_button.clicked.connect(on_about_clicked)
+
+    theme_button = QPushButton(theme_button_text)
+    theme_button.setObjectName("panelMiniButton")
+    theme_button.setAccessibleName("Toggle theme")
+    theme_button.setAccessibleDescription("Switch between dark and light UI theme")
+    theme_button.setToolTip(theme_button_tooltip)
+    theme_button.clicked.connect(on_theme_toggle)
 
     language_selector = QComboBox()
     for code, label in language_options:
@@ -94,11 +104,13 @@ def build_title_row(
     title_row.addStretch()
     title_row.addWidget(title_label, 1)
     title_row.addWidget(about_button, 0)
+    title_row.addWidget(theme_button, 0)
     title_row.addWidget(language_selector, 0)
 
     return {
         "title_label": title_label,
         "about_button": about_button,
+        "theme_button": theme_button,
         "language_selector": language_selector,
         "title_row": title_row,
     }

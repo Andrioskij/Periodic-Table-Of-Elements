@@ -9,6 +9,7 @@ from PySide6.QtGui import QColor, QFont, QPainter, QPixmap
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 from src.domain.lewis_diagram import distribute_dots, get_valence_electrons
+from src.ui.theme import get_theme
 
 
 class LewisPanel(QWidget):
@@ -18,6 +19,8 @@ class LewisPanel(QWidget):
         super().__init__()
         self.setObjectName("lewisPanel")
         self.setFocusPolicy(Qt.StrongFocus)
+        self._theme = get_theme("dark")
+        self._last_render = None
 
         self.title_label = QLabel(title_text)
         self.title_label.setObjectName("diagramTitleLabel")
@@ -65,6 +68,16 @@ class LewisPanel(QWidget):
         self.diagram_label.setPixmap(QPixmap())
         self.diagram_label.setText(prompt_text)
         self.valence_label.setText("")
+        self._last_render = None
+
+    def apply_theme(self, theme_name):
+        """Switch the painter palette and redraw the last diagram, if any."""
+        self._theme = get_theme(theme_name)
+        if self._last_render is None:
+            return
+        symbol, valence = self._last_render
+        pixmap = self._create_lewis_pixmap(symbol, valence)
+        self.diagram_label.setPixmap(pixmap)
 
     def show_lewis_diagram(self, element, *, translate, format_value):
         """Generate and display the Lewis dot diagram for the given element."""
@@ -76,6 +89,7 @@ class LewisPanel(QWidget):
             self.diagram_label.setPixmap(QPixmap())
             self.diagram_label.setText(translate("lewis_not_applicable"))
             self.valence_label.setText("")
+            self._last_render = None
             return
 
         pixmap = self._create_lewis_pixmap(symbol, valence)
@@ -84,12 +98,14 @@ class LewisPanel(QWidget):
         self.valence_label.setText(
             translate("lewis_valence_electrons", count=valence)
         )
+        self._last_render = (symbol, valence)
 
     def _create_lewis_pixmap(self, symbol, valence_electrons):
         """Render the Lewis dot diagram as a QPixmap image."""
+        theme = self._theme
         size = 240
         pixmap = QPixmap(size, size)
-        pixmap.fill(QColor("#20252c"))
+        pixmap.fill(QColor(theme["painter_bg"]))
 
         painter = QPainter(pixmap)
         painter.setRenderHint(QPainter.Antialiasing)
@@ -97,7 +113,7 @@ class LewisPanel(QWidget):
         # Draw element symbol at center
         symbol_font = QFont("Segoe UI", 28, QFont.Bold)
         painter.setFont(symbol_font)
-        painter.setPen(QColor("#eef3f8"))
+        painter.setPen(QColor(theme["painter_text"]))
         fm = painter.fontMetrics()
         text_width = fm.horizontalAdvance(symbol)
         text_height = fm.height()
@@ -112,7 +128,7 @@ class LewisPanel(QWidget):
         # Dot positions and distribution
         dots = distribute_dots(valence_electrons)
         dot_radius = 5
-        dot_color = QColor("#4fa3ff")
+        dot_color = QColor(theme["painter_dot"])
         painter.setPen(Qt.NoPen)
         painter.setBrush(dot_color)
 

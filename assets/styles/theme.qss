@@ -1,7 +1,7 @@
 
 QWidget {
-    background-color: #1e1e1e;
-    color: #f2f2f2;
+    background-color: {{bg_primary}};
+    color: {{text_primary}};
     font-family: Segoe UI, Arial, sans-serif;
 }
 
@@ -14,37 +14,37 @@ QLabel#titleLabel {
 QLabel#searchStatusLabel,
 QLabel#trendStatusLabel {
     font-size: 12px;
-    color: #c8c8c8;
+    color: {{text_secondary}};
 }
 
 QLabel#builderStatusLabel {
     font-size: 11px;
     font-weight: bold;
-    color: #d5dee8;
+    color: {{text_strong}};
 }
 
 QLabel#builderScopeLabel,
 QLabel#compoundScopeLabel {
     font-size: 11px;
-    color: #c8c8c8;
+    color: {{text_secondary}};
 }
 
 QWidget#searchCard {
-    background-color: #27303a;
-    border: 1px solid #4d5d6b;
+    background-color: {{bg_search_card}};
+    border: 1px solid {{border_search}};
     border-radius: 14px;
 }
 
 QWidget#compoundBuilderPanel {
-    background-color: #23272f;
-    border: 1px solid #404854;
+    background-color: {{bg_card}};
+    border: 1px solid {{border_strong}};
     border-radius: 10px;
 }
 
 QWidget#builderSelectionCard,
 QWidget#builderSelectorCard {
-    background-color: #20252c;
-    border: 1px solid #404854;
+    background-color: {{bg_inset}};
+    border: 1px solid {{border_strong}};
     border-radius: 8px;
 }
 
@@ -58,25 +58,25 @@ QLabel#builderSelectionTitleLabel,
 QLabel#builderGuideLabel,
 QLabel#builderSelectorCaptionLabel {
     font-size: 11px;
-    color: #c8c8c8;
+    color: {{text_secondary}};
 }
 
 QLabel#builderSelectionValueLabel,
 QLabel#builderSelectorSummaryLabel {
     font-size: 12px;
     font-weight: bold;
-    color: #f2f2f2;
+    color: {{text_primary}};
 }
 
 QLabel#builderSlotTitleLabel {
     font-size: 11px;
     font-weight: bold;
-    color: #dfe7ef;
+    color: {{text_strong}};
 }
 
 QLabel#builderSlotBadgeLabel {
-    background-color: #FFD60A;
-    color: #111111;
+    background-color: {{accent}};
+    color: {{text_on_accent}};
     border-radius: 10px;
     padding: 2px 8px;
     font-size: 11px;
@@ -85,55 +85,55 @@ QLabel#builderSlotBadgeLabel {
 
 QLabel#infoLabel,
 QLabel#infoPromptLabel {
-    background-color: #252526;
-    border: 1px solid #3c3c3c;
+    background-color: {{bg_card_alt}};
+    border: 1px solid {{border}};
     border-radius: 12px;
     padding: 12px;
     font-size: 13px;
 }
 
 QLabel#compoundResultLabel {
-    background-color: #252526;
-    border: 1px solid #3c3c3c;
+    background-color: {{bg_card_alt}};
+    border: 1px solid {{border}};
     border-radius: 8px;
     padding: 6px 8px;
     font-size: 13px;
 }
 
 QWidget#infoCard {
-    background-color: #252526;
-    border: 1px solid #3c3c3c;
+    background-color: {{bg_card_alt}};
+    border: 1px solid {{border}};
     border-radius: 14px;
 }
 
 QWidget#infoHero {
-    background-color: #27303a;
-    border: 1px solid #44515b;
+    background-color: {{bg_hero}};
+    border: 1px solid {{border_subtle}};
     border-radius: 12px;
 }
 
 QWidget#infoHeroAccentBar {
-    background-color: #ffd60a;
+    background-color: {{accent}};
     border-radius: 3px;
 }
 
 QWidget#infoHeroSymbolCard {
-    background-color: #20252c;
-    border: 1px solid #44515b;
+    background-color: {{bg_inset}};
+    border: 1px solid {{border_subtle}};
     border-radius: 12px;
 }
 
 QWidget#infoSectionCard,
 QWidget#sidePanelCard {
-    background-color: #23272f;
-    border: 1px solid #404854;
+    background-color: {{bg_card}};
+    border: 1px solid {{border_strong}};
     border-radius: 12px;
 }
 
 QLabel#infoSectionTitle {
     font-size: 11px;
     font-weight: bold;
-    color: #d5dbe4;
+    color: {{text_strong}};
     padding-top: 2px;
     letter-spacing: 0.4px;
 }
@@ -142,33 +142,33 @@ QLabel#infoFieldLabel,
 QLabel#infoHeroCaptionLabel,
 QLabel#infoFooterLabel {
     font-size: 11px;
-    color: #bdbdbd;
+    color: {{text_muted}};
 }
 
 QLabel#infoFieldValue,
 QLabel#infoHeroValueLabel {
     font-size: 14px;
     font-weight: bold;
-    color: #f2f2f2;
+    color: {{text_primary}};
 }
 
 QLabel#infoHeroAtomicNumberLabel {
     font-size: 28px;
     font-weight: bold;
-    color: #FFD60A;
+    color: {{accent}};
 }
 
 QLabel#infoHeroSymbolLabel {
     font-size: 44px;
     font-weight: bold;
-    color: #f2f2f2;
+    color: {{text_primary}};
     min-width: 72px;
 }
 
 QLabel#infoHeroNameLabel {
     font-size: 24px;
     font-weight: bold;
-    color: #f2f2f2;
+    color: {{text_primary}};
 }
 
 QLabel#infoHeroBadgeLabel {
@@ -184,12 +184,12 @@ QWidget#infoMetricVisualWidget {
 
 QProgressBar#infoMetricProgressBar {
     background-color: rgba(122, 122, 122, 24);
-    border: 1px solid #404854;
+    border: 1px solid {{border_strong}};
     border-radius: 4px;
 }
 
 QProgressBar#infoMetricProgressBar::chunk {
-    background-color: #5f7384;
+    background-color: {{border_button}};
     border-radius: 4px;
 }
 
@@ -202,45 +202,45 @@ QLabel#builderTitleLabel {
 }
 
 QLabel#diagramBoxLabel {
-    background-color: #20252c;
-    border: 1px solid #404854;
+    background-color: {{bg_inset}};
+    border: 1px solid {{border_strong}};
     border-radius: 12px;
     padding: 10px;
 }
 
 QLabel#headerLabel {
-    color: #d0d0d0;
+    color: {{text_secondary}};
     font-size: 11px;
     font-weight: bold;
 }
 
 QLabel#transitionBlockLabel {
-    color: #d7e5f5;
+    color: {{text_strong}};
     font-size: 14px;
     font-weight: bold;
     padding: 0px;
 }
 
 QLabel#sideLabel {
-    color: #bdbdbd;
+    color: {{text_muted}};
     font-size: 11px;
     font-weight: bold;
 }
 
 QLabel#seriesLabel {
-    color: #bdbdbd;
+    color: {{text_muted}};
     font-size: 10px;
     font-weight: bold;
 }
 
 QLineEdit,
 QComboBox {
-    background-color: #252526;
-    border: 1px solid #3c3c3c;
+    background-color: {{bg_input}};
+    border: 1px solid {{border}};
     border-radius: 8px;
     padding: 6px;
     font-size: 13px;
-    color: #f2f2f2;
+    color: {{text_primary}};
 }
 
 QComboBox {
@@ -254,7 +254,7 @@ QLineEdit#searchInput {
 
 QLineEdit:focus,
 QComboBox:focus {
-    border: 2px solid #FFD60A;
+    border: 2px solid {{accent}};
     padding: 5px;
 }
 
@@ -264,10 +264,10 @@ QComboBox::drop-down {
 }
 
 QComboBox QAbstractItemView {
-    background-color: #252526;
-    color: #f2f2f2;
-    border: 1px solid #3c3c3c;
-    selection-background-color: #3f5261;
+    background-color: {{bg_input}};
+    color: {{text_primary}};
+    border: 1px solid {{border}};
+    selection-background-color: {{selection_bg}};
 }
 
 QPushButton#searchButton,
@@ -275,9 +275,9 @@ QPushButton#trendButton,
 QPushButton#builderButton,
 QPushButton#builderResetButton,
 QPushButton#panelMiniButton {
-    background-color: #3f5261;
-    color: #ffffff;
-    border: 1px solid #5f7384;
+    background-color: {{bg_button}};
+    color: {{selection_text}};
+    border: 1px solid {{border_button}};
     border-radius: 8px;
     padding: 6px 10px;
     font-size: 12px;
@@ -285,9 +285,9 @@ QPushButton#panelMiniButton {
 }
 
 QPushButton#searchButton {
-    background-color: #FFD60A;
-    color: #111111;
-    border: 1px solid #E0B800;
+    background-color: {{accent}};
+    color: {{text_on_accent}};
+    border: 1px solid {{accent_pressed}};
     padding: 6px 12px;
 }
 
@@ -302,11 +302,11 @@ QPushButton#trendButton:hover,
 QPushButton#builderButton:hover,
 QPushButton#builderResetButton:hover,
 QPushButton#panelMiniButton:hover {
-    background-color: #4b6478;
+    background-color: {{bg_button_hover}};
 }
 
 QPushButton#searchButton:hover {
-    background-color: #FFE27A;
+    background-color: {{accent_hover}};
 }
 
 QPushButton#searchButton:pressed,
@@ -314,18 +314,18 @@ QPushButton#trendButton:pressed,
 QPushButton#builderButton:pressed,
 QPushButton#builderResetButton:pressed,
 QPushButton#panelMiniButton:pressed {
-    background-color: #32424f;
+    background-color: {{bg_button_pressed}};
 }
 
 QPushButton#searchButton:pressed {
-    background-color: #E0B800;
+    background-color: {{accent_pressed}};
 }
 
 QPushButton#trendButton:checked,
 QPushButton#panelMiniButton:checked {
-    background-color: #FFD60A;
-    color: #111111;
-    border: 1px solid #E0B800;
+    background-color: {{accent}};
+    color: {{text_on_accent}};
+    border: 1px solid {{accent_pressed}};
 }
 
 QPushButton#panelMiniButton {
@@ -338,33 +338,33 @@ QPushButton#trendButton:focus,
 QPushButton#builderButton:focus,
 QPushButton#builderResetButton:focus,
 QPushButton#panelMiniButton:focus {
-    border: 2px solid #FFD60A;
+    border: 2px solid {{accent}};
 }
 
 QPushButton:disabled,
 QComboBox:disabled {
-    background-color: #2a2e33;
-    color: #8f969e;
-    border: 1px solid #434952;
+    background-color: {{bg_disabled}};
+    color: {{text_disabled}};
+    border: 1px solid {{border_disabled}};
 }
 
 QScrollArea#infoPanel:focus,
 QWidget#orbitalDiagramPanel:focus,
 QWidget#compoundPanel:focus,
 QWidget#periodicTableWidget:focus {
-    border: 1px solid #FFD60A;
+    border: 1px solid {{accent}};
     border-radius: 12px;
 }
 
 QLabel#selectedElementNameLabel {
     font-size: 20px;
     font-weight: bold;
-    color: #f2f2f2;
+    color: {{text_primary}};
 }
 
 QListWidget {
-    background-color: #252526;
-    border: 1px solid #3c3c3c;
+    background-color: {{bg_input}};
+    border: 1px solid {{border}};
     border-radius: 8px;
     padding: 4px;
     font-size: 12px;
@@ -375,8 +375,8 @@ QListWidget::item {
 }
 
 QListWidget::item:selected {
-    background-color: #3f5261;
-    color: #ffffff;
+    background-color: {{selection_bg}};
+    color: {{selection_text}};
 }
 
 QScrollArea {

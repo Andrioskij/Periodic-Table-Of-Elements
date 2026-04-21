@@ -4,6 +4,7 @@ from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 from src.config.static_data import ORBITAL_BOX_COUNTS, VALID_SUBSHELLS
 from src.domain.electron_configuration import configuration_to_map, fill_boxes
+from src.ui.theme import get_theme
 
 
 class OrbitalDiagramPanel(QWidget):
@@ -17,6 +18,8 @@ class OrbitalDiagramPanel(QWidget):
         super().__init__()
         self.setObjectName("orbitalDiagramPanel")
         self.setFocusPolicy(Qt.StrongFocus)
+        self._theme = get_theme("dark")
+        self._last_render = None
 
         self.title_label = QLabel(title_text)
         self.title_label.setObjectName("diagramTitleLabel")
@@ -56,6 +59,17 @@ class OrbitalDiagramPanel(QWidget):
         self.title_label.setText(title_text)
         self.diagram_label.setPixmap(QPixmap())
         self.diagram_label.setText(prompt_text)
+        self._last_render = None
+
+    def apply_theme(self, theme_name):
+        """Switch the painter palette and redraw the last diagram, if any."""
+        self._theme = get_theme(theme_name)
+        if self._last_render is None:
+            return
+        config_text, symbol, cell_size = self._last_render
+        pixmap = self.create_orbital_diagram_pixmap(config_text, symbol, cell_size)
+        if pixmap is not None:
+            self.diagram_label.setPixmap(pixmap)
 
     def show_orbital_diagram(self, element, *, translate, cell_size, format_value):
         """Generate and display the orbital diagram for the given element.
@@ -72,6 +86,7 @@ class OrbitalDiagramPanel(QWidget):
             self.diagram_label.setPixmap(QPixmap())
             self.diagram_label.setText(translate("diagram_not_available"))
             self.diagram_label.setAccessibleName(translate("diagram_not_available"))
+            self._last_render = None
         else:
             self.diagram_label.setText("")
             self.diagram_label.setPixmap(pixmap)
@@ -82,6 +97,7 @@ class OrbitalDiagramPanel(QWidget):
                     config=config_text or "",
                 )
             )
+            self._last_render = (config_text, symbol, cell_size)
 
     def create_orbital_diagram_pixmap(self, config_text, symbol, cell_size):
         """Render the orbital box diagram as a QPixmap image.
@@ -118,18 +134,19 @@ class OrbitalDiagramPanel(QWidget):
         total_width = current_x + 10
         total_height = top_margin + 7 * (label_height + box_height + row_gap) + 8
 
+        theme = self._theme
         pixmap = QPixmap(total_width, total_height)
-        pixmap.fill(QColor("#20252c"))
+        pixmap.fill(QColor(theme["painter_bg"]))
 
         painter = QPainter(pixmap)
         painter.setRenderHint(QPainter.Antialiasing)
-        painter.setPen(QColor("#eef3f8"))
+        painter.setPen(QColor(theme["painter_text"]))
         painter.setFont(QFont("Segoe UI", 11, QFont.Bold))
         painter.drawText(10, 16, symbol)
 
         for level in range(1, 8):
             y_base = top_margin + (level - 1) * (label_height + box_height + row_gap)
-            painter.setPen(QColor("#bec7d2"))
+            painter.setPen(QColor(theme["painter_subtext"]))
             painter.setFont(QFont("Segoe UI", 8))
             painter.drawText(4, y_base + box_height + 1, str(level))
 
@@ -143,22 +160,22 @@ class OrbitalDiagramPanel(QWidget):
                 boxes = fill_boxes(electrons, box_count)
                 x_base = column_x[subshell]
 
-                painter.setPen(QColor("#d5dde8"))
+                painter.setPen(QColor(theme["painter_label"]))
                 painter.setFont(QFont("Segoe UI", 7))
                 painter.drawText(x_base, y_base - 1, key)
 
                 for index in range(box_count):
                     x = x_base + index * (box_width + box_gap)
                     y = y_base
-                    painter.setPen(QPen(QColor("#516071"), 1))
+                    painter.setPen(QPen(QColor(theme["painter_box_border"]), 1))
                     painter.drawRect(x, y, box_width, box_height)
 
                     if boxes[index] >= 1:
-                        painter.setPen(QColor("#4fa3ff"))
+                        painter.setPen(QColor(theme["painter_arrow_up"]))
                         painter.setFont(QFont("Segoe UI", 9, QFont.Bold))
                         painter.drawText(x + 1, y + box_height - 3, "\u2191")
                     if boxes[index] == 2:
-                        painter.setPen(QColor("#ff5f5f"))
+                        painter.setPen(QColor(theme["painter_arrow_down"]))
                         painter.setFont(QFont("Segoe UI", 9, QFont.Bold))
                         painter.drawText(x + box_width - 7, y + box_height - 3, "\u2193")
 

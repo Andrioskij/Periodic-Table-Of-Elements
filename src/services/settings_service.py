@@ -10,12 +10,14 @@ DEFAULT_LANGUAGE = "en"
 DEFAULT_RIGHT_PANEL_MODE = "info"
 DEFAULT_TREND_MODE = "normal"
 DEFAULT_WINDOW_STATE = "normal"
+DEFAULT_THEME = "dark"
 
 VALID_RIGHT_PANEL_MODES = {"info", "diagram", "lewis"}
 VALID_TOOL_AREA_MODES = {"compounds", "molar", "stoichiometry", "solubility"}
 VALID_TREND_MODES = set(list(NUMERIC_TREND_PROPERTIES.keys()) + ["normal", "macroclass", "metallic", "nonmetallic"])
 VALID_LANGUAGES = {code for code, _ in LANGUAGE_OPTIONS}
 VALID_WINDOW_STATES = {"normal", "maximized"}
+VALID_THEMES = {"dark", "light"}
 
 
 class SettingValidator:
@@ -214,6 +216,20 @@ class SettingsService:
         if state not in VALID_WINDOW_STATES:
             return
         self.settings.setValue("window_state", state)
+        self.settings.sync()
+
+    def get_theme(self):
+        """Return the stored UI theme ('dark' or 'light')."""
+        raw = self.settings.value("theme", DEFAULT_THEME)
+        value = SettingValidator._clean_string(raw)
+        return SettingValidator.validate_enum(value, VALID_THEMES, DEFAULT_THEME)
+
+    def set_theme(self, name):
+        """Persist the active UI theme after validation."""
+        name = SettingValidator._clean_string(name)
+        if name not in VALID_THEMES:
+            return
+        self.settings.setValue("theme", name)
         self.settings.sync()
 
     def clear(self):
