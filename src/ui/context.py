@@ -24,20 +24,20 @@ class AppContext:
     nomenclature_data: dict
 
     # Services
-    settings_service: "SettingsService"
+    settings_service: SettingsService
 
     # Managers
-    search_manager: "SearchManager"
-    trend_manager: "TrendManager"
-    compound_builder_manager: "CompoundBuilderManager"
+    search_manager: SearchManager
+    trend_manager: TrendManager
+    compound_builder_manager: CompoundBuilderManager
 
     @classmethod
     def create(
         cls,
         elements: list,
         nomenclature_data: dict,
-        settings_service: "SettingsService",
-    ) -> "AppContext":
+        settings_service: SettingsService,
+    ) -> AppContext:
         """Factory method to create AppContext with all managers initialized.
 
         Args:

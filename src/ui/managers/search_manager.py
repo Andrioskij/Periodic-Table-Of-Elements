@@ -1,7 +1,6 @@
 """Manager for element search operations."""
 
 from dataclasses import dataclass, field
-from typing import Set
 
 from src.ui.search_helpers import get_ranked_matches
 
@@ -17,9 +16,9 @@ class SearchManager:
     elements: list
 
     _current_query: str = ""
-    _matches: Set[int] = field(default_factory=set)
+    _matches: set[int] = field(default_factory=set)
 
-    def search(self, query: str) -> Set[int]:
+    def search(self, query: str) -> set[int]:
         """Search elements by name, symbol, or atomic number.
 
         Args:
@@ -50,12 +49,12 @@ class SearchManager:
         self._matches.clear()
 
     @property
-    def matches(self) -> Set[int]:
+    def matches(self) -> set[int]:
         """Return set of atomic numbers of currently matching elements."""
         return self._matches
 
     @matches.setter
-    def matches(self, value: Set[int]) -> None:
+    def matches(self, value: set[int]) -> None:
         """Set the set of atomic numbers matching the current search."""
         self._matches = value
 

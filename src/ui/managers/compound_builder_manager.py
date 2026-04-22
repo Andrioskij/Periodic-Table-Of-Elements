@@ -16,10 +16,10 @@ _logger = logging.getLogger(__name__)
 class CompoundBuilderState:
     """Internal state for compound builder."""
 
-    element_a_id: Optional[int] = None
-    element_a_oxidation: Optional[int] = None
-    element_b_id: Optional[int] = None
-    element_b_oxidation: Optional[int] = None
+    element_a_id: int | None = None
+    element_a_oxidation: int | None = None
+    element_b_id: int | None = None
+    element_b_oxidation: int | None = None
 
 
 @dataclass
@@ -78,7 +78,7 @@ class CompoundBuilderManager:
         self._state.element_b_oxidation = oxidation
         return True
 
-    def build_compound(self) -> Optional[str]:
+    def build_compound(self) -> str | None:
         """Build the chemical formula if state is valid.
 
         Returns:
@@ -145,7 +145,7 @@ class CompoundBuilderManager:
         """Check if oxidation state is valid (non-zero integer)."""
         return isinstance(oxidation, int) and oxidation != 0
 
-    def _get_element(self, element_id: Optional[int]) -> Optional[dict]:
+    def _get_element(self, element_id: int | None) -> dict | None:
         """Return the element record for the given atomic number, or None."""
         if element_id is None:
             return None
