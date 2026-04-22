@@ -5,8 +5,8 @@ Unified access to supplementary element data including isotopes and industrial u
 Aggregates data from specialized modules for convenient lookup.
 """
 
-from .isotope_data import get_isotopes
 from .industrial_uses import get_industrial_uses
+from .isotope_data import get_isotopes
 
 __all__ = [
     "get_isotopes",

@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-
 EV_TO_KJ_PER_MOL = 96.48533212331002
 
 

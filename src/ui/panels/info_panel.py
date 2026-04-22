@@ -167,7 +167,7 @@ class _MetricVisual(QWidget):
         fill_color = interpolate_color("#7E8EA4", accent_color, 0.78)
 
         self.progress_bar.setStyleSheet(
-            (
+
                 "QProgressBar#infoMetricProgressBar {"
                 f"background-color: {track_color};"
                 f"border: 1px solid {track_border};"
@@ -177,7 +177,7 @@ class _MetricVisual(QWidget):
                 f"background-color: {fill_color};"
                 "border-radius: 4px;"
                 "}"
-            )
+
         )
 
 
@@ -646,7 +646,7 @@ class InfoPanel(QScrollArea):
 
         # Import here to avoid circular dependency
         try:
-            from src.services.element_properties import get_isotopes, get_industrial_uses
+            from src.services.element_properties import get_industrial_uses, get_isotopes
 
             isotopes = get_isotopes(element.get("symbol", ""))
             uses = get_industrial_uses(element.get("symbol", ""))

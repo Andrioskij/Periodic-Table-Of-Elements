@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-
 UNBOUNDED_MAX_WIDTH = 16777215
 MIN_WINDOW_WIDTH = 560
 WIDE_BREAKPOINT = 1500

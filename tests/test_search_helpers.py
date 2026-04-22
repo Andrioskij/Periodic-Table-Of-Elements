@@ -2,7 +2,6 @@ import unittest
 
 from src.ui.search_helpers import compute_match_score, get_ranked_matches
 
-
 HYDROGEN = {"name": "Hydrogen", "symbol": "H", "atomic_number": 1}
 HELIUM = {"name": "Helium", "symbol": "He", "atomic_number": 2}
 IRON = {"name": "Iron", "symbol": "Fe", "atomic_number": 26}

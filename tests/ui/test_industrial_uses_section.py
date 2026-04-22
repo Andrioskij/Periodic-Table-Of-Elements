@@ -13,7 +13,6 @@ from PySide6.QtWidgets import QApplication, QLabel
 
 from src.ui.panels.info_panel import _IndustrialUsesSection
 
-
 _app = QApplication.instance() or QApplication(sys.argv)
 
 

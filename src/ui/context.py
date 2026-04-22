@@ -48,9 +48,9 @@ class AppContext:
         Returns:
             Fully initialized AppContext
         """
+        from src.ui.managers.compound_builder_manager import CompoundBuilderManager
         from src.ui.managers.search_manager import SearchManager
         from src.ui.managers.trend_manager import TrendManager
-        from src.ui.managers.compound_builder_manager import CompoundBuilderManager
 
         search_mgr = SearchManager(elements)
         trend_mgr = TrendManager(elements)

@@ -12,7 +12,6 @@ from PySide6.QtWidgets import QApplication
 
 from src.ui.panels.molar_mass_panel import MolarMassPanel
 
-
 _app = QApplication.instance() or QApplication(sys.argv)
 
 

@@ -13,7 +13,6 @@ from PySide6.QtWidgets import QApplication
 
 from src.ui.panels.stoichiometry_panel import StoichiometryPanel
 
-
 _app = QApplication.instance() or QApplication(sys.argv)
 
 

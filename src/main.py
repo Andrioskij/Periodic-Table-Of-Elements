@@ -11,7 +11,6 @@ from src.app_metadata import (
     APP_VERSION,
 )
 from src.bootstrap import run as run_application
-
 from src.config.static_data import (
     NUMERIC_TREND_PROPERTIES,
     ORBITAL_BOX_COUNTS,
@@ -48,13 +47,29 @@ from src.services.data_loader import (
 from src.services.localization_service import (
     LANGUAGE_OPTIONS,
     UI_TEXTS,
+)
+from src.services.localization_service import (
     format_stock_compound_name as localize_stock_compound_name,
+)
+from src.services.localization_service import (
     format_traditional_compound_name as localize_traditional_compound_name,
+)
+from src.services.localization_service import (
     get_language_naming_rules as get_naming_rules,
+)
+from src.services.localization_service import (
     get_localized_anion_name as get_anion_name_for_language,
+)
+from src.services.localization_service import (
     get_localized_element_name as get_element_name_for_language,
+)
+from src.services.localization_service import (
     get_localized_support_text as get_support_text_for_language,
+)
+from src.services.localization_service import (
     get_support_entry as get_nomenclature_support_entry,
+)
+from src.services.localization_service import (
     tr as translate_text,
 )
 from src.ui.main_window import MainWindow, format_value

@@ -1,6 +1,5 @@
 from src.config.static_data import NUMERIC_TREND_PROPERTIES
 
-
 METAL_CATEGORIES = {
     "alkali metal",
     "alkaline earth metal",

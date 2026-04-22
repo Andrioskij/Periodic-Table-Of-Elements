@@ -2,7 +2,6 @@ import re
 
 from src.config.static_data import CORE_CONFIGS
 
-
 TOKEN_PATTERN = re.compile(r"\[[A-Za-z]{1,2}\]|\d[spdf]\d+")
 CONFIG_PATTERN = re.compile(r"(\d)([spdf])(\d+)")
 

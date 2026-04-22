@@ -20,7 +20,6 @@ from src.app_metadata import (
     OPTIONAL_ICON_PATH,
 )
 
-
 LOG_FILE_NAME = f"{APP_EXECUTABLE_NAME}.log"
 LOG_DIR_NAME = "logs"
 LOG_MAX_BYTES = 512 * 1024

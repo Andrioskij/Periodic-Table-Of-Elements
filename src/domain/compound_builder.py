@@ -1,7 +1,6 @@
 import math
 import re
 
-
 OXIDATION_PATTERN = re.compile(r"[+-]?\d+")
 
 

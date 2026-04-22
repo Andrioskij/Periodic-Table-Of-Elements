@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt, QEvent
+from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QKeySequence, QShortcut
 from PySide6.QtWidgets import (
     QApplication,
@@ -26,39 +26,64 @@ from src.domain.trends import (
 )
 from src.services.localization_service import (
     LANGUAGE_OPTIONS,
+)
+from src.services.localization_service import (
     format_stock_compound_name as localize_stock_compound_name,
+)
+from src.services.localization_service import (
     format_traditional_compound_name as localize_traditional_compound_name,
+)
+from src.services.localization_service import (
     get_language_naming_rules as get_naming_rules,
+)
+from src.services.localization_service import (
     get_localized_anion_name as get_anion_name_for_language,
+)
+from src.services.localization_service import (
     get_localized_category_text as get_category_text_for_language,
+)
+from src.services.localization_service import (
     get_localized_element_name as get_element_name_for_language,
+)
+from src.services.localization_service import (
     get_localized_macro_class_text as get_macro_class_text_for_language,
+)
+from src.services.localization_service import (
     get_localized_standard_state_text as get_standard_state_text_for_language,
+)
+from src.services.localization_service import (
     get_localized_support_text as get_support_text_for_language,
+)
+from src.services.localization_service import (
     get_support_entry as get_nomenclature_support_entry,
+)
+from src.services.localization_service import (
     tr as translate_text,
 )
 from src.services.settings_service import SettingsService
 from src.ui.about_dialog import AboutDialog
 from src.ui.compound_text import (
     compose_compound_result_text as compose_compound_panel_text,
+)
+from src.ui.compound_text import (
     format_common_compounds_section as format_compound_preview_section,
+)
+from src.ui.compound_text import (
     get_common_compounds_for_pair,
+)
+from src.ui.compound_text import (
     get_compound_pair_key as build_compound_pair_key,
+)
+from src.ui.compound_text import (
     get_localized_common_compound_name as get_localized_common_name,
 )
+from src.ui.context import AppContext
 from src.ui.formatters import format_info_value, format_value
-from src.ui.layout_policy import HORIZONTAL, UNBOUNDED_MAX_WIDTH, VERTICAL, compute_responsive_layout
-from src.ui.main_window_language import (
-    build_accessibility_specs,
-    build_main_window_texts,
-)
-from src.ui.main_window_panels import (
-    TOOL_AREA_STACK_INDEX,
-    build_diagram_panel_state,
-    build_info_panel_prompt,
-    build_right_panel_mode_state,
-    build_tool_area_mode_state,
+from src.ui.layout_policy import (
+    HORIZONTAL,
+    UNBOUNDED_MAX_WIDTH,
+    VERTICAL,
+    compute_responsive_layout,
 )
 from src.ui.main_window_builder import (
     build_builder_widget,
@@ -71,11 +96,23 @@ from src.ui.main_window_builder import (
     build_top_controls_layout,
     build_trend_controls,
 )
+from src.ui.main_window_language import (
+    build_accessibility_specs,
+    build_main_window_texts,
+)
+from src.ui.main_window_panels import (
+    TOOL_AREA_STACK_INDEX,
+    build_diagram_panel_state,
+    build_info_panel_prompt,
+    build_right_panel_mode_state,
+    build_tool_area_mode_state,
+)
 from src.ui.search_helpers import (
     compute_match_score as compute_search_match_score,
+)
+from src.ui.search_helpers import (
     get_ranked_matches as get_ranked_search_matches,
 )
-from src.ui.context import AppContext
 from src.ui.state import (
     LanguageState,
     RightPanelState,
@@ -83,13 +120,20 @@ from src.ui.state import (
 )
 from src.ui.styles import (
     DEFAULT_UI_COLOR,
-    get_category_color as get_ui_category_color,
-    get_current_button_colors as get_ui_button_colors,
     get_stylesheet,
+)
+from src.ui.styles import (
+    get_category_color as get_ui_category_color,
+)
+from src.ui.styles import (
+    get_current_button_colors as get_ui_button_colors,
+)
+from src.ui.styles import (
     get_text_color as get_ui_text_color,
+)
+from src.ui.styles import (
     interpolate_color as interpolate_ui_color,
 )
-
 
 TREND_BUTTON_SPECS = (
     ("normal", "trend_button_normal"),

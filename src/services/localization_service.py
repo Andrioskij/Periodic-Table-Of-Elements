@@ -15,30 +15,30 @@ from pathlib import Path
 _logger = logging.getLogger(__name__)
 
 # Import from specialized modules for re-export
-from .element_names import (
-    get_localized_element_name,
-    get_localized_anion_name,
-    get_support_entry,
-    get_localized_support_text,
-)
-from .compound_names import (
-    format_stock_compound_name,
-    format_traditional_compound_name,
-    RUSSIAN_GENITIVE_EXCEPTIONS,
-)
-from .ui_localization import (
-    get_localized_category_text,
-    get_localized_standard_state_text,
-    get_localized_macro_class_text,
-)
-
 # Language configuration constants are defined in src/config/languages.py to
 # avoid potential circular imports between settings_service and this module.
 # They are re-exported here for backward compatibility (see __all__ below).
 from src.config.languages import (
     ALL_LANGUAGE_OPTIONS,
-    VISIBLE_LANGUAGE_CODES,
     LANGUAGE_OPTIONS,
+    VISIBLE_LANGUAGE_CODES,
+)
+
+from .compound_names import (
+    RUSSIAN_GENITIVE_EXCEPTIONS,
+    format_stock_compound_name,
+    format_traditional_compound_name,
+)
+from .element_names import (
+    get_localized_anion_name,
+    get_localized_element_name,
+    get_localized_support_text,
+    get_support_entry,
+)
+from .ui_localization import (
+    get_localized_category_text,
+    get_localized_macro_class_text,
+    get_localized_standard_state_text,
 )
 
 LANGUAGE_READINESS_REQUIRED_TEXT_KEYS = (
@@ -213,7 +213,7 @@ def _load_language_from_json(language_code):
     if not json_file.exists():
         raise FileNotFoundError(f"Localization file not found: {json_file}")
 
-    with open(json_file, "r", encoding="utf-8") as f:
+    with open(json_file, encoding="utf-8") as f:
         data = json.load(f)
 
     # Update global dictionaries

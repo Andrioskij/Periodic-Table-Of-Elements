@@ -9,7 +9,8 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from src.ui.styles import build_periodic_button_stylesheet, get_text_color as get_ui_text_color
+from src.ui.styles import build_periodic_button_stylesheet
+from src.ui.styles import get_text_color as get_ui_text_color
 
 from .trends_overlay import TrendsOverlay
 

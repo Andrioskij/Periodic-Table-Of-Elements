@@ -12,7 +12,6 @@ from PySide6.QtWidgets import QApplication
 
 from src.ui.panels.orbital_diagram_panel import OrbitalDiagramPanel
 
-
 _app = QApplication.instance() or QApplication(sys.argv)
 
 

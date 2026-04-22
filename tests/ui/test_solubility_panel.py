@@ -13,7 +13,6 @@ from PySide6.QtWidgets import QApplication
 
 from src.ui.panels.solubility_panel import SolubilityPanel
 
-
 _app = QApplication.instance() or QApplication(sys.argv)
 
 

@@ -8,7 +8,6 @@ and accessed via properties in MainWindow.
 from dataclasses import dataclass
 from typing import Any
 
-
 ElementRecord = dict[str, Any]
 
 

@@ -12,9 +12,9 @@ from src.app_metadata import (
     APP_DISPLAY_NAME,
     APP_EXECUTABLE_NAME,
     APP_ID,
-    OPTIONAL_ICON_PATH,
     APP_VENDOR,
     APP_VERSION,
+    OPTIONAL_ICON_PATH,
 )
 from src.error_handling import (
     STARTUP_ERROR_MESSAGE,
