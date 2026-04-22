@@ -78,6 +78,46 @@ class TestLoadElements(unittest.TestCase):
         self.assertTrue(ELEMENTS_DATA_PATH.exists())
 
 
+class TestLoadJsonFileSchemaDrift(unittest.TestCase):
+    """load_json_file should not crash on partially-corrupted records.
+
+    The loader is intentionally schema-agnostic: validation happens
+    downstream. These cases confirm that JSON which is well-formed
+    but missing or null in a known field still loads cleanly so
+    callers can decide how to react.
+    """
+
+    def test_elements_with_missing_atomic_number(self):
+        records = [
+            {"symbol": "H", "atomic_number": 1, "name": "Hydrogen"},
+            {"symbol": "X", "name": "Mystery"},
+        ]
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(records, f)
+            path = f.name
+        try:
+            result = load_json_file(path)
+            self.assertEqual(result, records)
+            self.assertNotIn("atomic_number", result[1])
+        finally:
+            os.unlink(path)
+
+    def test_elements_with_null_symbol(self):
+        records = [
+            {"symbol": "H", "atomic_number": 1, "name": "Hydrogen"},
+            {"symbol": None, "atomic_number": 999, "name": "Broken"},
+        ]
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(records, f)
+            path = f.name
+        try:
+            result = load_json_file(path)
+            self.assertEqual(result, records)
+            self.assertIsNone(result[1]["symbol"])
+        finally:
+            os.unlink(path)
+
+
 class TestLoadNomenclatureData(unittest.TestCase):
 
     def test_returns_dict(self):
