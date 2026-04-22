@@ -50,7 +50,8 @@ class TestIsotopesSection(unittest.TestCase):
         self.assertIn("Isotope-?", text)
 
     def test_translate_fallback_used_for_empty(self):
-        tr = lambda key: {"no_isotope_data": "Nessun dato sugli isotopi"}.get(key, key)
+        def tr(key):
+            return {"no_isotope_data": "Nessun dato sugli isotopi"}.get(key, key)
         self.section.set_content(title="Isotopi", isotopes=[], translate=tr)
         label = self.section.isotopes_layout.itemAt(0).widget()
         self.assertEqual(label.text(), "Nessun dato sugli isotopi")

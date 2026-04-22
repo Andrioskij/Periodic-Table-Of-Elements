@@ -64,7 +64,8 @@ class TestBuildBinaryFormula(unittest.TestCase):
         self.assertEqual(result, "CaO")
 
     def test_custom_formatter(self):
-        fmt = lambda sym, cnt: f"<sub>{sym}{cnt}</sub>"
+        def fmt(sym, cnt):
+            return f"<sub>{sym}{cnt}</sub>"
         result = build_binary_formula("Fe", 3, "O", 2, formatter=fmt)
         self.assertIn("Fe", result)
         self.assertIn("O", result)

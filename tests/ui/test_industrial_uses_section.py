@@ -53,16 +53,18 @@ class TestIndustrialUsesSection(unittest.TestCase):
         )
 
     def test_translate_fallback_used_for_empty(self):
-        tr = lambda key: {"no_industrial_data": "Nessun dato industriale"}.get(key, key)
+        def tr(key):
+            return {"no_industrial_data": "Nessun dato industriale"}.get(key, key)
         self.section.set_content(title="Usi industriali", uses=[], translate=tr)
         label = self.section.uses_layout.itemAt(0).widget()
         self.assertEqual(label.text(), "Nessun dato industriale")
         self.assertEqual(self.section.title_label.text(), "Usi industriali")
 
     def test_category_translated_when_key_present(self):
-        tr = lambda key: {
-            "industrial_category_chemical_synthesis": "Sintesi chimica",
-        }.get(key, key)
+        def tr(key):
+            return {
+                "industrial_category_chemical_synthesis": "Sintesi chimica",
+            }.get(key, key)
         data = [{"category": "Chemical synthesis", "use": "Ammonia production"}]
         self.section.set_content(title="Usi industriali", uses=data, translate=tr)
         self.assertEqual(self.section.uses_layout.count(), 2)
@@ -76,7 +78,8 @@ class TestIndustrialUsesSection(unittest.TestCase):
         )
 
     def test_category_falls_back_when_translate_returns_key(self):
-        tr = lambda key: key
+        def tr(key):
+            return key
         data = [{"category": "Chemical synthesis", "use": "Ammonia production"}]
         self.section.set_content(title="Industrial uses", uses=data, translate=tr)
         self.assertEqual(
@@ -85,9 +88,10 @@ class TestIndustrialUsesSection(unittest.TestCase):
         )
 
     def test_unknown_category_falls_back_to_raw_value(self):
-        tr = lambda key: {
-            "industrial_category_energy": "Energia",
-        }.get(key, key)
+        def tr(key):
+            return {
+                "industrial_category_energy": "Energia",
+            }.get(key, key)
         data = [{"category": "Foo bar", "use": "Unmapped category"}]
         self.section.set_content(title="Usi industriali", uses=data, translate=tr)
         self.assertEqual(
