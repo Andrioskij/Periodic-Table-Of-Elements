@@ -26,9 +26,12 @@ def _load_isotope_data():
     try:
         with open(_DATA_PATH, encoding="utf-8") as f:
             return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError) as exc:
-        _logger.warning("Could not load isotope data from %s: %s", _DATA_PATH, exc)
+    except FileNotFoundError:
+        _logger.warning("Isotope data file not found at %s", _DATA_PATH)
         return {}
+    except json.JSONDecodeError:
+        _logger.exception("Corrupted isotope JSON at %s", _DATA_PATH)
+        raise
 
 
 # Isotope data: symbol -> list of {"mass_number": int, "abundance": float|None,

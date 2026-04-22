@@ -26,11 +26,12 @@ def _load_industrial_uses():
     try:
         with open(_DATA_PATH, encoding="utf-8") as f:
             return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError) as exc:
-        _logger.warning(
-            "Could not load industrial uses data from %s: %s", _DATA_PATH, exc
-        )
+    except FileNotFoundError:
+        _logger.warning("Industrial uses data file not found at %s", _DATA_PATH)
         return {}
+    except json.JSONDecodeError:
+        _logger.exception("Corrupted industrial uses JSON at %s", _DATA_PATH)
+        raise
 
 
 # Industrial uses data: symbol -> list of {"category": str, "use": str}
