@@ -72,7 +72,10 @@ class LewisPanel(QWidget):
 
     def apply_theme(self, theme_name):
         """Switch the painter palette and redraw the last diagram, if any."""
-        self._theme = get_theme(theme_name)
+        new_theme = get_theme(theme_name)
+        if new_theme is self._theme:
+            return
+        self._theme = new_theme
         if self._last_render is None:
             return
         symbol, valence = self._last_render

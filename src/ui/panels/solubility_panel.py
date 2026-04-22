@@ -187,7 +187,10 @@ class SolubilityPanel(QWidget):
 
     def apply_theme(self, theme_name):
         """Switch the painter palette and redraw the matrix and legend swatches."""
-        self._theme = get_theme(theme_name)
+        new_theme = get_theme(theme_name)
+        if new_theme is self._theme:
+            return
+        self._theme = new_theme
         self._refresh_legend_swatches()
         self._render_matrix()
 

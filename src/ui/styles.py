@@ -3,6 +3,8 @@ from pathlib import Path
 from src.config.static_data import NUMERIC_TREND_PROPERTIES
 from src.ui.theme import get_theme
 
+_STYLESHEET_CACHE: dict[str, str] = {}
+
 
 def _get_stylesheet_path():
     """Get path to the QSS template file."""
@@ -13,11 +15,13 @@ def _get_stylesheet_path():
 def get_stylesheet(theme="dark"):
     """Load the QSS template and substitute theme placeholders.
 
-    The template at ``assets/styles/theme.qss`` uses ``{{key}}`` tokens
-    that are replaced with values from the requested theme palette.
+    Results are cached per theme name; the template file is not
+    expected to change at runtime, so the cache never expires.
     """
-    qss_path = _get_stylesheet_path()
+    if theme in _STYLESHEET_CACHE:
+        return _STYLESHEET_CACHE[theme]
 
+    qss_path = _get_stylesheet_path()
     if not qss_path.exists():
         raise FileNotFoundError(f"Stylesheet file not found: {qss_path}")
 
@@ -25,6 +29,8 @@ def get_stylesheet(theme="dark"):
     palette = get_theme(theme)
     for key, value in palette.items():
         template = template.replace(f"{{{{{key}}}}}", value)
+
+    _STYLESHEET_CACHE[theme] = template
     return template
 
 
