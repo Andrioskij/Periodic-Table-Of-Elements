@@ -41,7 +41,7 @@ class SearchManager:
         )
 
         # Extract atomic numbers from matched elements
-        self._matches = {element.get("atomic_number") for element in matches}
+        self._matches = {element["atomic_number"] for element in matches}
         return self._matches
 
     def clear_search(self) -> None:

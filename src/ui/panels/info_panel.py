@@ -99,7 +99,7 @@ class _InfoSection(QWidget):
         self.title_label.setText(title)
         for field_name, translation_key in self.field_definitions:
             self.field_label_widgets[field_name].setText(translate(translation_key))
-            self.field_value_widgets[field_name].setText(values[field_name])
+            self.field_value_widgets[field_name].setText(values.get(field_name, "—"))
 
 
 class _MetricVisual(QWidget):
