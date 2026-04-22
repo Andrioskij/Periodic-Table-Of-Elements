@@ -2,12 +2,8 @@
 
 import logging
 from dataclasses import dataclass, field
-from typing import Optional
 
-from src.domain.compound_builder import (
-    build_binary_formula,
-    parse_oxidation_states,
-)
+from src.domain.compound_builder import build_binary_formula
 
 _logger = logging.getLogger(__name__)
 

@@ -3,7 +3,7 @@
 import unittest
 
 from src.services.data_loader import load_elements
-from src.ui.managers.trend_manager import TrendManager, TrendMode
+from src.ui.managers.trend_manager import TrendManager
 
 
 class TestTrendManager(unittest.TestCase):

@@ -9,11 +9,7 @@ from src.domain.trends import (
     get_macro_class,
     get_macro_class_color,
 )
-from src.ui.styles import (
-    get_category_color,
-    get_current_button_colors,
-    get_text_color,
-)
+from src.ui.styles import get_current_button_colors
 
 
 class TrendMode(str, Enum):

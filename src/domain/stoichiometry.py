@@ -74,8 +74,6 @@ def build_composition_matrix(
         set().union(*(atoms.keys() for atoms in all_atoms))
     )
 
-    n_elements = len(elements)
-    n_compounds = len(compounds)
     n_reactants = len(reactants)
 
     mat = []

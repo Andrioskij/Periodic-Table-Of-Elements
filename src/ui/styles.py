@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 from src.config.static_data import NUMERIC_TREND_PROPERTIES

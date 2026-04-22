@@ -60,7 +60,6 @@ from src.services.localization_service import (
 from src.services.localization_service import (
     tr as translate_text,
 )
-from src.services.settings_service import SettingsService
 from src.ui.about_dialog import AboutDialog
 from src.ui.compound_text import (
     compose_compound_result_text as compose_compound_panel_text,
@@ -101,7 +100,6 @@ from src.ui.main_window_language import (
     build_main_window_texts,
 )
 from src.ui.main_window_panels import (
-    TOOL_AREA_STACK_INDEX,
     build_diagram_panel_state,
     build_info_panel_prompt,
     build_right_panel_mode_state,
@@ -119,14 +117,13 @@ from src.ui.state import (
     SelectionState,
 )
 from src.ui.styles import (
-    DEFAULT_UI_COLOR,
-    get_stylesheet,
-)
-from src.ui.styles import (
     get_category_color as get_ui_category_color,
 )
 from src.ui.styles import (
     get_current_button_colors as get_ui_button_colors,
+)
+from src.ui.styles import (
+    get_stylesheet,
 )
 from src.ui.styles import (
     get_text_color as get_ui_text_color,
