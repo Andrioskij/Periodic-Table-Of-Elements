@@ -58,7 +58,7 @@ class _InfoSection(QWidget):
         self.metric_visual_widgets = {}
         self.metric_progress_bars = {}
 
-        for row_index, (field_name, translation_key) in enumerate(self.field_definitions):
+        for row_index, (field_name, _translation_key) in enumerate(self.field_definitions):
             field_label = QLabel()
             field_label.setObjectName("infoFieldLabel")
             field_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)

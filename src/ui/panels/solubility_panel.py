@@ -327,7 +327,7 @@ class SolubilityPanel(QWidget):
             self._theme["solubility_insoluble"],
             self._theme["solubility_slightly"],
         ]
-        for swatch, color in zip(self._legend_swatches, colors):
+        for swatch, color in zip(self._legend_swatches, colors, strict=True):
             swatch.setStyleSheet(f"background-color: {color}; border-radius: 2px;")
 
     # ------------------------------------------------------------------
@@ -396,7 +396,7 @@ class SolubilityPanel(QWidget):
             )
 
             # Cells
-            for j, anion in enumerate(ANIONS):
+            for j, _anion in enumerate(ANIONS):
                 cx = row_header_w + j * (_CELL_W + _GAP)
                 verdict = matrix[i][j]
                 cell_color = QColor(_verdict_color(theme, verdict))

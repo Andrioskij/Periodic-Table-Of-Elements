@@ -444,11 +444,11 @@ class MainWindow(QWidget):
         self.right_column_widget.setFocusPolicy(Qt.StrongFocus)
 
         # Trend buttons and panel buttons should be keyboard-controllable
-        for mode, button in self.trend_buttons.items():
+        for _mode, button in self.trend_buttons.items():
             button.setFocusPolicy(Qt.StrongFocus)
             button.installEventFilter(self)
 
-        for mode, button in self.right_panel_buttons.items():
+        for _mode, button in self.right_panel_buttons.items():
             button.setFocusPolicy(Qt.StrongFocus)
             button.installEventFilter(self)
 
