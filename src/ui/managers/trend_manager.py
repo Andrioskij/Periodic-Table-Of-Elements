@@ -1,7 +1,7 @@
 """Manager for trend visualization mode and color calculations."""
 
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 from src.config.static_data import NUMERIC_TREND_PROPERTIES
 from src.domain.trends import (
@@ -12,7 +12,7 @@ from src.domain.trends import (
 from src.ui.styles import get_current_button_colors
 
 
-class TrendMode(str, Enum):
+class TrendMode(StrEnum):
     """Enumeration of available trend visualization modes."""
 
     NORMAL = "normal"

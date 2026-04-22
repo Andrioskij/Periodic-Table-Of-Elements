@@ -12,8 +12,6 @@ import json
 import logging
 from pathlib import Path
 
-_logger = logging.getLogger(__name__)
-
 # Import from specialized modules for re-export
 # Language configuration constants are defined in src/config/languages.py to
 # avoid potential circular imports between settings_service and this module.
@@ -40,6 +38,8 @@ from .ui_localization import (
     get_localized_macro_class_text,
     get_localized_standard_state_text,
 )
+
+_logger = logging.getLogger(__name__)
 
 LANGUAGE_READINESS_REQUIRED_TEXT_KEYS = (
     "about_button",

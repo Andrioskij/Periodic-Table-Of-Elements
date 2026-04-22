@@ -13,8 +13,6 @@ from PySide6.QtWidgets import (
 
 from src.domain.trends import get_macro_class, get_macro_class_color
 from src.ui.scientific_data_notes import build_scientific_data_note
-
-_logger = logging.getLogger(__name__)
 from src.ui.styles import (
     DEFAULT_UI_COLOR,
     get_category_color,
@@ -23,6 +21,8 @@ from src.ui.styles import (
     interpolate_color,
 )
 from src.ui.widgets.flow_layout import FlowLayout
+
+_logger = logging.getLogger(__name__)
 
 
 class _InfoSection(QWidget):
