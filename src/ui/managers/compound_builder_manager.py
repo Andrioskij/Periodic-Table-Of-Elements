@@ -1,5 +1,6 @@
 """Manager for binary compound builder operations."""
 
+import logging
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -7,6 +8,8 @@ from src.domain.compound_builder import (
     build_binary_formula,
     parse_oxidation_states,
 )
+
+_logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -30,6 +33,12 @@ class CompoundBuilderManager:
     elements: list
 
     _state: CompoundBuilderState = field(default_factory=CompoundBuilderState)
+    _element_index: dict = field(init=False, repr=False)
+
+    def __post_init__(self) -> None:
+        self._element_index = {
+            element["atomic_number"]: element for element in self.elements
+        }
 
     def set_element_a(self, element_id: int, oxidation: int) -> bool:
         """Set the first element and its oxidation state.
@@ -95,7 +104,10 @@ class CompoundBuilderManager:
                 self._state.element_b_oxidation,
             )
             return formula
-        except Exception:
+        except (ValueError, ArithmeticError):
+            _logger.exception(
+                "build_binary_formula failed for %s/%s", symbol_a, symbol_b
+            )
             return None
 
     def reset(self) -> None:
@@ -134,13 +146,10 @@ class CompoundBuilderManager:
         return isinstance(oxidation, int) and oxidation != 0
 
     def _get_element(self, element_id: Optional[int]) -> Optional[dict]:
-        """Get element record by atomic number."""
+        """Return the element record for the given atomic number, or None."""
         if element_id is None:
             return None
-        for element in self.elements:
-            if element.get("atomic_number") == element_id:
-                return element
-        return None
+        return self._element_index.get(element_id)
 
     @property
     def state(self) -> CompoundBuilderState:
