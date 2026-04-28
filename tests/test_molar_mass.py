@@ -76,6 +76,14 @@ class TestFormulaErrors(unittest.TestCase):
         with self.assertRaises(FormulaError):
             parse_formula("na")
 
+    def test_three_letter_symbol_rejected(self):
+        with self.assertRaises(FormulaError):
+            parse_formula("NaaCl")
+
+    def test_lowercase_after_two_letter_symbol_rejected(self):
+        with self.assertRaises(FormulaError):
+            parse_formula("Naa")
+
 
 if __name__ == "__main__":
     unittest.main()

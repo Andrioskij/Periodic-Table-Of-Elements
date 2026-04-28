@@ -70,6 +70,12 @@ class TestBuildBinaryFormula(unittest.TestCase):
         self.assertIn("Fe", result)
         self.assertIn("O", result)
 
+    def test_zero_charge_rejected(self):
+        with self.assertRaises(ValueError):
+            build_binary_formula("Na", 0, "Cl", 1)
+        with self.assertRaises(ValueError):
+            build_binary_formula("Na", 1, "Cl", 0)
+
 
 if __name__ == "__main__":
     unittest.main()
