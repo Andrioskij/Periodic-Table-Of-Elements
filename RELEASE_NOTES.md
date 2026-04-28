@@ -1,6 +1,6 @@
 # Release notes
 
-## 0.9.0 "Solubility Table"
+## 1.0.0 "Chemistry Tool"
 
 Highlights
 - Light theme with a persistent user-selectable toggle (f241d9a).

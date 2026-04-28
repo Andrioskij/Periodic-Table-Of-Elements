@@ -1,5 +1,5 @@
 Periodic Table Of Elements
-Version 0.9.0 "Solubility Table"
+Version 1.0.0 "Chemistry Tool"
 
 A desktop periodic table explorer: element details, quick property
 trends, electron configuration views, and a simple binary compound

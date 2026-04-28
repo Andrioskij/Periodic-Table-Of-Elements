@@ -8,13 +8,13 @@ APP_DISPLAY_NAME = "Periodic Table Of Elements"
 APP_EXECUTABLE_NAME = "PeriodicTableApp"
 APP_VENDOR = "T_P_python"
 APP_ID = "t_p_python.periodic_table_app"
-APP_VERSION = "0.9.0"
-APP_RELEASE_NAME = "Solubility Table"
+APP_VERSION = "1.0.0"
+APP_RELEASE_NAME = "Chemistry Tool"
 OPTIONAL_ICON_PATH = PROJECT_ROOT / "assets_" / "app.ico"
 
 
 def get_release_display_name():
-    """Return a human-readable version string like 'v0.6.0-beta.1 "Quality Pass"'."""
+    """Return a human-readable version string like 'v1.0.0 "Chemistry Tool"'."""
     return f'v{APP_VERSION} "{APP_RELEASE_NAME}"'
 
 
