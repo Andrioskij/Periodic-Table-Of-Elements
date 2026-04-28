@@ -1,5 +1,15 @@
 # Release notes
 
+## 1.0.1 "Chemistry Tool"
+
+Fixes
+- Formula parser now reads at most one lowercase letter after an uppercase, so malformed symbols like `NaaCl` are rejected at parse time with a clear error.
+- `build_binary_formula` rejects zero charges explicitly, preventing nonsensical output and a `ZeroDivisionError`.
+- Removed four decorative section banners in the solubility panel for visual consistency with the rest of the UI.
+
+Quality
+- Test suite expanded to 340 tests (3 new edge-case tests on the formula parser and compound builder).
+
 ## 1.0.0 "Chemistry Tool"
 
 Highlights
