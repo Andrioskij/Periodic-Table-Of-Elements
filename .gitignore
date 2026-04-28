@@ -11,9 +11,6 @@ __pycache__/
 # Local environments
 /.venv/
 
-# Claude Code local settings
-/.claude/
-
 # Build and release outputs
 /build/
 /dist/
