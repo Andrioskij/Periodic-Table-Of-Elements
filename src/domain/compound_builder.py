@@ -54,6 +54,8 @@ def build_binary_formula(
     greatest common divisor of their charges, then delegates the
     symbol+subscript rendering to the formatter function.
     """
+    if cation_charge == 0 or anion_charge == 0:
+        raise ValueError("Charges must be non-zero")
     format_part = formatter or format_formula_part
     gcd_value = math.gcd(abs(cation_charge), abs(anion_charge))
     cation_count = abs(anion_charge) // gcd_value

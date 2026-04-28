@@ -171,10 +171,6 @@ class SolubilityPanel(QWidget):
         self._matrix_cell_accessibility = []
         self._render_matrix()
 
-    # ------------------------------------------------------------------
-    # Public API
-    # ------------------------------------------------------------------
-
     def highlight_element(self, symbol):
         """Highlight matrix rows for the cations of the given element."""
         self._highlight_cations = get_cations_for_element(symbol)
@@ -247,10 +243,6 @@ class SolubilityPanel(QWidget):
         # Refresh matrix so its accessibility description picks up the new verdict labels.
         self._render_matrix()
 
-    # ------------------------------------------------------------------
-    # Quick check
-    # ------------------------------------------------------------------
-
     def _on_check(self):
         """Look up solubility for the selected cation/anion pair."""
         cation = self.cation_combo.currentText()
@@ -283,10 +275,6 @@ class SolubilityPanel(QWidget):
             lines.append(f"<br><b>{self._rule_label}</b> {self._default_rule_text}")
 
         self.verdict_label.setText("".join(lines))
-
-    # ------------------------------------------------------------------
-    # Legend
-    # ------------------------------------------------------------------
 
     def _build_legend(self):
         """Build the legend row with title and three colored squares and labels."""
@@ -329,10 +317,6 @@ class SolubilityPanel(QWidget):
         ]
         for swatch, color in zip(self._legend_swatches, colors, strict=True):
             swatch.setStyleSheet(f"background-color: {color}; border-radius: 2px;")
-
-    # ------------------------------------------------------------------
-    # Matrix rendering
-    # ------------------------------------------------------------------
 
     def _render_matrix(self):
         """Generate the solubility matrix as a QPixmap and display it."""

@@ -44,10 +44,10 @@ def parse_formula(formula: str) -> dict[str, int]:
                 stack[-1][symbol] = stack[-1].get(symbol, 0) + count * multiplier
 
         elif ch.isupper():
-            # Read element symbol: uppercase followed by optional lowercase
+            # Read element symbol: uppercase followed by at most one lowercase
             symbol = ch
             i += 1
-            while i < n and formula[i].islower():
+            if i < n and formula[i].islower():
                 symbol += formula[i]
                 i += 1
             # Read count
