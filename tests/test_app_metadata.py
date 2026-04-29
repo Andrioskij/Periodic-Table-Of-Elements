@@ -35,6 +35,17 @@ class TestAppMetadata(unittest.TestCase):
         self.assertIn(APP_VERSION, name)
         self.assertIn(get_release_slug(), name)
 
+    def test_bundle_name_with_os_suffix_appends_suffix(self):
+        for suffix in ("win", "mac", "linux"):
+            with self.subTest(suffix=suffix):
+                name = get_release_bundle_name(suffix)
+                self.assertTrue(name.endswith(f"-{suffix}"))
+                self.assertIn(APP_VERSION, name)
+                self.assertIn(get_release_slug(), name)
+
+    def test_bundle_name_no_suffix_when_none(self):
+        self.assertEqual(get_release_bundle_name(), get_release_bundle_name(None))
+
     def test_build_metadata_keys(self):
         meta = get_build_metadata()
         expected_keys = {"app_id", "display_name", "executable_name", "version", "vendor"}

@@ -166,7 +166,8 @@ function Invoke-FrozenSmokeTest {
     Write-Host "Frozen smoke test passed: $ExecutablePath"
 }
 
-$MetadataJson = & $PythonCommand -c "from src.app_metadata import get_build_metadata; import json; print(json.dumps(get_build_metadata()))"
+$MetadataScript = "from src.app_metadata import get_build_metadata, get_release_bundle_name; import json; m = get_build_metadata(); m['release_bundle_name'] = get_release_bundle_name('win'); print(json.dumps(m))"
+$MetadataJson = & $PythonCommand -c $MetadataScript
 if ($LASTEXITCODE -ne 0) {
     throw "Unable to read build metadata from src.app_metadata."
 }

@@ -1,11 +1,11 @@
 # Periodic Table Of Elements
 
-Release target: `1.1.0 "Chemistry Tool"`
+Release target: `1.2.0 "Chemistry Tool"`
 
 PySide6 desktop app for exploring the periodic table, quick trends, electron configuration, and compound nomenclature.
 
 This GitHub repository is meant to host the source code and project documentation.
-Current Windows delivery choice: the project ships the portable zip produced by `tools/build_windows.ps1`. The Windows binary should be published only as a GitHub release asset, not committed to the repository. No installer is planned in this scope, and code signing remains out of scope.
+Each release publishes three portable zips as GitHub release assets — Windows (`...-win.zip`), macOS (`...-mac.zip`), and Linux (`...-linux.zip`) — produced respectively by `tools/build_windows.ps1` and `tools/build_unix.sh`. Binaries are not committed to the repository. No installer, code signing, or notarization is in scope for this delivery model.
 License: `MIT`.
 
 ## Environment setup
@@ -63,39 +63,46 @@ python -m unittest discover -s tests -p "test_*.py"
 - Build a compound by selecting two elements, choosing oxidation states, and pressing `Calculate formula`. The current builder is intentionally limited to simple binary compounds. `Ctrl+L` resets it.
 - Hover the primary controls for short hints while learning the main flows.
 
-## Windows build
+## Building portable bundles
 
-This repo uses a conservative `PyInstaller` setup. `PyInstaller` is not a runtime dependency; it is declared only in `requirements-build.txt`.
+This repo uses a conservative `PyInstaller` setup. `PyInstaller` is not a runtime dependency; it is declared only in `requirements-build.txt`. Both build wrappers consume the same `PeriodicTableApp.spec` and run an offscreen smoke launch against the frozen executable before zipping the bundle.
 
-1. install the build dependency set:
+Install the build dependency set:
 
-```powershell
+```bash
 python -m pip install -r requirements-build.txt
 ```
 
-2. build from the repo root:
+### Windows
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File tools/build_windows.ps1 -Clean
 ```
 
-If you want to pin the build to a specific local venv without activating it first, the script also accepts an explicit interpreter:
+To pin the build to a specific local venv without activating it first, the script also accepts an explicit interpreter:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File tools/build_windows.ps1 -Clean -PythonExe .\.venv\Scripts\python.exe
 ```
 
-Expected outputs:
+Expected output: `dist/release/PeriodicTableApp-1.2.0-chemistry-tool-win.zip`.
 
-- `dist/PeriodicTableApp/`
-- `dist/release/PeriodicTableApp-1.1.0-chemistry-tool/`
-- `dist/release/PeriodicTableApp-1.1.0-chemistry-tool.zip`
+### macOS and Linux
 
-For portfolio publication, keep those generated `dist/` outputs out of the repository and distribute only the portable zip through the GitHub release assets.
-End users do not need an installer for this delivery model: they extract the zip, keep the extracted folder together, and remove the app later by deleting that folder.
+```bash
+bash tools/build_unix.sh --clean
+```
 
-The repo already includes `assets/app.ico` and the build script now performs a conservative post-build smoke on the copied release folder: it verifies the packaged datasets and icon, launches the frozen executable with `QT_QPA_PLATFORM=offscreen`, and expects a clean auto-exit.
-The release folder now also includes a user-facing `README.txt`, a `LICENSE.txt`, and `RELEASE_NOTES.md` so the portable bundle can be delivered without depending on the repo checkout.
+The OS suffix (`mac` or `linux`) is detected from `uname`, so the same script produces a `.app` bundle on macOS and an onedir folder on Linux. Outputs:
+
+- macOS: `dist/release/PeriodicTableApp-1.2.0-chemistry-tool-mac.zip` (contains `PeriodicTableApp.app`, unsigned)
+- Linux: `dist/release/PeriodicTableApp-1.2.0-chemistry-tool-linux.zip`
+
+On Linux, the smoke launch needs the same Qt offscreen system libraries used by CI: `libegl1 libxkbcommon0 libxcb-cursor0 libdbus-1-3`.
+
+### Release-asset delivery
+
+Each release published from CI ships all three zips. End users do not need an installer for this delivery model: they extract the zip, keep the extracted folder together, and remove the app later by deleting that folder. The release folder also bundles a per-OS `README.txt`, a `LICENSE.txt`, and `RELEASE_NOTES.md`. For portfolio publication, keep generated `dist/` outputs out of the repository and distribute only the portable zips through the GitHub release assets.
 
 ## License
 
