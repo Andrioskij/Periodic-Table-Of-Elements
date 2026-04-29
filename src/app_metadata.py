@@ -8,7 +8,7 @@ APP_DISPLAY_NAME = "Periodic Table Of Elements"
 APP_EXECUTABLE_NAME = "PeriodicTableApp"
 APP_VENDOR = "T_P_python"
 APP_ID = "t_p_python.periodic_table_app"
-APP_VERSION = "1.1.0"
+APP_VERSION = "1.2.0"
 APP_RELEASE_NAME = "Chemistry Tool"
 OPTIONAL_ICON_PATH = PROJECT_ROOT / "assets" / "app.ico"
 
@@ -28,9 +28,16 @@ def get_release_slug():
     return APP_RELEASE_NAME.lower().replace(" ", "-")
 
 
-def get_release_bundle_name():
-    """Return the full bundle name used for packaged release artifacts."""
-    return f"{APP_EXECUTABLE_NAME}-{APP_VERSION}-{get_release_slug()}"
+def get_release_bundle_name(os_suffix=None):
+    """Return the full bundle name used for packaged release artifacts.
+
+    When ``os_suffix`` is provided (``"win"``, ``"mac"``, ``"linux"``) the
+    suffix is appended so per-OS artifacts can coexist on the same release.
+    """
+    base = f"{APP_EXECUTABLE_NAME}-{APP_VERSION}-{get_release_slug()}"
+    if os_suffix:
+        return f"{base}-{os_suffix}"
+    return base
 
 
 def get_build_metadata():

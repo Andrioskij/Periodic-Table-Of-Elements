@@ -6,6 +6,17 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-04-29
+
+### Added
+- Cross-platform delivery: Windows, macOS, and Linux portable bundles published to GitHub releases. Per-OS zip naming (`...-win.zip`, `...-mac.zip`, `...-linux.zip`).
+- `tools/build_unix.sh` build wrapper for macOS and Linux, mirroring `tools/build_windows.ps1` (PyInstaller, offscreen smoke launch, zip).
+- Release workflow now runs a 3-OS matrix build and publishes all artifacts to a single GitHub release.
+
+### Changed
+- `get_release_bundle_name()` accepts an optional `os_suffix` argument so per-OS bundles can coexist on the same release.
+- `PeriodicTableApp.spec` produces a `.app` bundle on macOS and skips the Windows-only `.ico` icon on macOS/Linux.
+
 ## [1.1.0] - 2026-04-29
 
 ### Added
@@ -48,7 +59,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ruff lint baseline reduced to zero findings and enforced by Windows CI.
 - Project configuration consolidated into pyproject.toml.
 
-[Unreleased]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/releases/tag/v1.0.0

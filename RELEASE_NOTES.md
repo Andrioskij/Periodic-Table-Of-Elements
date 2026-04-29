@@ -1,5 +1,12 @@
 # Release notes
 
+## 1.2.0 "Chemistry Tool"
+
+Highlights
+- Cross-platform delivery: Windows, macOS, and Linux portable bundles are now published to GitHub releases. Each release ships three zips named `...-win.zip`, `...-mac.zip`, and `...-linux.zip`.
+- New `tools/build_unix.sh` build wrapper for macOS and Linux, mirroring the existing `tools/build_windows.ps1` (PyInstaller, offscreen smoke launch, zip).
+- Release workflow now runs a 3-OS matrix build and publishes all artifacts to a single GitHub release.
+
 ## 1.1.0 "Chemistry Tool"
 
 Highlights
