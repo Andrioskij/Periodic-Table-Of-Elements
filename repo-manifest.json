@@ -1,0 +1,34 @@
+{
+  "name": "periodic-table-of-elements",
+  "kind": "desktop-application",
+  "language": "python",
+  "python_version": "3.14",
+  "ui_framework": "pyside6",
+  "license": "MIT",
+  "agents_file": "AGENTS.md",
+  "architecture_file": "ARCHITECTURE.md",
+  "version_source": "src/app_metadata.py:APP_VERSION",
+  "entry_point": "src.bootstrap:run",
+  "facade_module": "src.main",
+  "commands": {
+    "test": "QT_QPA_PLATFORM=offscreen python -m pytest tests/ -q",
+    "lint": "python -m ruff check .",
+    "run": "python -m src.main",
+    "audit_dataset": "python tools/audit_elements_dataset.py data/raw/elements.json data/reference/nomenclature_data.json",
+    "build_windows": "powershell -ExecutionPolicy Bypass -File tools/build_windows.ps1 -Clean",
+    "build_unix": "bash tools/build_unix.sh --clean"
+  },
+  "layer_rules": {
+    "no_pyside6_in": ["src/config/", "src/domain/"],
+    "settings_pyside6_exception": "src/services/settings_service.py uses QSettings only"
+  },
+  "data_dirs": {
+    "elements": "data/raw/elements.json",
+    "reference": "data/reference/",
+    "localization": "data/localization/"
+  },
+  "supported_languages": ["en", "it", "es", "fr", "de", "zh", "ru"],
+  "test_environments": {
+    "qt_offscreen_required_for": "tests/ui/"
+  }
+}
