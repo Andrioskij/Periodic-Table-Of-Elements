@@ -10,7 +10,7 @@ APP_VENDOR = "T_P_python"
 APP_ID = "t_p_python.periodic_table_app"
 APP_VERSION = "1.0.1"
 APP_RELEASE_NAME = "Chemistry Tool"
-OPTIONAL_ICON_PATH = PROJECT_ROOT / "assets_" / "app.ico"
+OPTIONAL_ICON_PATH = PROJECT_ROOT / "assets" / "app.ico"
 
 
 def get_release_display_name():

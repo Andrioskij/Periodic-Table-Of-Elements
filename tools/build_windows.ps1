@@ -114,7 +114,7 @@ function Invoke-FrozenSmokeTest {
     ) "nomenclature dataset"
 
     if ($Metadata.icon_present) {
-        $null = Assert-ExistingRepoItem (Join-Path $ReleaseFolder "_internal\assets_\app.ico") "release icon"
+        $null = Assert-ExistingRepoItem (Join-Path $ReleaseFolder "_internal\assets\app.ico") "release icon"
     }
 
     $SmokeRoot = Join-Path $RepoRoot ".test_runtime\frozen_smoke"

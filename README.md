@@ -94,7 +94,7 @@ Expected outputs:
 For portfolio publication, keep those generated `dist/` outputs out of the repository and distribute only the portable zip through the GitHub release assets.
 End users do not need an installer for this delivery model: they extract the zip, keep the extracted folder together, and remove the app later by deleting that folder.
 
-The repo already includes `assets_/app.ico` and the build script now performs a conservative post-build smoke on the copied release folder: it verifies the packaged datasets and icon, launches the frozen executable with `QT_QPA_PLATFORM=offscreen`, and expects a clean auto-exit.
+The repo already includes `assets/app.ico` and the build script now performs a conservative post-build smoke on the copied release folder: it verifies the packaged datasets and icon, launches the frozen executable with `QT_QPA_PLATFORM=offscreen`, and expects a clean auto-exit.
 The release folder now also includes a user-facing `README.txt`, a `LICENSE.txt`, and `RELEASE_NOTES.md` so the portable bundle can be delivered without depending on the repo checkout.
 
 ## License
