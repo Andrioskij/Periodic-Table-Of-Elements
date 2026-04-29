@@ -67,7 +67,7 @@ jobs:
             build_cmd: bash tools/build_unix.sh --clean
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ needs.resolve-meta.outputs.source_ref }}
 
@@ -106,7 +106,7 @@ jobs:
     needs: [resolve-meta, build]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ needs.resolve-meta.outputs.source_ref }}
 
