@@ -38,7 +38,7 @@ class MolarMassPanel(QWidget):
 
         self.formula_input = QLineEdit()
         self.formula_input.setObjectName("molarMassInput")
-        self.formula_input.setPlaceholderText("H2O, Ca(OH)2, Fe2(SO4)3...")
+        self.formula_input.setPlaceholderText("H2O, Ca(OH)2, Fe2(SO4)3, CuSO4·5H2O...")
         self.formula_input.setAccessibleName("Chemical formula input")
 
         self.calculate_button = QPushButton()

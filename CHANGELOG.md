@@ -6,7 +6,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-04-29
+
 ### Added
+- Crystalline hydrate notation support in the molar-mass parser, accepting `·` (U+00B7) or `.` as separator (e.g. `CuSO4·5H2O`, `Na2CO3·10H2O`, `Al2(SO4)3·18H2O`).
 - Tag-triggered auto-release workflow (Windows portable bundle uploaded as release asset).
 - Linux lint + test CI job running in parallel with the Windows build for faster feedback.
 - Dependabot configuration for pip and GitHub Actions, weekly schedule.
@@ -45,6 +48,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ruff lint baseline reduced to zero findings and enforced by Windows CI.
 - Project configuration consolidated into pyproject.toml.
 
-[Unreleased]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/releases/tag/v1.0.0
