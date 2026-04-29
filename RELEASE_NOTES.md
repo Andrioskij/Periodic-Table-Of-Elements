@@ -1,5 +1,10 @@
 # Release notes
 
+## 1.1.0 "Chemistry Tool"
+
+Highlights
+- Molar-mass parser now accepts crystalline hydrate notation with `·` (U+00B7) or `.` as separator (e.g. `CuSO4·5H2O`, `Na2CO3·10H2O`).
+
 ## 1.0.1 "Chemistry Tool"
 
 Fixes

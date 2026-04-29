@@ -85,5 +85,81 @@ class TestFormulaErrors(unittest.TestCase):
             parse_formula("Naa")
 
 
+class TestHydratedCompounds(unittest.TestCase):
+
+    def test_copper_sulfate_pentahydrate(self):
+        self.assertEqual(
+            parse_formula("CuSO4·5H2O"),
+            {"Cu": 1, "S": 1, "O": 9, "H": 10},
+        )
+
+    def test_sodium_carbonate_decahydrate(self):
+        self.assertEqual(
+            parse_formula("Na2CO3·10H2O"),
+            {"Na": 2, "C": 1, "O": 13, "H": 20},
+        )
+
+    def test_magnesium_sulfate_heptahydrate(self):
+        self.assertEqual(
+            parse_formula("MgSO4·7H2O"),
+            {"Mg": 1, "S": 1, "O": 11, "H": 14},
+        )
+
+    def test_iron_chloride_hexahydrate(self):
+        self.assertEqual(
+            parse_formula("FeCl3·6H2O"),
+            {"Fe": 1, "Cl": 3, "O": 6, "H": 12},
+        )
+
+    def test_alum_octadecahydrate(self):
+        self.assertEqual(
+            parse_formula("Al2(SO4)3·18H2O"),
+            {"Al": 2, "S": 3, "O": 30, "H": 36},
+        )
+
+    def test_hydrate_without_explicit_multiplier(self):
+        self.assertEqual(
+            parse_formula("CaSO4·H2O"),
+            {"Ca": 1, "S": 1, "O": 5, "H": 2},
+        )
+
+    def test_molar_mass_of_copper_sulfate_pentahydrate(self):
+        atoms = parse_formula("CuSO4·5H2O")
+        mass = compute_molar_mass(atoms, ELEMENTS)
+        self.assertAlmostEqual(mass, 249.68, delta=0.05)
+
+    def test_ascii_dot_equivalent_to_middle_dot(self):
+        self.assertEqual(
+            parse_formula("CuSO4.5H2O"),
+            parse_formula("CuSO4·5H2O"),
+        )
+
+    def test_spaces_around_separator_are_tolerated(self):
+        self.assertEqual(
+            parse_formula("CuSO4 · 5H2O"),
+            parse_formula("CuSO4·5H2O"),
+        )
+
+    def test_leading_separator_rejected(self):
+        with self.assertRaises(FormulaError):
+            parse_formula("·H2O")
+
+    def test_trailing_separator_rejected(self):
+        with self.assertRaises(FormulaError):
+            parse_formula("CuSO4·")
+
+    def test_double_separator_rejected(self):
+        with self.assertRaises(FormulaError):
+            parse_formula("CuSO4··5H2O")
+
+    def test_separator_only_rejected(self):
+        with self.assertRaises(FormulaError):
+            parse_formula("·")
+
+    def test_multiplier_without_formula_rejected(self):
+        with self.assertRaises(FormulaError):
+            parse_formula("CuSO4·5")
+
+
 if __name__ == "__main__":
     unittest.main()

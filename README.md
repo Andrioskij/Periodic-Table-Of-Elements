@@ -1,6 +1,6 @@
 # Periodic Table Of Elements
 
-Release target: `1.0.0 "Chemistry Tool"`
+Release target: `1.1.0 "Chemistry Tool"`
 
 PySide6 desktop app for exploring the periodic table, quick trends, electron configuration, and compound nomenclature.
 
@@ -88,8 +88,8 @@ powershell -ExecutionPolicy Bypass -File tools/build_windows.ps1 -Clean -PythonE
 Expected outputs:
 
 - `dist/PeriodicTableApp/`
-- `dist/release/PeriodicTableApp-1.0.0-chemistry-tool/`
-- `dist/release/PeriodicTableApp-1.0.0-chemistry-tool.zip`
+- `dist/release/PeriodicTableApp-1.1.0-chemistry-tool/`
+- `dist/release/PeriodicTableApp-1.1.0-chemistry-tool.zip`
 
 For portfolio publication, keep those generated `dist/` outputs out of the repository and distribute only the portable zip through the GitHub release assets.
 End users do not need an installer for this delivery model: they extract the zip, keep the extracted folder together, and remove the app later by deleting that folder.

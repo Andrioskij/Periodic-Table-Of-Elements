@@ -9,15 +9,59 @@ def parse_formula(formula: str) -> dict[str, int]:
     """Parse a chemical formula and return {symbol: atom_count}.
 
     Handles simple formulas (H2O), parentheses with multipliers Ca(OH)2,
-    nested parentheses Mg3(PO4)2, and implicit count of 1.
+    nested parentheses Mg3(PO4)2, implicit count of 1, and crystalline
+    hydrate notation using `·` (U+00B7) or `.` as the separator
+    (e.g. CuSO4·5H2O, Na2CO3.10H2O).
 
-    Raises FormulaError on empty input, invalid characters, or malformed
-    parentheses.
+    Raises FormulaError on empty input, invalid characters, malformed
+    parentheses, or malformed hydrate notation.
     """
     if not formula or not formula.strip():
         raise FormulaError("Empty formula")
 
     formula = formula.strip()
+
+    if "·" in formula or "." in formula:
+        return _parse_hydrate(formula)
+
+    return _parse_simple(formula)
+
+
+def _parse_hydrate(formula: str) -> dict[str, int]:
+    """Parse a hydrate-notation formula like CuSO4·5H2O.
+
+    The first segment must be a plain formula; subsequent segments may carry
+    an optional integer multiplier prefix (e.g. `5H2O`).
+    """
+    normalized = formula.replace("·", ".")
+    parts = [p.strip() for p in normalized.split(".")]
+    if any(not p for p in parts):
+        raise FormulaError(f"Malformed hydrate notation in '{formula}'")
+
+    merged: dict[str, int] = {}
+    for idx, part in enumerate(parts):
+        multiplier = 1
+        sub = part
+        if idx > 0:
+            k = 0
+            while k < len(sub) and sub[k].isdigit():
+                k += 1
+            if k > 0:
+                multiplier = int(sub[:k])
+                sub = sub[k:]
+                if not sub:
+                    raise FormulaError(
+                        f"Hydrate multiplier without formula in '{formula}'"
+                    )
+        atoms = _parse_simple(sub)
+        for symbol, count in atoms.items():
+            merged[symbol] = merged.get(symbol, 0) + count * multiplier
+
+    return merged
+
+
+def _parse_simple(formula: str) -> dict[str, int]:
+    """Parse a non-hydrate formula segment with the stack-based algorithm."""
     stack: list[dict[str, int]] = [{}]
     i = 0
     n = len(formula)
