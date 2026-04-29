@@ -100,3 +100,5 @@ The release folder now also includes a user-facing `README.txt`, a `LICENSE.txt`
 ## License
 
 This project is released under the MIT license. See `LICENSE` for details.
+
+See [CHANGELOG.md](CHANGELOG.md) for the full version history.
