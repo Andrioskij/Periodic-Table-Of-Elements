@@ -12,7 +12,7 @@ a = Analysis(
     datas=[
         ("data", "data"),
         ("assets/styles", "assets/styles"),
-        ("assets/app.ico", "assets_"),
+        ("assets/app.ico", "assets"),
     ],
     hiddenimports=collect_submodules("src"),
     hookspath=[],
