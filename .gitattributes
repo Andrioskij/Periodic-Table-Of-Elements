@@ -1,3 +1,10 @@
 # Ensure shell scripts always check out with LF line endings so they work
 # unmodified on Linux/macOS runners regardless of the developer's autocrlf setting.
 *.sh text eol=lf
+
+# Distro packaging files must keep LF line endings to be parsed correctly by
+# makepkg (AUR), brew (Homebrew tap), and freedesktop tooling.
+PKGBUILD text eol=lf
+.SRCINFO text eol=lf
+*.desktop text eol=lf
+*.rb text eol=lf

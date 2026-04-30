@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Periodic Table Of Elements
+GenericName=Periodic Table
+Comment=Desktop periodic table explorer with molar mass and nomenclature tools
+Exec=periodic-table-app
+Icon=periodic-table-app
+Terminal=false
+Categories=Education;Science;Chemistry;
+StartupNotify=true
+StartupWMClass=PeriodicTableApp
+Keywords=chemistry;elements;periodic;table;molar;mass;nomenclature;
