@@ -1,0 +1,37 @@
+# Maintainer: Andrioskij <pallandreas993@gmail.com>
+pkgname=periodic-table-app-bin
+pkgver=1.2.0
+pkgrel=1
+pkgdesc="Desktop periodic table explorer with molar mass and nomenclature tools (PySide6)"
+arch=('x86_64')
+url="https://github.com/Andrioskij/Periodic-Table-Of-Elements"
+license=('MIT')
+provides=('periodic-table-app')
+conflicts=('periodic-table-app')
+options=('!strip')
+source=("PeriodicTableApp-${pkgver}-chemistry-tool-linux.zip::${url}/releases/download/v${pkgver}/PeriodicTableApp-${pkgver}-chemistry-tool-linux.zip"
+        "periodic-table-app.desktop"
+        "periodic-table-app.png")
+sha256sums=('47114762ba89e52401e9763d90a8894af26067b781e3be1ca357b23d9eea5d9e'
+            'SKIP'
+            'SKIP')
+noextract=()
+
+_bundle_dir="PeriodicTableApp-${pkgver}-chemistry-tool-linux"
+
+package() {
+    install -dm755 "${pkgdir}/opt/${pkgname}"
+    cp -r "${srcdir}/${_bundle_dir}/." "${pkgdir}/opt/${pkgname}/"
+    chmod 755 "${pkgdir}/opt/${pkgname}/PeriodicTableApp"
+
+    install -dm755 "${pkgdir}/usr/bin"
+    ln -sf "/opt/${pkgname}/PeriodicTableApp" "${pkgdir}/usr/bin/periodic-table-app"
+
+    install -Dm644 "${srcdir}/periodic-table-app.desktop" \
+        "${pkgdir}/usr/share/applications/periodic-table-app.desktop"
+    install -Dm644 "${srcdir}/periodic-table-app.png" \
+        "${pkgdir}/usr/share/icons/hicolor/256x256/apps/periodic-table-app.png"
+
+    install -Dm644 "${srcdir}/${_bundle_dir}/LICENSE.txt" \
+        "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

@@ -1,0 +1,18 @@
+pkgbase = periodic-table-app-bin
+	pkgdesc = Desktop periodic table explorer with molar mass and nomenclature tools (PySide6)
+	pkgver = 1.2.0
+	pkgrel = 1
+	url = https://github.com/Andrioskij/Periodic-Table-Of-Elements
+	arch = x86_64
+	license = MIT
+	provides = periodic-table-app
+	conflicts = periodic-table-app
+	options = !strip
+	source = PeriodicTableApp-1.2.0-chemistry-tool-linux.zip::https://github.com/Andrioskij/Periodic-Table-Of-Elements/releases/download/v1.2.0/PeriodicTableApp-1.2.0-chemistry-tool-linux.zip
+	source = periodic-table-app.desktop
+	source = periodic-table-app.png
+	sha256sums = 47114762ba89e52401e9763d90a8894af26067b781e3be1ca357b23d9eea5d9e
+	sha256sums = SKIP
+	sha256sums = SKIP
+
+pkgname = periodic-table-app-bin
