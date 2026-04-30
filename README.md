@@ -40,6 +40,12 @@ python -m src.main
 
 The runtime requirement file is intentionally minimal and currently contains only the dependency needed to execute the app from source.
 
+## Screenshots
+
+![Periodic table overview at startup, English UI, dark theme](assets/screenshots/overview.png)
+
+![Molar mass calculator with hydrate-aware placeholder (CuSO4·5H2O)](assets/screenshots/molar-mass.png)
+
 ## Tests
 
 Install the test environment and run the suite:
