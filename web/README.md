@@ -10,12 +10,25 @@ file is duplicated.
 
 ## Status
 
-Foundation only (Batch 6 of the browser-version roadmap). The app
-currently renders a static, color-coded periodic table. There is no
-interactivity, no search, no info card, no localization, no theme
-switcher yet — those land in the following batches.
+Batch 7 closed (interactivity layer). Currently shipping:
 
-![Static periodic table render](../assets/screenshots/web-foundation.png)
+- Click an element → highlight + element-detail card on the right.
+- Search box filters cells by name, symbol, or atomic number — non-
+  matches fade to 25 % opacity, the active selection still keeps its
+  yellow border.
+- Trend recoloring: switch between **Default** (category palette),
+  **Radius**, **Ionization**, **Electron Affinity**,
+  **Electronegativity**, **Metallic**, and **Nonmetallic**. Numeric
+  trends interpolate a two-color gradient over the dataset min/max.
+- Responsive layout: on viewports below `lg`, the info card stacks
+  below the table; above, it sits on the right.
+
+Still missing in this batch (intentionally — see roadmap below):
+electron configuration / Lewis diagrams (Batch 8), tool area for
+molar mass / stoichiometry / compound builder (Batch 9), and
+i18n / theme switcher / deploy build (Batch 10).
+
+![Periodic table with element selected](../assets/screenshots/web-batch7.png)
 
 ## Prerequisites
 
@@ -68,7 +81,9 @@ web/
 ├── assets/                      # static assets served by the frontend
 ├── periodic_table_web/
 │   ├── __init__.py              # adds repo root to sys.path
-│   ├── periodic_table_web.py    # Reflex App + index page
+│   ├── periodic_table_web.py    # Reflex App, index page, UI components
+│   ├── state.py                 # rx.State (selection, search, trend)
+│   ├── trends.py                # trend color helpers (lerp, gradients)
 │   └── theme.py                 # palette / colors
 ├── requirements.txt             # pinned to reflex==0.9.1
 ├── rxconfig.py                  # Reflex project configuration
@@ -92,12 +107,15 @@ them up automatically — no sync step.
 
 ## Roadmap
 
-- **Batch 6 (this batch)** — project scaffolding, static periodic table
+- **Batch 6 — done** — project scaffolding, static periodic table
   grid, color-coded by category.
-- **Batch 7** — element selection, info card panel, search box, and
-  trend recoloring controls (Macro / Radius / Ionization / Electron
-  Affinity / Electronegativity / Metallic / Nonmetallic).
-- **Batch 8** — electron configuration view and Lewis diagram rendering.
+- **Batch 7 — done (this batch)** — element selection, info card,
+  search box, trend recoloring (Default / Radius / Ionization /
+  Electron Affinity / Electronegativity / Metallic / Nonmetallic),
+  responsive layout.
+- **Batch 8** — alternate right-panel views: electron configuration
+  (orbital diagram with ↑↓ arrows) and Lewis structures, with a
+  toggle at the top of the panel (Info / Electron config / Lewis).
 - **Batch 9** — tool area: molar mass, stoichiometry, compound builder,
   solubility lookup.
 - **Batch 10** — i18n (the 7 desktop locales), theme switcher, and a
