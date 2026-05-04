@@ -1,9 +1,11 @@
 """Reflex State for the browser version.
 
-The State drives three concerns: which element is selected (info card),
-the active search query (cell opacity), and the active trend mode
-(cell background color). Computed vars produce a per-element color map
-and a set of visible atomic numbers so each cell can render with a
+The State drives four concerns: which element is selected (info card),
+the active search query (cell opacity), the active trend mode (cell
+background color), and which view is shown in the right panel
+(Info / Electron Config / Lewis). Computed vars produce a per-element
+color map, a set of visible atomic numbers, and the parsed orbital /
+Lewis data for the selected element so each cell can render with a
 single Var dereference instead of a 119-way condition.
 """
 
@@ -11,6 +13,8 @@ from __future__ import annotations
 
 import reflex as rx
 
+from periodic_table_web.electron_view import ShellRow, compute_shell_rows
+from periodic_table_web.lewis_view import LewisData, compute_lewis_data
 from periodic_table_web.trends import compute_ranges, trend_color
 from src.services.data_loader import load_elements
 
@@ -24,6 +28,9 @@ VALID_TREND_MODES: frozenset[str] = frozenset(
         "metallic",
         "nonmetallic",
     }
+)
+VALID_RIGHT_PANEL_VIEWS: frozenset[str] = frozenset(
+    {"info", "electron", "lewis"}
 )
 
 _ELEMENTS: list[dict] = load_elements()
@@ -46,6 +53,7 @@ class TableState(rx.State):
     selected_atomic_number: int | None = None
     search_query: str = ""
     trend_mode: str = "category"
+    right_panel_view: str = "info"
 
     @rx.event
     def select_element(self, atomic_number: int) -> None:
@@ -67,6 +75,11 @@ class TableState(rx.State):
     def set_trend(self, mode: str) -> None:
         if mode in VALID_TREND_MODES:
             self.trend_mode = mode
+
+    @rx.event
+    def set_right_panel(self, view: str) -> None:
+        if view in VALID_RIGHT_PANEL_VIEWS:
+            self.right_panel_view = view
 
     @rx.var(cache=True)
     def has_selection(self) -> bool:
@@ -92,3 +105,19 @@ class TableState(rx.State):
             e["atomic_number"]: trend_color(e, mode, ranges=_TREND_RANGES)
             for e in _ELEMENTS
         }
+
+    @rx.var(cache=True)
+    def orbital_rows(self) -> list[ShellRow]:
+        if self.selected_atomic_number is None:
+            return []
+        element = _BY_ATOMIC_NUMBER.get(self.selected_atomic_number)
+        if not element:
+            return []
+        return compute_shell_rows(element.get("electron_configuration"))
+
+    @rx.var(cache=True)
+    def lewis_data(self) -> LewisData:
+        if self.selected_atomic_number is None:
+            return compute_lewis_data({})
+        element = _BY_ATOMIC_NUMBER.get(self.selected_atomic_number) or {}
+        return compute_lewis_data(element)

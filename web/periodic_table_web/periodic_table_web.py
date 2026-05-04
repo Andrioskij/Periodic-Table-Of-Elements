@@ -2,6 +2,8 @@
 
 import reflex as rx
 
+from periodic_table_web.electron_view import electron_view
+from periodic_table_web.lewis_view import lewis_view
 from periodic_table_web.state import TableState
 from periodic_table_web.theme import (
     DARK_BACKGROUND,
@@ -23,6 +25,13 @@ TREND_BUTTONS: list[tuple[str, str]] = [
     ("metallic", "Metallic"),
     ("nonmetallic", "Nonmetallic"),
 ]
+RIGHT_PANEL_TABS: list[tuple[str, str]] = [
+    ("info", "Info"),
+    ("electron", "Electron Config"),
+    ("lewis", "Lewis"),
+]
+TAB_ACTIVE_BG = "#4e79a7"
+TAB_INACTIVE_BG = "#1f1f2e"
 
 
 def _grid_row(display_row: int) -> int:
@@ -253,12 +262,49 @@ def _info_placeholder() -> rx.Component:
     )
 
 
+def _info_tab_content() -> rx.Component:
+    return rx.cond(
+        TableState.has_selection,
+        _info_card_content(),
+        _info_placeholder(),
+    )
+
+
+def _tab_button(view: str, label: str) -> rx.Component:
+    is_active = TableState.right_panel_view == view
+    return rx.button(
+        label,
+        on_click=TableState.set_right_panel(view),
+        background=rx.cond(is_active, TAB_ACTIVE_BG, TAB_INACTIVE_BG),
+        color=DARK_FOREGROUND,
+        border="none",
+        border_radius="6px",
+        padding="6px 10px",
+        cursor="pointer",
+        font_size="0.78rem",
+        font_weight=rx.cond(is_active, "600", "400"),
+        flex_grow="1",
+    )
+
+
+def _tab_bar() -> rx.Component:
+    return rx.hstack(
+        *[_tab_button(view, label) for view, label in RIGHT_PANEL_TABS],
+        spacing="1",
+        width="100%",
+        margin_bottom="0.75rem",
+    )
+
+
 def _info_card() -> rx.Component:
     return rx.box(
-        rx.cond(
-            TableState.has_selection,
-            _info_card_content(),
-            _info_placeholder(),
+        _tab_bar(),
+        rx.match(
+            TableState.right_panel_view,
+            ("info", _info_tab_content()),
+            ("electron", electron_view(TableState, _info_placeholder())),
+            ("lewis", lewis_view(TableState, _info_placeholder())),
+            _info_tab_content(),
         ),
         background=DARK_PANEL,
         border_radius="8px",
