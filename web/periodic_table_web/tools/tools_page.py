@@ -17,6 +17,7 @@ from periodic_table_web.nav import header
 from periodic_table_web.theme import DARK_BACKGROUND, DARK_FOREGROUND, DARK_PANEL
 from periodic_table_web.tools.compound_builder_view import compound_builder_view
 from periodic_table_web.tools.molar_mass_view import molar_mass_view
+from periodic_table_web.tools.solubility_view import solubility_view
 from periodic_table_web.tools.state import ToolsState
 from periodic_table_web.tools.stoichiometry_view import stoichiometry_view
 
@@ -74,7 +75,7 @@ def _tab_content() -> rx.Component:
         ("molar", molar_mass_view()),
         ("stoich", stoichiometry_view()),
         ("builder", compound_builder_view()),
-        ("solubility", _placeholder("Solubility")),
+        ("solubility", solubility_view()),
         molar_mass_view(),
     )
 
