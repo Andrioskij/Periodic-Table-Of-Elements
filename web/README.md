@@ -10,36 +10,36 @@ file is duplicated.
 
 ## Status
 
-Batch 8 closed (alternate right-panel views). The right card now has
-three tabs at the top — **Info**, **Electron Config**, and **Lewis** —
-that switch what the panel shows for the currently selected element:
+Batch 9 closed (tools area). The app now has two routes — `/` for
+the periodic table itself and `/tools` for calculators and lookups —
+linked through a header strip at the top of every page.
 
-- **Info** (default) — the same property sheet shipped in Batch 7
-  (atomic mass, category, electron configuration string, trends, …).
-- **Electron Config** — orbital diagram with one box per orbital and
-  ↑↓ arrows filled per Hund's rule. Noble-gas prefixes are kept in
-  the configuration string at the top *and* the inner-shell
-  occupancies are also rendered visually, so e.g. Iron's `[Ar]3d6 4s2`
-  shows the full 1s/2s/2p/3s/3p stack, then 3d⁶ and 4s². Aufbau
-  exceptions in the dataset (Cr, Cu, …) are honoured verbatim — the
-  view never normalizes them.
-- **Lewis** — Lewis dot diagram (single atoms only): the symbol in
-  the centre of an SVG with up to 8 dots placed top → right →
-  bottom → left following Hund's rule, plus a small valence /
-  lone-pairs / unpaired-electrons summary. Transition metals get the
-  outer s+p count and an *"extended octet — see electron
-  configuration for d/f shells"* note instead of a misleading dash.
+`/tools` carries four tabs, each backed by the same `src.domain`
+module that powers the equivalent desktop panel:
 
-Carried over from Batch 7: element selection, search filter (25 %
-opacity for non-matches), 7 trend recolorings, and the responsive
-column-to-row layout below `lg`.
+- **Molar Mass** — formula → molar mass + optional percent
+  composition. Hydrate notation works (e.g. `CuSO4·5H2O` or
+  `CuSO4.5H2O`).
+- **Stoichiometry** — equation → balanced coefficients (sympy
+  nullspace), with an optional given-compound + grams override that
+  scales every row's moles and grams.
+- **Compound Builder** — pick a cation element and an anion element
+  (only those with the right oxidation states appear), choose the
+  charge per side, and the binary formula falls out via
+  criss-cross GCD.
+- **Solubility** — full 14×10 cation/anion solubility matrix from
+  the priority-ordered rule set, with optional row/column highlight.
 
-Still missing (intentionally — see roadmap below): tool area for
-molar mass / stoichiometry / compound builder (Batch 9), and
-i18n / theme switcher / deploy build (Batch 10). Multi-atom Lewis
-structures are deferred past Batch 9.
+Carried over from earlier batches: element selection, search,
+trend recolorings, three-tab right panel (Info / Electron Config /
+Lewis) on the periodic-table page.
 
-![Periodic table with Carbon selected and the Electron Config tab active](../assets/screenshots/web-batch8.png)
+Still missing (see roadmap): i18n with the seven desktop locales,
+theme switcher, and a deployable build (Docker / Reflex Hosting) —
+all three land in Batch 10. Multi-atom Lewis structures remain
+deferred.
+
+![/tools page with Stoichiometry tab active and an H2 + O2 → H2O calculation](../assets/screenshots/web-batch9.png)
 
 ## Prerequisites
 
@@ -92,13 +92,21 @@ web/
 ├── assets/                      # static assets served by the frontend
 ├── periodic_table_web/
 │   ├── __init__.py              # adds repo root to sys.path
-│   ├── periodic_table_web.py    # Reflex App, index page, UI components
+│   ├── periodic_table_web.py    # Reflex App, index page, /tools registration
+│   ├── nav.py                   # shared header (Periodic Table / Tools)
 │   ├── state.py                 # rx.State (selection, search, trend, panel tab)
 │   ├── trends.py                # trend color helpers (lerp, gradients)
 │   ├── electron_view.py         # orbital-diagram tab (boxes + Hund arrows)
 │   ├── lewis_view.py            # Lewis-dot tab (SVG single-atom render)
-│   └── theme.py                 # palette / colors
-├── requirements.txt             # pinned to reflex==0.9.1
+│   ├── theme.py                 # palette / colors
+│   └── tools/
+│       ├── tools_page.py        # /tools layout + 4-tab strip
+│       ├── state.py             # ToolsState (active tab)
+│       ├── molar_mass_view.py
+│       ├── stoichiometry_view.py
+│       ├── compound_builder_view.py
+│       └── solubility_view.py
+├── requirements.txt             # reflex==0.9.1, sympy>=1.12
 ├── rxconfig.py                  # Reflex project configuration
 └── README.md
 ```
@@ -125,11 +133,13 @@ them up automatically — no sync step.
 - **Batch 7 — done** — element selection, info card, search box,
   trend recoloring (Default / Radius / Ionization / Electron Affinity
   / Electronegativity / Metallic / Nonmetallic), responsive layout.
-- **Batch 8 — done (this batch)** — alternate right-panel views:
-  Info / Electron Config / Lewis tabs at the top of the side card.
-  Electron Config renders boxes-and-arrows orbital diagrams; Lewis
-  renders single-atom dot diagrams (multi-atom molecules deferred).
-- **Batch 9** — tool area: molar mass, stoichiometry, compound
-  builder, solubility lookup.
+- **Batch 8 — done** — alternate right-panel views: Info / Electron
+  Config / Lewis tabs at the top of the side card. Electron Config
+  renders boxes-and-arrows orbital diagrams; Lewis renders
+  single-atom dot diagrams (multi-atom molecules deferred).
+- **Batch 9 — done (this batch)** — `/tools` route with header
+  navigation and four tabs: molar mass, stoichiometry (sympy-based
+  balancer), compound builder (binary ionic, criss-cross GCD), and
+  the full 14×10 solubility matrix.
 - **Batch 10** — i18n (the 7 desktop locales), theme switcher, and a
   deployable build (Docker / Reflex Hosting).
