@@ -10,25 +10,36 @@ file is duplicated.
 
 ## Status
 
-Batch 7 closed (interactivity layer). Currently shipping:
+Batch 8 closed (alternate right-panel views). The right card now has
+three tabs at the top — **Info**, **Electron Config**, and **Lewis** —
+that switch what the panel shows for the currently selected element:
 
-- Click an element → highlight + element-detail card on the right.
-- Search box filters cells by name, symbol, or atomic number — non-
-  matches fade to 25 % opacity, the active selection still keeps its
-  yellow border.
-- Trend recoloring: switch between **Default** (category palette),
-  **Radius**, **Ionization**, **Electron Affinity**,
-  **Electronegativity**, **Metallic**, and **Nonmetallic**. Numeric
-  trends interpolate a two-color gradient over the dataset min/max.
-- Responsive layout: on viewports below `lg`, the info card stacks
-  below the table; above, it sits on the right.
+- **Info** (default) — the same property sheet shipped in Batch 7
+  (atomic mass, category, electron configuration string, trends, …).
+- **Electron Config** — orbital diagram with one box per orbital and
+  ↑↓ arrows filled per Hund's rule. Noble-gas prefixes are kept in
+  the configuration string at the top *and* the inner-shell
+  occupancies are also rendered visually, so e.g. Iron's `[Ar]3d6 4s2`
+  shows the full 1s/2s/2p/3s/3p stack, then 3d⁶ and 4s². Aufbau
+  exceptions in the dataset (Cr, Cu, …) are honoured verbatim — the
+  view never normalizes them.
+- **Lewis** — Lewis dot diagram (single atoms only): the symbol in
+  the centre of an SVG with up to 8 dots placed top → right →
+  bottom → left following Hund's rule, plus a small valence /
+  lone-pairs / unpaired-electrons summary. Transition metals get the
+  outer s+p count and an *"extended octet — see electron
+  configuration for d/f shells"* note instead of a misleading dash.
 
-Still missing in this batch (intentionally — see roadmap below):
-electron configuration / Lewis diagrams (Batch 8), tool area for
+Carried over from Batch 7: element selection, search filter (25 %
+opacity for non-matches), 7 trend recolorings, and the responsive
+column-to-row layout below `lg`.
+
+Still missing (intentionally — see roadmap below): tool area for
 molar mass / stoichiometry / compound builder (Batch 9), and
-i18n / theme switcher / deploy build (Batch 10).
+i18n / theme switcher / deploy build (Batch 10). Multi-atom Lewis
+structures are deferred past Batch 9.
 
-![Periodic table with element selected](../assets/screenshots/web-batch7.png)
+![Periodic table with Carbon selected and the Electron Config tab active](../assets/screenshots/web-batch8.png)
 
 ## Prerequisites
 
@@ -82,8 +93,10 @@ web/
 ├── periodic_table_web/
 │   ├── __init__.py              # adds repo root to sys.path
 │   ├── periodic_table_web.py    # Reflex App, index page, UI components
-│   ├── state.py                 # rx.State (selection, search, trend)
+│   ├── state.py                 # rx.State (selection, search, trend, panel tab)
 │   ├── trends.py                # trend color helpers (lerp, gradients)
+│   ├── electron_view.py         # orbital-diagram tab (boxes + Hund arrows)
+│   ├── lewis_view.py            # Lewis-dot tab (SVG single-atom render)
 │   └── theme.py                 # palette / colors
 ├── requirements.txt             # pinned to reflex==0.9.1
 ├── rxconfig.py                  # Reflex project configuration
@@ -109,14 +122,14 @@ them up automatically — no sync step.
 
 - **Batch 6 — done** — project scaffolding, static periodic table
   grid, color-coded by category.
-- **Batch 7 — done (this batch)** — element selection, info card,
-  search box, trend recoloring (Default / Radius / Ionization /
-  Electron Affinity / Electronegativity / Metallic / Nonmetallic),
-  responsive layout.
-- **Batch 8** — alternate right-panel views: electron configuration
-  (orbital diagram with ↑↓ arrows) and Lewis structures, with a
-  toggle at the top of the panel (Info / Electron config / Lewis).
-- **Batch 9** — tool area: molar mass, stoichiometry, compound builder,
-  solubility lookup.
+- **Batch 7 — done** — element selection, info card, search box,
+  trend recoloring (Default / Radius / Ionization / Electron Affinity
+  / Electronegativity / Metallic / Nonmetallic), responsive layout.
+- **Batch 8 — done (this batch)** — alternate right-panel views:
+  Info / Electron Config / Lewis tabs at the top of the side card.
+  Electron Config renders boxes-and-arrows orbital diagrams; Lewis
+  renders single-atom dot diagrams (multi-atom molecules deferred).
+- **Batch 9** — tool area: molar mass, stoichiometry, compound
+  builder, solubility lookup.
 - **Batch 10** — i18n (the 7 desktop locales), theme switcher, and a
   deployable build (Docker / Reflex Hosting).
