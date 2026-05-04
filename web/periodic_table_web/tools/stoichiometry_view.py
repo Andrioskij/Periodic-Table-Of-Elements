@@ -11,6 +11,7 @@ from __future__ import annotations
 import reflex as rx
 from pydantic import BaseModel
 
+from periodic_table_web.i18n import TranslationState
 from periodic_table_web.theme import DARK_FOREGROUND
 from src.domain.molar_mass import FormulaError
 from src.domain.stoichiometry import (
@@ -173,11 +174,11 @@ def _stoich_row(row: StoichRow) -> rx.Component:
 def _stoich_table() -> rx.Component:
     return rx.vstack(
         rx.hstack(
-            rx.text("Compound", color=_LABEL_MUTED, font_size="0.78rem", min_width="120px"),
-            rx.text("Coeff.", color=_LABEL_MUTED, font_size="0.78rem", width="60px"),
-            rx.text("Molar mass", color=_LABEL_MUTED, font_size="0.78rem", width="140px"),
-            rx.text("Moles", color=_LABEL_MUTED, font_size="0.78rem", width="100px"),
-            rx.text("Mass", color=_LABEL_MUTED, font_size="0.78rem", text_align="right", flex_grow="1"),
+            rx.text(TranslationState.t["stoich_col_compound"], color=_LABEL_MUTED, font_size="0.78rem", min_width="120px"),
+            rx.text(TranslationState.t["stoich_col_coefficient"], color=_LABEL_MUTED, font_size="0.78rem", width="60px"),
+            rx.text(TranslationState.t["stoich_col_molar_mass"], color=_LABEL_MUTED, font_size="0.78rem", width="140px"),
+            rx.text(TranslationState.t["stoich_col_moles"], color=_LABEL_MUTED, font_size="0.78rem", width="100px"),
+            rx.text(TranslationState.t["stoich_col_mass"], color=_LABEL_MUTED, font_size="0.78rem", text_align="right", flex_grow="1"),
             spacing="3",
             width="100%",
             padding_y="4px",
@@ -193,12 +194,12 @@ def _stoich_table() -> rx.Component:
 def stoichiometry_view() -> rx.Component:
     return rx.vstack(
         rx.text(
-            "Enter a chemical equation. Use '->' (or '=' / '→') to separate reactants and products.",
+            TranslationState.t["stoich_subtitle"],
             color=_LABEL_MUTED,
             font_size="0.85rem",
         ),
         rx.input(
-            placeholder="e.g. H2 + O2 -> H2O",
+            placeholder=TranslationState.t["stoich_placeholder"],
             value=StoichiometryState.equation,
             on_change=StoichiometryState.set_equation,
             background=_RESULT_BG,
@@ -231,12 +232,12 @@ def stoichiometry_view() -> rx.Component:
                     ),
                     rx.hstack(
                         rx.vstack(
-                            rx.text("Given compound", color=_LABEL_MUTED, font_size="0.78rem"),
+                            rx.text(TranslationState.t["stoich_given_compound"], color=_LABEL_MUTED, font_size="0.78rem"),
                             rx.select(
                                 StoichiometryState.compound_options,
                                 value=StoichiometryState.given_compound,
                                 on_change=StoichiometryState.set_given_compound,
-                                placeholder="Optional — pick one",
+                                placeholder=TranslationState.t["stoich_given_pick"],
                                 color_scheme="iris",
                                 width="100%",
                             ),
@@ -245,9 +246,9 @@ def stoichiometry_view() -> rx.Component:
                             flex_grow="1",
                         ),
                         rx.vstack(
-                            rx.text("Mass (g)", color=_LABEL_MUTED, font_size="0.78rem"),
+                            rx.text(TranslationState.t["stoich_mass_label"], color=_LABEL_MUTED, font_size="0.78rem"),
                             rx.input(
-                                placeholder="e.g. 18",
+                                placeholder=TranslationState.t["stoich_mass_placeholder"],
                                 value=StoichiometryState.given_mass_text,
                                 on_change=StoichiometryState.set_given_mass,
                                 background=_RESULT_BG,

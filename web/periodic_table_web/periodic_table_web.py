@@ -3,6 +3,7 @@
 import reflex as rx
 
 from periodic_table_web.electron_view import electron_view
+from periodic_table_web.i18n import TranslationState
 from periodic_table_web.lewis_view import lewis_view
 from periodic_table_web.nav import header as nav_header
 from periodic_table_web.state import TableState
@@ -19,18 +20,18 @@ ELEMENTS = load_elements()
 GRID_GAP_ROW = 8
 SELECTED_BORDER_COLOR = "#f5d442"
 TREND_BUTTONS: list[tuple[str, str]] = [
-    ("category", "Default"),
-    ("radius", "Radius"),
-    ("ionization", "Ionization"),
-    ("electron_affinity", "Electron Affinity"),
-    ("electronegativity", "Electronegativity"),
-    ("metallic", "Metallic"),
-    ("nonmetallic", "Nonmetallic"),
+    ("category", "trend_default"),
+    ("radius", "trend_radius"),
+    ("ionization", "trend_ionization"),
+    ("electron_affinity", "trend_electron_affinity"),
+    ("electronegativity", "trend_electronegativity"),
+    ("metallic", "trend_metallic"),
+    ("nonmetallic", "trend_nonmetallic"),
 ]
 RIGHT_PANEL_TABS: list[tuple[str, str]] = [
-    ("info", "Info"),
-    ("electron", "Electron Config"),
-    ("lewis", "Lewis"),
+    ("info", "tab_info"),
+    ("electron", "tab_electron_config"),
+    ("lewis", "tab_lewis"),
 ]
 TAB_ACTIVE_BG = "#4e79a7"
 TAB_INACTIVE_BG = "#1f1f2e"
@@ -112,7 +113,7 @@ def _grid() -> rx.Component:
 def _search_box() -> rx.Component:
     return rx.box(
         rx.input(
-            placeholder="Search by name, symbol, or atomic number…",
+            placeholder=TranslationState.t["home_search_placeholder"],
             value=TableState.search_query,
             on_change=TableState.set_search,
             background=DARK_PANEL,
@@ -143,10 +144,10 @@ def _search_box() -> rx.Component:
     )
 
 
-def _trend_button(mode: str, label: str) -> rx.Component:
+def _trend_button(mode: str, t_key: str) -> rx.Component:
     is_active = TableState.trend_mode == mode
     return rx.button(
-        label,
+        TranslationState.t[t_key],
         on_click=TableState.set_trend(mode),
         background=rx.cond(is_active, "#4e79a7", DARK_PANEL),
         color=DARK_FOREGROUND,
@@ -161,7 +162,7 @@ def _trend_button(mode: str, label: str) -> rx.Component:
 
 def _trend_buttons() -> rx.Component:
     return rx.hstack(
-        *[_trend_button(mode, label) for mode, label in TREND_BUTTONS],
+        *[_trend_button(mode, t_key) for mode, t_key in TREND_BUTTONS],
         spacing="2",
         flex_wrap="wrap",
         margin_bottom="1rem",
@@ -222,13 +223,13 @@ def _info_card_content() -> rx.Component:
             margin_bottom="0.5rem",
         ),
         rx.divider(color_scheme="gray"),
-        _info_row("Atomic mass", rx.fragment(el["atomic_mass"], " u")),
-        _info_row("Category", el["category"]),
-        _info_row("Period", el["period"]),
-        _info_row("Group", _opt(el["group"])),
-        _info_row("Standard state", _opt(el["standard_state"])),
+        _info_row(TranslationState.t["info_atomic_mass"], rx.fragment(el["atomic_mass"], " u")),
+        _info_row(TranslationState.t["info_category"], el["category"]),
+        _info_row(TranslationState.t["info_period"], el["period"]),
+        _info_row(TranslationState.t["info_group"], _opt(el["group"])),
+        _info_row(TranslationState.t["info_standard_state"], _opt(el["standard_state"])),
         _info_row(
-            "Electron config.",
+            TranslationState.t["info_electron_config"],
             rx.text(
                 el["electron_configuration"],
                 font_family="'Cascadia Code', 'Consolas', monospace",
@@ -236,15 +237,15 @@ def _info_card_content() -> rx.Component:
                 color=DARK_FOREGROUND,
             ),
         ),
-        _info_row("Electronegativity", _opt(el["electronegativity"])),
-        _info_row("Atomic radius", _opt(el["atomic_radius"], " pm")),
-        _info_row("Ionization energy", _opt(el["ionization_energy"], " eV")),
-        _info_row("Electron affinity", _opt(el["electron_affinity"], " eV")),
-        _info_row("Oxidation states", _opt(el["oxidation_states"])),
-        _info_row("Melting point", _opt(el["melting_point"], " K")),
-        _info_row("Boiling point", _opt(el["boiling_point"], " K")),
-        _info_row("Density", _opt(el["density"], " g/cm³")),
-        _info_row("Discovered", _opt(el["year_discovered"])),
+        _info_row(TranslationState.t["info_electronegativity"], _opt(el["electronegativity"])),
+        _info_row(TranslationState.t["info_atomic_radius"], _opt(el["atomic_radius"], " pm")),
+        _info_row(TranslationState.t["info_ionization_energy"], _opt(el["ionization_energy"], " eV")),
+        _info_row(TranslationState.t["info_electron_affinity"], _opt(el["electron_affinity"], " eV")),
+        _info_row(TranslationState.t["info_oxidation_states"], _opt(el["oxidation_states"])),
+        _info_row(TranslationState.t["info_melting_point"], _opt(el["melting_point"], " K")),
+        _info_row(TranslationState.t["info_boiling_point"], _opt(el["boiling_point"], " K")),
+        _info_row(TranslationState.t["info_density"], _opt(el["density"], " g/cm³")),
+        _info_row(TranslationState.t["info_discovered"], _opt(el["year_discovered"])),
         spacing="2",
         align="stretch",
         width="100%",
@@ -254,7 +255,7 @@ def _info_card_content() -> rx.Component:
 def _info_placeholder() -> rx.Component:
     return rx.center(
         rx.text(
-            "Select an element to see its details.",
+            TranslationState.t["home_select_prompt"],
             color="#9a9aa8",
             font_size="0.9rem",
             text_align="center",
@@ -272,10 +273,10 @@ def _info_tab_content() -> rx.Component:
     )
 
 
-def _tab_button(view: str, label: str) -> rx.Component:
+def _tab_button(view: str, t_key: str) -> rx.Component:
     is_active = TableState.right_panel_view == view
     return rx.button(
-        label,
+        TranslationState.t[t_key],
         on_click=TableState.set_right_panel(view),
         background=rx.cond(is_active, TAB_ACTIVE_BG, TAB_INACTIVE_BG),
         color=DARK_FOREGROUND,
@@ -291,7 +292,7 @@ def _tab_button(view: str, label: str) -> rx.Component:
 
 def _tab_bar() -> rx.Component:
     return rx.hstack(
-        *[_tab_button(view, label) for view, label in RIGHT_PANEL_TABS],
+        *[_tab_button(view, t_key) for view, t_key in RIGHT_PANEL_TABS],
         spacing="1",
         width="100%",
         margin_bottom="0.75rem",
@@ -323,13 +324,13 @@ def index() -> rx.Component:
         rx.vstack(
             nav_header("home"),
             rx.heading(
-                "Periodic Table of Elements",
+                TranslationState.t["home_heading"],
                 size="6",
                 color=DARK_FOREGROUND,
                 margin_bottom="0.25rem",
             ),
             rx.text(
-                "Click an element for details · search by name, symbol, or atomic number · switch trend view above the table.",
+                TranslationState.t["home_subtitle"],
                 font_size="0.85rem",
                 color="#9a9aa8",
                 margin_bottom="1.25rem",

@@ -14,6 +14,7 @@ from __future__ import annotations
 import reflex as rx
 from pydantic import BaseModel, Field
 
+from periodic_table_web.i18n import TranslationState
 from periodic_table_web.theme import DARK_FOREGROUND
 from src.domain.electron_configuration import configuration_to_map
 from src.domain.lewis_diagram import distribute_dots, get_valence_electrons
@@ -21,9 +22,6 @@ from src.domain.lewis_diagram import distribute_dots, get_valence_electrons
 DOT_COLOR = "#f5d442"
 SYMBOL_COLOR = DARK_FOREGROUND
 INFO_LABEL_COLOR = "#9a9aa8"
-EXTENDED_OCTET_NOTE = (
-    "Extended octet — see electron configuration for d/f shells."
-)
 
 SVG_SIZE = 200
 CENTER = SVG_SIZE / 2
@@ -225,9 +223,9 @@ def lewis_view(state, placeholder) -> rx.Component:
                 ),
                 _lewis_svg(state),
                 rx.vstack(
-                    _info_row("Valence electrons", data.valence),
-                    _info_row("Lone pairs", data.lone_pairs),
-                    _info_row("Bonding (unpaired)", data.unpaired),
+                    _info_row(TranslationState.t["lewis_valence_electrons"], data.valence),
+                    _info_row(TranslationState.t["lewis_lone_pairs"], data.lone_pairs),
+                    _info_row(TranslationState.t["lewis_bonding"], data.unpaired),
                     spacing="1",
                     width="100%",
                     margin_top="0.5rem",
@@ -235,7 +233,7 @@ def lewis_view(state, placeholder) -> rx.Component:
                 rx.cond(
                     data.is_extended,
                     rx.text(
-                        EXTENDED_OCTET_NOTE,
+                        TranslationState.t["lewis_extended_octet_note"],
                         font_size="0.75rem",
                         color=INFO_LABEL_COLOR,
                         font_style="italic",
@@ -248,7 +246,7 @@ def lewis_view(state, placeholder) -> rx.Component:
             ),
             rx.center(
                 rx.text(
-                    "Lewis dot diagram is not conventionally drawn for this element.",
+                    TranslationState.t["lewis_not_applicable"],
                     color=INFO_LABEL_COLOR,
                     font_size="0.85rem",
                     text_align="center",

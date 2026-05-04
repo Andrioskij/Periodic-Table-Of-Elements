@@ -11,6 +11,7 @@ from __future__ import annotations
 import reflex as rx
 from pydantic import BaseModel
 
+from periodic_table_web.i18n import TranslationState
 from periodic_table_web.theme import DARK_FOREGROUND
 from src.domain.molar_mass import (
     FormulaError,
@@ -115,10 +116,10 @@ def _composition_row(row: CompositionRow) -> rx.Component:
 def _composition_table() -> rx.Component:
     return rx.vstack(
         rx.hstack(
-            rx.text("Symbol", color=_LABEL_MUTED, font_size="0.78rem", width="48px"),
-            rx.text("Count", color=_LABEL_MUTED, font_size="0.78rem", width="48px"),
-            rx.text("Mass", color=_LABEL_MUTED, font_size="0.78rem", width="120px"),
-            rx.text("Percent", color=_LABEL_MUTED, font_size="0.78rem", text_align="right", flex_grow="1"),
+            rx.text(TranslationState.t["molar_col_symbol"], color=_LABEL_MUTED, font_size="0.78rem", width="48px"),
+            rx.text(TranslationState.t["molar_col_count"], color=_LABEL_MUTED, font_size="0.78rem", width="48px"),
+            rx.text(TranslationState.t["molar_col_mass"], color=_LABEL_MUTED, font_size="0.78rem", width="120px"),
+            rx.text(TranslationState.t["molar_col_percent"], color=_LABEL_MUTED, font_size="0.78rem", text_align="right", flex_grow="1"),
             spacing="3",
             width="100%",
             padding_y="4px",
@@ -134,12 +135,12 @@ def _composition_table() -> rx.Component:
 def molar_mass_view() -> rx.Component:
     return rx.vstack(
         rx.text(
-            "Enter a chemical formula. Hydrate notation works (e.g. CuSO4·5H2O or CuSO4.5H2O).",
+            TranslationState.t["molar_subtitle"],
             color=_LABEL_MUTED,
             font_size="0.85rem",
         ),
         rx.input(
-            placeholder="e.g. H2O, Ca(OH)2, Mg3(PO4)2",
+            placeholder=TranslationState.t["molar_placeholder"],
             value=MolarMassState.formula,
             on_change=MolarMassState.set_formula,
             background=_RESULT_BG,
@@ -182,7 +183,7 @@ def molar_mass_view() -> rx.Component:
                     ),
                     rx.hstack(
                         rx.checkbox(
-                            "Show percent composition",
+                            TranslationState.t["molar_show_composition"],
                             checked=MolarMassState.show_composition,
                             on_change=MolarMassState.toggle_composition,
                             color_scheme="iris",

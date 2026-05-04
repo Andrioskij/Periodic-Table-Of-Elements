@@ -17,6 +17,7 @@ from __future__ import annotations
 import reflex as rx
 from pydantic import BaseModel
 
+from periodic_table_web.i18n import TranslationState
 from periodic_table_web.theme import (
     DARK_FOREGROUND,
 )
@@ -200,7 +201,11 @@ def electron_view(state, placeholder) -> rx.Component:
                 margin_bottom="0.25rem",
             ),
             rx.text(
-                rx.fragment("Configuration: ", el["electron_configuration"]),
+                rx.fragment(
+                    TranslationState.t["electron_configuration_label"],
+                    " ",
+                    el["electron_configuration"],
+                ),
                 font_family="'Cascadia Code', 'Consolas', monospace",
                 font_size="0.8rem",
                 color=BLOCK_LABEL_COLOR,
