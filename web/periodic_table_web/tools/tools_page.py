@@ -15,6 +15,8 @@ import reflex as rx
 
 from periodic_table_web.nav import header
 from periodic_table_web.theme import DARK_BACKGROUND, DARK_FOREGROUND, DARK_PANEL
+from periodic_table_web.tools.compound_builder_view import compound_builder_view
+from periodic_table_web.tools.molar_mass_view import molar_mass_view
 from periodic_table_web.tools.state import ToolsState
 
 _TAB_BUTTONS: list[tuple[str, str]] = [
@@ -68,11 +70,11 @@ def _tab_bar() -> rx.Component:
 def _tab_content() -> rx.Component:
     return rx.match(
         ToolsState.active_tool,
-        ("molar", _placeholder("Molar mass")),
+        ("molar", molar_mass_view()),
         ("stoich", _placeholder("Stoichiometry")),
-        ("builder", _placeholder("Compound builder")),
+        ("builder", compound_builder_view()),
         ("solubility", _placeholder("Solubility")),
-        _placeholder("Molar mass"),
+        molar_mass_view(),
     )
 
 
