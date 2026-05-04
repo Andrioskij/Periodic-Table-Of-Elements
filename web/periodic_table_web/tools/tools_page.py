@@ -18,6 +18,7 @@ from periodic_table_web.theme import DARK_BACKGROUND, DARK_FOREGROUND, DARK_PANE
 from periodic_table_web.tools.compound_builder_view import compound_builder_view
 from periodic_table_web.tools.molar_mass_view import molar_mass_view
 from periodic_table_web.tools.state import ToolsState
+from periodic_table_web.tools.stoichiometry_view import stoichiometry_view
 
 _TAB_BUTTONS: list[tuple[str, str]] = [
     ("molar", "Molar Mass"),
@@ -71,7 +72,7 @@ def _tab_content() -> rx.Component:
     return rx.match(
         ToolsState.active_tool,
         ("molar", molar_mass_view()),
-        ("stoich", _placeholder("Stoichiometry")),
+        ("stoich", stoichiometry_view()),
         ("builder", compound_builder_view()),
         ("solubility", _placeholder("Solubility")),
         molar_mass_view(),
