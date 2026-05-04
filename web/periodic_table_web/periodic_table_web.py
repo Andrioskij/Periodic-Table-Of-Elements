@@ -4,6 +4,7 @@ import reflex as rx
 
 from periodic_table_web.electron_view import electron_view
 from periodic_table_web.lewis_view import lewis_view
+from periodic_table_web.nav import header as nav_header
 from periodic_table_web.state import TableState
 from periodic_table_web.theme import (
     DARK_BACKGROUND,
@@ -11,6 +12,7 @@ from periodic_table_web.theme import (
     DARK_LABEL_MUTED,
     DARK_PANEL,
 )
+from periodic_table_web.tools import tools_page
 from src.services.data_loader import load_elements
 
 ELEMENTS = load_elements()
@@ -319,6 +321,7 @@ def _info_card() -> rx.Component:
 def index() -> rx.Component:
     return rx.box(
         rx.vstack(
+            nav_header("home"),
             rx.heading(
                 "Periodic Table of Elements",
                 size="6",
@@ -357,3 +360,4 @@ app = rx.App(
     theme=rx.theme(appearance="dark", accent_color="iris"),
 )
 app.add_page(index, title="Periodic Table")
+app.add_page(tools_page, route="/tools", title="Tools — Periodic Table")
