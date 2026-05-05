@@ -16,14 +16,12 @@ from __future__ import annotations
 
 import reflex as rx
 
-from periodic_table_web.theme import DARK_FOREGROUND
+from periodic_table_web.i18n import TranslationState
+from periodic_table_web.theme_state import ThemeState
 from src.domain.compound_builder import build_binary_formula, parse_oxidation_states
 from src.services.data_loader import load_elements
 
 _ELEMENTS = load_elements()
-_LABEL_MUTED = "#9a9aa8"
-_RESULT_BG = "#1f1f2e"
-_ERROR_COLOR = "#f7a8a8"
 
 # Pre-compute the dropdown lists at import time. Each entry is
 # (symbol, "Symbol — Name") so the labels read naturally; we send the
@@ -117,24 +115,30 @@ class CompoundBuilderState(rx.State):
         )
 
     @rx.var(cache=True)
-    def error_message(self) -> str:
+    def error_key(self) -> str:
+        """Return the translation key for the current error, or ``""``.
+
+        Storing a key (not a localized string) lets the view look the
+        message up against ``TranslationState.t`` so the language switch
+        propagates instantly.
+        """
         if not (self.cation_option and self.anion_option):
             return ""
         if self.cation_symbol == self.anion_symbol:
-            return "Pick two different elements for the cation and the anion."
+            return "builder_error_same_element"
         if not (self.cation_charge_label and self.anion_charge_label):
             return ""
         cation_charge = _coerce_charge(self.cation_charge_label)
         anion_charge = _coerce_charge(self.anion_charge_label)
         if cation_charge <= 0:
-            return "Cation charge must be positive."
+            return "builder_error_cation_positive"
         if anion_charge >= 0:
-            return "Anion charge must be negative."
+            return "builder_error_anion_negative"
         return ""
 
     @rx.var(cache=True)
     def formula(self) -> str:
-        if not self.has_full_selection or self.error_message:
+        if not self.has_full_selection or self.error_key:
             return ""
         cation_charge = _coerce_charge(self.cation_charge_label)
         anion_charge = _coerce_charge(self.anion_charge_label)
@@ -149,14 +153,14 @@ class CompoundBuilderState(rx.State):
             return ""
 
 
-def _picker(label: str, options: list[str], value, on_change) -> rx.Component:
+def _picker(label, options: list[str], value, on_change) -> rx.Component:
     return rx.vstack(
-        rx.text(label, color=_LABEL_MUTED, font_size="0.78rem"),
+        rx.text(label, color=ThemeState.colors["text_muted"], font_size="0.78rem"),
         rx.select(
             options,
             value=value,
             on_change=on_change,
-            placeholder="Select…",
+            placeholder=TranslationState.t["builder_select_placeholder"],
             color_scheme="iris",
             width="100%",
         ),
@@ -166,16 +170,14 @@ def _picker(label: str, options: list[str], value, on_change) -> rx.Component:
     )
 
 
-def _charge_picker(
-    label: str, choices, value, on_change
-) -> rx.Component:
+def _charge_picker(label, choices, value, on_change) -> rx.Component:
     return rx.vstack(
-        rx.text(label, color=_LABEL_MUTED, font_size="0.78rem"),
+        rx.text(label, color=ThemeState.colors["text_muted"], font_size="0.78rem"),
         rx.select(
             choices,
             value=value,
             on_change=on_change,
-            placeholder="—",
+            placeholder=TranslationState.t["builder_charge_placeholder"],
             color_scheme="iris",
             width="100%",
         ),
@@ -188,19 +190,19 @@ def _charge_picker(
 def compound_builder_view() -> rx.Component:
     return rx.vstack(
         rx.text(
-            "Pick a cation (positive charge) and an anion (negative charge). The formula is the simplest integer ratio that balances the charges.",
-            color=_LABEL_MUTED,
+            TranslationState.t["builder_subtitle"],
+            color=ThemeState.colors["text_muted"],
             font_size="0.85rem",
         ),
         rx.hstack(
             _picker(
-                "Cation element",
+                TranslationState.t["builder_cation_element"],
                 _CATION_OPTIONS,
                 CompoundBuilderState.cation_option,
                 CompoundBuilderState.set_cation_option,
             ),
             _charge_picker(
-                "Charge",
+                TranslationState.t["builder_charge"],
                 CompoundBuilderState.cation_charge_choices,
                 CompoundBuilderState.cation_charge_label,
                 CompoundBuilderState.set_cation_charge,
@@ -211,13 +213,13 @@ def compound_builder_view() -> rx.Component:
         ),
         rx.hstack(
             _picker(
-                "Anion element",
+                TranslationState.t["builder_anion_element"],
                 _ANION_OPTIONS,
                 CompoundBuilderState.anion_option,
                 CompoundBuilderState.set_anion_option,
             ),
             _charge_picker(
-                "Charge",
+                TranslationState.t["builder_charge"],
                 CompoundBuilderState.anion_charge_choices,
                 CompoundBuilderState.anion_charge_label,
                 CompoundBuilderState.set_anion_charge,
@@ -227,10 +229,10 @@ def compound_builder_view() -> rx.Component:
             max_width="540px",
         ),
         rx.cond(
-            CompoundBuilderState.error_message != "",
+            CompoundBuilderState.error_key != "",
             rx.text(
-                CompoundBuilderState.error_message,
-                color=_ERROR_COLOR,
+                TranslationState.t[CompoundBuilderState.error_key],
+                color=ThemeState.colors["error"],
                 font_size="0.85rem",
             ),
         ),
@@ -238,14 +240,14 @@ def compound_builder_view() -> rx.Component:
             CompoundBuilderState.formula != "",
             rx.vstack(
                 rx.text(
-                    "Formula",
-                    color=_LABEL_MUTED,
+                    TranslationState.t["builder_formula_label"],
+                    color=ThemeState.colors["text_muted"],
                     font_size="0.78rem",
                     margin_top="0.5rem",
                 ),
                 rx.text(
                     CompoundBuilderState.formula,
-                    color=DARK_FOREGROUND,
+                    color=ThemeState.colors["foreground"],
                     font_size="2rem",
                     font_weight="700",
                     font_family="'Cascadia Code', 'Consolas', monospace",

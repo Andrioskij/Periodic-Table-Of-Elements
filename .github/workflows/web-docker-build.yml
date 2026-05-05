@@ -1,0 +1,57 @@
+name: Web Docker Build
+
+# Build-only verification of the Reflex web app's Docker image. No
+# registry push — that requires a credential decision the user has not
+# yet made; see the PR for batch 10 for the rationale.
+#
+# Triggered on pushes that touch the web layer or its source-of-truth
+# inputs (the shared domain / services packages and the data/ tree).
+# Pull requests targeting main also run the build so changes get caught
+# before merge.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "web/**"
+      - "src/domain/**"
+      - "src/services/**"
+      - "src/config/**"
+      - "data/**"
+      - ".github/workflows/web-docker-build.yml"
+  pull_request:
+    paths:
+      - "web/**"
+      - "src/domain/**"
+      - "src/services/**"
+      - "src/config/**"
+      - "data/**"
+      - ".github/workflows/web-docker-build.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-web-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build web image (verification only, no push)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: web/Dockerfile
+          push: false
+          load: false
+          tags: periodic-table-web:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

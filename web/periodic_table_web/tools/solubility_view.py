@@ -11,28 +11,33 @@ from __future__ import annotations
 import reflex as rx
 from pydantic import BaseModel
 
-from periodic_table_web.theme import DARK_FOREGROUND
+from periodic_table_web.i18n import TranslationState
+from periodic_table_web.theme_state import ThemeState
 from src.domain.solubility import ANIONS, CATIONS, get_solubility_matrix
 
-_LABEL_MUTED = "#9a9aa8"
-_PANEL_BG = "#1f1f2e"
+# Verdict colours (cell backgrounds) stay fixed across themes — they
+# carry domain meaning (green=soluble / amber=slightly / red=insoluble)
+# and read against both panel backgrounds.
 _VERDICT_COLORS: dict[str, str] = {
     "soluble": "#3fa34d",
     "slightly_soluble": "#d9a13b",
     "insoluble": "#c14953",
 }
-_VERDICT_LABELS: dict[str, str] = {
-    "soluble": "Soluble",
-    "slightly_soluble": "Slightly soluble",
-    "insoluble": "Insoluble",
+# Map verdict keyword -> i18n translation key. The verdict itself stays
+# inside the MatrixCell model so the view can index ``TranslationState.t``
+# at render time and switch language without rebuilding the matrix.
+_VERDICT_T_KEYS: dict[str, str] = {
+    "soluble": "solubility_soluble",
+    "slightly_soluble": "solubility_slightly_soluble",
+    "insoluble": "solubility_insoluble",
 }
 
 
 class MatrixCell(BaseModel):
-    """One cation/anion cell with its precomputed verdict + label."""
+    """One cation/anion cell with its precomputed verdict + label key."""
 
     verdict: str
-    label: str
+    label_key: str
     color: str
     cation: str
     anion: str
@@ -55,7 +60,7 @@ def _build_rows() -> list[MatrixRow]:
             cells.append(
                 MatrixCell(
                     verdict=verdict,
-                    label=_VERDICT_LABELS.get(verdict, verdict),
+                    label_key=_VERDICT_T_KEYS.get(verdict, ""),
                     color=_VERDICT_COLORS.get(verdict, "#7a7a8a"),
                     cation=cation,
                     anion=anion,
@@ -66,6 +71,12 @@ def _build_rows() -> list[MatrixRow]:
 
 
 _MATRIX_ROWS: list[MatrixRow] = _build_rows()
+# "(All)" is the sentinel the highlight dropdowns emit when no row/column
+# is filtered. The desktop's solubility dialog uses an analogous "any"
+# sentinel; we keep this one in English because rx.select with a flat
+# string list treats each entry as both value and label, so a translated
+# label would also change the sentinel value the state compares against.
+# Documented in the PR as a deliberate scope cut.
 _CATION_OPTIONS: list[str] = ["(All)", *CATIONS]
 _ANION_OPTIONS: list[str] = ["(All)", *ANIONS]
 
@@ -93,7 +104,7 @@ def _cell(cell: MatrixCell) -> rx.Component:
     is_dim = ~(cation_match & anion_match)
     return rx.box(
         rx.text(
-            cell.label,
+            TranslationState.t[cell.label_key],
             color="#ffffff",
             font_size="0.7rem",
             text_align="center",
@@ -116,7 +127,7 @@ def _row(row: MatrixRow) -> rx.Component:
         rx.box(
             rx.text(
                 row.cation,
-                color=DARK_FOREGROUND,
+                color=ThemeState.colors["foreground"],
                 font_size="0.85rem",
                 font_weight="600",
                 text_align="right",
@@ -125,7 +136,7 @@ def _row(row: MatrixRow) -> rx.Component:
             padding_right="6px",
             position="sticky",
             left="0",
-            background=_PANEL_BG,
+            background=ThemeState.colors["panel"],
             z_index="1",
         ),
         *[_cell(cell) for cell in row.cells],
@@ -141,14 +152,14 @@ def _header_row() -> rx.Component:
             padding_right="6px",
             position="sticky",
             left="0",
-            background=_PANEL_BG,
+            background=ThemeState.colors["panel"],
             z_index="1",
         ),
         *[
             rx.box(
                 rx.text(
                     anion,
-                    color=_LABEL_MUTED,
+                    color=ThemeState.colors["text_muted"],
                     font_size="0.78rem",
                     text_align="center",
                 ),
@@ -169,7 +180,11 @@ def _legend_chip(verdict: str) -> rx.Component:
             height="14px",
             border_radius="3px",
         ),
-        rx.text(_VERDICT_LABELS[verdict], color=_LABEL_MUTED, font_size="0.78rem"),
+        rx.text(
+            TranslationState.t[_VERDICT_T_KEYS[verdict]],
+            color=ThemeState.colors["text_muted"],
+            font_size="0.78rem",
+        ),
         spacing="2",
         align="center",
     )
@@ -178,13 +193,13 @@ def _legend_chip(verdict: str) -> rx.Component:
 def solubility_view() -> rx.Component:
     return rx.vstack(
         rx.text(
-            "Solubility verdict for every cation × anion pair, generated from a small priority-ordered rule set.",
-            color=_LABEL_MUTED,
+            TranslationState.t["solubility_subtitle"],
+            color=ThemeState.colors["text_muted"],
             font_size="0.85rem",
         ),
         rx.hstack(
             rx.vstack(
-                rx.text("Highlight cation", color=_LABEL_MUTED, font_size="0.78rem"),
+                rx.text(TranslationState.t["solubility_highlight_cation"], color=ThemeState.colors["text_muted"], font_size="0.78rem"),
                 rx.select(
                     _CATION_OPTIONS,
                     value=SolubilityState.highlight_cation,
@@ -196,7 +211,7 @@ def solubility_view() -> rx.Component:
                 align="stretch",
             ),
             rx.vstack(
-                rx.text("Highlight anion", color=_LABEL_MUTED, font_size="0.78rem"),
+                rx.text(TranslationState.t["solubility_highlight_anion"], color=ThemeState.colors["text_muted"], font_size="0.78rem"),
                 rx.select(
                     _ANION_OPTIONS,
                     value=SolubilityState.highlight_anion,
