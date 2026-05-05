@@ -10,9 +10,12 @@ file is duplicated.
 
 ## Status
 
-Batch 9 closed (tools area). The app now has two routes — `/` for
-the periodic table itself and `/tools` for calculators and lookups —
-linked through a header strip at the top of every page.
+Batch 10 closed — the web port now ships with full UI translations,
+a runtime theme switcher, and a deployable container image.
+
+The app has two routes — `/` for the periodic table itself and
+`/tools` for calculators and lookups — linked through a header strip
+that also carries a 7-language selector and a dark/light theme toggle.
 
 `/tools` carries four tabs, each backed by the same `src.domain`
 module that powers the equivalent desktop panel:
@@ -34,12 +37,25 @@ Carried over from earlier batches: element selection, search,
 trend recolorings, three-tab right panel (Info / Electron Config /
 Lewis) on the periodic-table page.
 
-Still missing (see roadmap): i18n with the seven desktop locales,
-theme switcher, and a deployable build (Docker / Reflex Hosting) —
-all three land in Batch 10. Multi-atom Lewis structures remain
-deferred.
+The seven UI languages match the desktop dataset (English, Italiano,
+Español, Français, Deutsch, 中文, Русский). Web-specific strings live
+under `data/localization/web/{code}.json` so the desktop dataset and
+its audit pipeline stay untouched. A small set of strings stays in
+English by design — element category names, parser error messages
+returned by `src.domain.*`, the browser document title, and the
+solubility "(All)" highlight sentinel — see the batch-10 PR for the
+rationale.
 
-![/tools page with Stoichiometry tab active and an H2 + O2 → H2O calculation](../assets/screenshots/web-batch9.png)
+The light theme palette runs alongside the existing dark one. Both
+are persisted via `rx.LocalStorage` so a refresh keeps the user's
+language and theme choices. The Radix appearance is fixed to
+`inherit`; every visible surface (page bg, foreground text, panel
+cards, accent buttons, borders, inputs) is driven directly by
+`ThemeState.colors` so the toggle takes effect without a page reload.
+
+Multi-atom Lewis structures remain deferred.
+
+![/ page in Italian with the light theme active, showing the seven-language selector and the sun/moon toggle in the header](../assets/screenshots/web-batch10.png)
 
 ## Prerequisites
 
@@ -83,22 +99,58 @@ Reflex starts:
 Open http://localhost:3000 in a browser. The first start compiles the
 React bundle and may take a minute; subsequent starts are fast.
 
+## Docker build / deploy
+
+The Reflex app ships with a multi-stage Dockerfile that bundles the
+production frontend and the Python backend into a single image. Build
+context is the repo root because the web layer reaches into `src/` and
+`data/` via the sys.path bridge in `periodic_table_web/__init__.py`:
+
+```bash
+# From the repository root:
+docker build -t periodic-table-web -f web/Dockerfile .
+
+# Run the container, exposing both ports:
+docker run --rm -p 3000:3000 -p 8000:8000 periodic-table-web
+```
+
+The image entry point is `reflex run --env prod`, which serves the
+prerendered frontend on port 3000 and the WebSocket backend on port
+8000. The `.dockerignore` at the repo root excludes the Reflex build
+cache, virtualenvs, the desktop screenshots folder, and other noise
+that bloats the image without contributing to the runtime.
+
+CI verifies that the image builds cleanly on every push to `main` and
+on every pull request that touches `web/`, the shared domain/services
+packages, or the data tree, via
+[`.github/workflows/web-docker-build.yml`](../.github/workflows/web-docker-build.yml).
+The workflow runs build verification only — it does not push to a
+registry.
+
+For a hosted deploy without managing your own infrastructure,
+[Reflex Hosting](https://reflex.dev/docs/hosting/deploy-quick-start/)
+is the simplest path: it runs `reflex deploy` against your project
+directly, no Docker step required.
+
 ## Folder layout
 
 ```
 web/
 ├── .venv/                       # virtualenv (gitignored)
 ├── .web/                        # Reflex/React build artifacts (gitignored)
+├── Dockerfile                   # multi-stage build for the deployable image
 ├── assets/                      # static assets served by the frontend
 ├── periodic_table_web/
 │   ├── __init__.py              # adds repo root to sys.path
 │   ├── periodic_table_web.py    # Reflex App, index page, /tools registration
-│   ├── nav.py                   # shared header (Periodic Table / Tools)
+│   ├── nav.py                   # shared header (Periodic Table / Tools + lang + theme)
 │   ├── state.py                 # rx.State (selection, search, trend, panel tab)
+│   ├── i18n.py                  # TranslationState + 7 web/{code}.json bundles
+│   ├── theme.py                 # DARK_PALETTE / LIGHT_PALETTE / palette() helper
+│   ├── theme_state.py           # ThemeState (rx.LocalStorage + colors computed var)
 │   ├── trends.py                # trend color helpers (lerp, gradients)
 │   ├── electron_view.py         # orbital-diagram tab (boxes + Hund arrows)
 │   ├── lewis_view.py            # Lewis-dot tab (SVG single-atom render)
-│   ├── theme.py                 # palette / colors
 │   └── tools/
 │       ├── tools_page.py        # /tools layout + 4-tab strip
 │       ├── state.py             # ToolsState (active tab)
@@ -119,6 +171,9 @@ web/
 - `src.services.data_loader` — JSON loaders for `data/raw/elements.json`
   and friends.
 - `src.domain.*` — pure-Python parsers and chemistry logic.
+- `src.config.languages.ALL_LANGUAGE_OPTIONS` — the seven supported
+  language codes + their native labels (shared with the desktop
+  language picker).
 
 `src.ui.*` is **never imported** from the web app: it depends on
 PySide6, which has no place in the Reflex runtime.
@@ -137,9 +192,13 @@ them up automatically — no sync step.
   Config / Lewis tabs at the top of the side card. Electron Config
   renders boxes-and-arrows orbital diagrams; Lewis renders
   single-atom dot diagrams (multi-atom molecules deferred).
-- **Batch 9 — done (this batch)** — `/tools` route with header
-  navigation and four tabs: molar mass, stoichiometry (sympy-based
-  balancer), compound builder (binary ionic, criss-cross GCD), and
-  the full 14×10 solubility matrix.
-- **Batch 10** — i18n (the 7 desktop locales), theme switcher, and a
-  deployable build (Docker / Reflex Hosting).
+- **Batch 9 — done** — `/tools` route with header navigation and
+  four tabs: molar mass, stoichiometry (sympy-based balancer),
+  compound builder (binary ionic, criss-cross GCD), and the full
+  14×10 solubility matrix.
+- **Batch 10 — done (this batch)** — i18n with seven locales,
+  light/dark theme switcher with `rx.LocalStorage` persistence, and
+  a multi-stage Docker build with CI verification.
+- **Future** — first web-app release tag (`web-v1.0.0` + CHANGELOG),
+  hosted deploy (Reflex Hosting / fly.io / Render), end-to-end
+  Playwright suite integrated into CI, multi-atom Lewis structures.
