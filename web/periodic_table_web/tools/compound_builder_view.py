@@ -17,14 +17,11 @@ from __future__ import annotations
 import reflex as rx
 
 from periodic_table_web.i18n import TranslationState
-from periodic_table_web.theme import DARK_FOREGROUND
+from periodic_table_web.theme_state import ThemeState
 from src.domain.compound_builder import build_binary_formula, parse_oxidation_states
 from src.services.data_loader import load_elements
 
 _ELEMENTS = load_elements()
-_LABEL_MUTED = "#9a9aa8"
-_RESULT_BG = "#1f1f2e"
-_ERROR_COLOR = "#f7a8a8"
 
 # Pre-compute the dropdown lists at import time. Each entry is
 # (symbol, "Symbol — Name") so the labels read naturally; we send the
@@ -158,7 +155,7 @@ class CompoundBuilderState(rx.State):
 
 def _picker(label, options: list[str], value, on_change) -> rx.Component:
     return rx.vstack(
-        rx.text(label, color=_LABEL_MUTED, font_size="0.78rem"),
+        rx.text(label, color=ThemeState.colors["text_muted"], font_size="0.78rem"),
         rx.select(
             options,
             value=value,
@@ -175,7 +172,7 @@ def _picker(label, options: list[str], value, on_change) -> rx.Component:
 
 def _charge_picker(label, choices, value, on_change) -> rx.Component:
     return rx.vstack(
-        rx.text(label, color=_LABEL_MUTED, font_size="0.78rem"),
+        rx.text(label, color=ThemeState.colors["text_muted"], font_size="0.78rem"),
         rx.select(
             choices,
             value=value,
@@ -194,7 +191,7 @@ def compound_builder_view() -> rx.Component:
     return rx.vstack(
         rx.text(
             TranslationState.t["builder_subtitle"],
-            color=_LABEL_MUTED,
+            color=ThemeState.colors["text_muted"],
             font_size="0.85rem",
         ),
         rx.hstack(
@@ -235,7 +232,7 @@ def compound_builder_view() -> rx.Component:
             CompoundBuilderState.error_key != "",
             rx.text(
                 TranslationState.t[CompoundBuilderState.error_key],
-                color=_ERROR_COLOR,
+                color=ThemeState.colors["error"],
                 font_size="0.85rem",
             ),
         ),
@@ -244,13 +241,13 @@ def compound_builder_view() -> rx.Component:
             rx.vstack(
                 rx.text(
                     TranslationState.t["builder_formula_label"],
-                    color=_LABEL_MUTED,
+                    color=ThemeState.colors["text_muted"],
                     font_size="0.78rem",
                     margin_top="0.5rem",
                 ),
                 rx.text(
                     CompoundBuilderState.formula,
-                    color=DARK_FOREGROUND,
+                    color=ThemeState.colors["foreground"],
                     font_size="2rem",
                     font_weight="700",
                     font_family="'Cascadia Code', 'Consolas', monospace",

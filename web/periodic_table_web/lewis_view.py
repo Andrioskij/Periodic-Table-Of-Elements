@@ -15,13 +15,12 @@ import reflex as rx
 from pydantic import BaseModel, Field
 
 from periodic_table_web.i18n import TranslationState
-from periodic_table_web.theme import DARK_FOREGROUND
+from periodic_table_web.theme_state import ThemeState
 from src.domain.electron_configuration import configuration_to_map
 from src.domain.lewis_diagram import distribute_dots, get_valence_electrons
 
+# Dot colour stays fixed: yellow reads against both panel backgrounds.
 DOT_COLOR = "#f5d442"
-SYMBOL_COLOR = DARK_FOREGROUND
-INFO_LABEL_COLOR = "#9a9aa8"
 
 SVG_SIZE = 200
 CENTER = SVG_SIZE / 2
@@ -178,7 +177,7 @@ def _lewis_svg(state) -> rx.Component:
             dominant_baseline="central",
             font_size="36",
             font_weight="700",
-            fill=SYMBOL_COLOR,
+            fill=ThemeState.colors["foreground"],
             font_family="'Segoe UI', system-ui, sans-serif",
         ),
         top,
@@ -192,10 +191,10 @@ def _lewis_svg(state) -> rx.Component:
     )
 
 
-def _info_row(label: str, value) -> rx.Component:
+def _info_row(label, value) -> rx.Component:
     return rx.hstack(
-        rx.text(label, color=INFO_LABEL_COLOR, font_size="0.78rem"),
-        rx.text(value, color=DARK_FOREGROUND, font_size="0.85rem"),
+        rx.text(label, color=ThemeState.colors["text_muted"], font_size="0.78rem"),
+        rx.text(value, color=ThemeState.colors["foreground"], font_size="0.85rem"),
         justify="between",
         width="100%",
     )
@@ -218,7 +217,7 @@ def lewis_view(state, placeholder) -> rx.Component:
                     el["name"],
                     font_size="1rem",
                     font_weight="600",
-                    color=DARK_FOREGROUND,
+                    color=ThemeState.colors["foreground"],
                     margin_bottom="0.25rem",
                 ),
                 _lewis_svg(state),
@@ -235,7 +234,7 @@ def lewis_view(state, placeholder) -> rx.Component:
                     rx.text(
                         TranslationState.t["lewis_extended_octet_note"],
                         font_size="0.75rem",
-                        color=INFO_LABEL_COLOR,
+                        color=ThemeState.colors["text_muted"],
                         font_style="italic",
                         margin_top="0.5rem",
                     ),
@@ -247,7 +246,7 @@ def lewis_view(state, placeholder) -> rx.Component:
             rx.center(
                 rx.text(
                     TranslationState.t["lewis_not_applicable"],
-                    color=INFO_LABEL_COLOR,
+                    color=ThemeState.colors["text_muted"],
                     font_size="0.85rem",
                     text_align="center",
                 ),

@@ -7,18 +7,13 @@ from periodic_table_web.i18n import TranslationState
 from periodic_table_web.lewis_view import lewis_view
 from periodic_table_web.nav import header as nav_header
 from periodic_table_web.state import TableState
-from periodic_table_web.theme import (
-    DARK_BACKGROUND,
-    DARK_FOREGROUND,
-    DARK_LABEL_MUTED,
-    DARK_PANEL,
-)
+from periodic_table_web.theme import DARK_LABEL_MUTED
+from periodic_table_web.theme_state import ThemeState
 from periodic_table_web.tools import tools_page
 from src.services.data_loader import load_elements
 
 ELEMENTS = load_elements()
 GRID_GAP_ROW = 8
-SELECTED_BORDER_COLOR = "#f5d442"
 TREND_BUTTONS: list[tuple[str, str]] = [
     ("category", "trend_default"),
     ("radius", "trend_radius"),
@@ -33,8 +28,6 @@ RIGHT_PANEL_TABS: list[tuple[str, str]] = [
     ("electron", "tab_electron_config"),
     ("lewis", "tab_lewis"),
 ]
-TAB_ACTIVE_BG = "#4e79a7"
-TAB_INACTIVE_BG = "#1f1f2e"
 
 
 def _grid_row(display_row: int) -> int:
@@ -78,8 +71,8 @@ def _element_cell(element: dict) -> rx.Component:
         background=TableState.color_map[atomic_number],
         border=rx.cond(
             is_selected,
-            f"2px solid {SELECTED_BORDER_COLOR}",
-            f"1px solid {DARK_PANEL}",
+            "2px solid " + ThemeState.colors["selection_border"],
+            "1px solid " + ThemeState.colors["border"],
         ),
         opacity=rx.cond(is_visible, "1", "0.25"),
         cursor="pointer",
@@ -116,9 +109,9 @@ def _search_box() -> rx.Component:
             placeholder=TranslationState.t["home_search_placeholder"],
             value=TableState.search_query,
             on_change=TableState.set_search,
-            background=DARK_PANEL,
-            color=DARK_FOREGROUND,
-            border=f"1px solid {DARK_PANEL}",
+            background=ThemeState.colors["input_bg"],
+            color=ThemeState.colors["foreground"],
+            border="1px solid " + ThemeState.colors["border"],
             border_radius="6px",
             padding="6px 10px",
             width="100%",
@@ -130,7 +123,7 @@ def _search_box() -> rx.Component:
                 "✕",
                 on_click=TableState.clear_search,
                 background="transparent",
-                color=DARK_FOREGROUND,
+                color=ThemeState.colors["foreground"],
                 border="none",
                 cursor="pointer",
                 font_size="0.9rem",
@@ -149,9 +142,13 @@ def _trend_button(mode: str, t_key: str) -> rx.Component:
     return rx.button(
         TranslationState.t[t_key],
         on_click=TableState.set_trend(mode),
-        background=rx.cond(is_active, "#4e79a7", DARK_PANEL),
-        color=DARK_FOREGROUND,
-        border=f"1px solid {DARK_PANEL}",
+        background=rx.cond(
+            is_active,
+            ThemeState.colors["accent_active"],
+            ThemeState.colors["accent_inactive"],
+        ),
+        color=ThemeState.colors["foreground"],
+        border="1px solid " + ThemeState.colors["border"],
         border_radius="6px",
         padding="4px 12px",
         cursor="pointer",
@@ -169,12 +166,17 @@ def _trend_buttons() -> rx.Component:
     )
 
 
-def _info_row(label: str, value) -> rx.Component:
+def _info_row(label, value) -> rx.Component:
     return rx.hstack(
-        rx.text(label, color="#9a9aa8", font_size="0.78rem", min_width="120px"),
+        rx.text(
+            label,
+            color=ThemeState.colors["text_muted"],
+            font_size="0.78rem",
+            min_width="120px",
+        ),
         rx.text(
             value,
-            color=DARK_FOREGROUND,
+            color=ThemeState.colors["foreground"],
             font_size="0.85rem",
             text_align="right",
             flex_grow="1",
@@ -198,12 +200,12 @@ def _info_card_content() -> rx.Component:
                 font_size="3rem",
                 font_weight="700",
                 line_height="1",
-                color=DARK_FOREGROUND,
+                color=ThemeState.colors["foreground"],
             ),
             rx.vstack(
                 rx.text(
                     el["atomic_number"],
-                    color="#9a9aa8",
+                    color=ThemeState.colors["text_muted"],
                     font_size="0.85rem",
                     line_height="1",
                 ),
@@ -211,7 +213,7 @@ def _info_card_content() -> rx.Component:
                     el["name"],
                     font_size="1.4rem",
                     font_weight="600",
-                    color=DARK_FOREGROUND,
+                    color=ThemeState.colors["foreground"],
                     line_height="1.1",
                 ),
                 spacing="1",
@@ -234,7 +236,7 @@ def _info_card_content() -> rx.Component:
                 el["electron_configuration"],
                 font_family="'Cascadia Code', 'Consolas', monospace",
                 font_size="0.8rem",
-                color=DARK_FOREGROUND,
+                color=ThemeState.colors["foreground"],
             ),
         ),
         _info_row(TranslationState.t["info_electronegativity"], _opt(el["electronegativity"])),
@@ -256,7 +258,7 @@ def _info_placeholder() -> rx.Component:
     return rx.center(
         rx.text(
             TranslationState.t["home_select_prompt"],
-            color="#9a9aa8",
+            color=ThemeState.colors["text_muted"],
             font_size="0.9rem",
             text_align="center",
         ),
@@ -278,8 +280,12 @@ def _tab_button(view: str, t_key: str) -> rx.Component:
     return rx.button(
         TranslationState.t[t_key],
         on_click=TableState.set_right_panel(view),
-        background=rx.cond(is_active, TAB_ACTIVE_BG, TAB_INACTIVE_BG),
-        color=DARK_FOREGROUND,
+        background=rx.cond(
+            is_active,
+            ThemeState.colors["accent_active"],
+            ThemeState.colors["accent_inactive"],
+        ),
+        color=ThemeState.colors["foreground"],
         border="none",
         border_radius="6px",
         padding="6px 10px",
@@ -309,7 +315,7 @@ def _info_card() -> rx.Component:
             ("lewis", lewis_view(TableState, _info_placeholder())),
             _info_tab_content(),
         ),
-        background=DARK_PANEL,
+        background=ThemeState.colors["panel"],
         border_radius="8px",
         padding="16px",
         width={"base": "100%", "lg": "360px"},
@@ -326,13 +332,13 @@ def index() -> rx.Component:
             rx.heading(
                 TranslationState.t["home_heading"],
                 size="6",
-                color=DARK_FOREGROUND,
+                color=ThemeState.colors["foreground"],
                 margin_bottom="0.25rem",
             ),
             rx.text(
                 TranslationState.t["home_subtitle"],
                 font_size="0.85rem",
-                color="#9a9aa8",
+                color=ThemeState.colors["text_muted"],
                 margin_bottom="1.25rem",
             ),
             _search_box(),
@@ -349,16 +355,21 @@ def index() -> rx.Component:
             align="stretch",
             width="100%",
         ),
-        background=DARK_BACKGROUND,
+        background=ThemeState.colors["background"],
         min_height="100vh",
         padding="1.5rem 1rem 2rem",
-        color=DARK_FOREGROUND,
+        color=ThemeState.colors["foreground"],
         font_family="'Segoe UI', system-ui, -apple-system, sans-serif",
     )
 
 
+# Reflex 0.9.1's ``rx.theme(appearance=...)`` is read at app build time,
+# not per-render — switching it dynamically would require a full reload.
+# Keeping ``appearance="inherit"`` lets the Radix primitives follow the
+# host CSS, while the visible colours (page bg, foreground, panel,
+# accent) are driven entirely by ``ThemeState.colors`` on every box.
 app = rx.App(
-    theme=rx.theme(appearance="dark", accent_color="iris"),
+    theme=rx.theme(appearance="inherit", accent_color="iris"),
 )
 app.add_page(index, title="Periodic Table")
 app.add_page(tools_page, route="/tools", title="Tools — Periodic Table")

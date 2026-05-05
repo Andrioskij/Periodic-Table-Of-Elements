@@ -18,9 +18,7 @@ import reflex as rx
 from pydantic import BaseModel
 
 from periodic_table_web.i18n import TranslationState
-from periodic_table_web.theme import (
-    DARK_FOREGROUND,
-)
+from periodic_table_web.theme_state import ThemeState
 from src.config.static_data import ORBITAL_BOX_COUNTS, VALID_SUBSHELLS
 from src.domain.electron_configuration import configuration_to_map, fill_boxes
 
@@ -187,13 +185,13 @@ def electron_view(state, placeholder) -> rx.Component:
                     el["symbol"],
                     font_size="1.6rem",
                     font_weight="700",
-                    color=DARK_FOREGROUND,
+                    color=ThemeState.colors["foreground"],
                     line_height="1",
                 ),
                 rx.text(
                     el["name"],
                     font_size="1rem",
-                    color=DARK_FOREGROUND,
+                    color=ThemeState.colors["foreground"],
                     line_height="1",
                 ),
                 spacing="3",

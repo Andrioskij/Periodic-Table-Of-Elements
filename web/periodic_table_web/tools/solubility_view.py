@@ -12,11 +12,12 @@ import reflex as rx
 from pydantic import BaseModel
 
 from periodic_table_web.i18n import TranslationState
-from periodic_table_web.theme import DARK_FOREGROUND
+from periodic_table_web.theme_state import ThemeState
 from src.domain.solubility import ANIONS, CATIONS, get_solubility_matrix
 
-_LABEL_MUTED = "#9a9aa8"
-_PANEL_BG = "#1f1f2e"
+# Verdict colours (cell backgrounds) stay fixed across themes — they
+# carry domain meaning (green=soluble / amber=slightly / red=insoluble)
+# and read against both panel backgrounds.
 _VERDICT_COLORS: dict[str, str] = {
     "soluble": "#3fa34d",
     "slightly_soluble": "#d9a13b",
@@ -126,7 +127,7 @@ def _row(row: MatrixRow) -> rx.Component:
         rx.box(
             rx.text(
                 row.cation,
-                color=DARK_FOREGROUND,
+                color=ThemeState.colors["foreground"],
                 font_size="0.85rem",
                 font_weight="600",
                 text_align="right",
@@ -135,7 +136,7 @@ def _row(row: MatrixRow) -> rx.Component:
             padding_right="6px",
             position="sticky",
             left="0",
-            background=_PANEL_BG,
+            background=ThemeState.colors["panel"],
             z_index="1",
         ),
         *[_cell(cell) for cell in row.cells],
@@ -151,14 +152,14 @@ def _header_row() -> rx.Component:
             padding_right="6px",
             position="sticky",
             left="0",
-            background=_PANEL_BG,
+            background=ThemeState.colors["panel"],
             z_index="1",
         ),
         *[
             rx.box(
                 rx.text(
                     anion,
-                    color=_LABEL_MUTED,
+                    color=ThemeState.colors["text_muted"],
                     font_size="0.78rem",
                     text_align="center",
                 ),
@@ -181,7 +182,7 @@ def _legend_chip(verdict: str) -> rx.Component:
         ),
         rx.text(
             TranslationState.t[_VERDICT_T_KEYS[verdict]],
-            color=_LABEL_MUTED,
+            color=ThemeState.colors["text_muted"],
             font_size="0.78rem",
         ),
         spacing="2",
@@ -193,12 +194,12 @@ def solubility_view() -> rx.Component:
     return rx.vstack(
         rx.text(
             TranslationState.t["solubility_subtitle"],
-            color=_LABEL_MUTED,
+            color=ThemeState.colors["text_muted"],
             font_size="0.85rem",
         ),
         rx.hstack(
             rx.vstack(
-                rx.text(TranslationState.t["solubility_highlight_cation"], color=_LABEL_MUTED, font_size="0.78rem"),
+                rx.text(TranslationState.t["solubility_highlight_cation"], color=ThemeState.colors["text_muted"], font_size="0.78rem"),
                 rx.select(
                     _CATION_OPTIONS,
                     value=SolubilityState.highlight_cation,
@@ -210,7 +211,7 @@ def solubility_view() -> rx.Component:
                 align="stretch",
             ),
             rx.vstack(
-                rx.text(TranslationState.t["solubility_highlight_anion"], color=_LABEL_MUTED, font_size="0.78rem"),
+                rx.text(TranslationState.t["solubility_highlight_anion"], color=ThemeState.colors["text_muted"], font_size="0.78rem"),
                 rx.select(
                     _ANION_OPTIONS,
                     value=SolubilityState.highlight_anion,

@@ -12,7 +12,7 @@ import reflex as rx
 from pydantic import BaseModel
 
 from periodic_table_web.i18n import TranslationState
-from periodic_table_web.theme import DARK_FOREGROUND
+from periodic_table_web.theme_state import ThemeState
 from src.domain.molar_mass import (
     FormulaError,
     compute_molar_mass,
@@ -22,9 +22,6 @@ from src.domain.molar_mass import (
 from src.services.data_loader import load_elements
 
 _ELEMENTS = load_elements()
-_LABEL_MUTED = "#9a9aa8"
-_RESULT_BG = "#1f1f2e"
-_ERROR_COLOR = "#f7a8a8"
 
 
 class CompositionRow(BaseModel):
@@ -89,18 +86,18 @@ class MolarMassState(rx.State):
 
 def _composition_row(row: CompositionRow) -> rx.Component:
     return rx.hstack(
-        rx.text(row.symbol, color=DARK_FOREGROUND, font_weight="600", width="48px"),
-        rx.text(row.count, color=DARK_FOREGROUND, width="48px"),
+        rx.text(row.symbol, color=ThemeState.colors["foreground"], font_weight="600", width="48px"),
+        rx.text(row.count, color=ThemeState.colors["foreground"], width="48px"),
         rx.text(
             rx.fragment(row.mass, " u"),
-            color=DARK_FOREGROUND,
+            color=ThemeState.colors["foreground"],
             font_family="'Cascadia Code', 'Consolas', monospace",
             font_size="0.85rem",
             width="120px",
         ),
         rx.text(
             rx.fragment(row.percent, " %"),
-            color=DARK_FOREGROUND,
+            color=ThemeState.colors["foreground"],
             font_family="'Cascadia Code', 'Consolas', monospace",
             font_size="0.85rem",
             text_align="right",
@@ -109,21 +106,21 @@ def _composition_row(row: CompositionRow) -> rx.Component:
         spacing="3",
         width="100%",
         padding_y="4px",
-        border_bottom="1px solid #2a2a3a",
+        border_bottom="1px solid " + ThemeState.colors["border"],
     )
 
 
 def _composition_table() -> rx.Component:
     return rx.vstack(
         rx.hstack(
-            rx.text(TranslationState.t["molar_col_symbol"], color=_LABEL_MUTED, font_size="0.78rem", width="48px"),
-            rx.text(TranslationState.t["molar_col_count"], color=_LABEL_MUTED, font_size="0.78rem", width="48px"),
-            rx.text(TranslationState.t["molar_col_mass"], color=_LABEL_MUTED, font_size="0.78rem", width="120px"),
-            rx.text(TranslationState.t["molar_col_percent"], color=_LABEL_MUTED, font_size="0.78rem", text_align="right", flex_grow="1"),
+            rx.text(TranslationState.t["molar_col_symbol"], color=ThemeState.colors["text_muted"], font_size="0.78rem", width="48px",),
+            rx.text(TranslationState.t["molar_col_count"], color=ThemeState.colors["text_muted"], font_size="0.78rem", width="48px",),
+            rx.text(TranslationState.t["molar_col_mass"], color=ThemeState.colors["text_muted"], font_size="0.78rem", width="120px"),
+            rx.text(TranslationState.t["molar_col_percent"], color=ThemeState.colors["text_muted"], font_size="0.78rem", text_align="right", flex_grow="1"),
             spacing="3",
             width="100%",
             padding_y="4px",
-            border_bottom="1px solid #2a2a3a",
+            border_bottom="1px solid " + ThemeState.colors["border"],
         ),
         rx.foreach(MolarMassState.composition_rows, _composition_row),
         spacing="0",
@@ -136,16 +133,16 @@ def molar_mass_view() -> rx.Component:
     return rx.vstack(
         rx.text(
             TranslationState.t["molar_subtitle"],
-            color=_LABEL_MUTED,
+            color=ThemeState.colors["text_muted"],
             font_size="0.85rem",
         ),
         rx.input(
             placeholder=TranslationState.t["molar_placeholder"],
             value=MolarMassState.formula,
             on_change=MolarMassState.set_formula,
-            background=_RESULT_BG,
-            color=DARK_FOREGROUND,
-            border="1px solid #2a2a3a",
+            background=ThemeState.colors["input_bg"],
+            color=ThemeState.colors["foreground"],
+            border="1px solid " + ThemeState.colors["border"],
             border_radius="6px",
             padding="8px 12px",
             font_family="'Cascadia Code', 'Consolas', monospace",
@@ -158,7 +155,7 @@ def molar_mass_view() -> rx.Component:
                 MolarMassState.error_message != "",
                 rx.text(
                     MolarMassState.error_message,
-                    color=_ERROR_COLOR,
+                    color=ThemeState.colors["error"],
                     font_size="0.85rem",
                     margin_top="0.5rem",
                 ),
@@ -166,7 +163,7 @@ def molar_mass_view() -> rx.Component:
                     rx.hstack(
                         rx.text(
                             MolarMassState.molar_mass_value,
-                            color=DARK_FOREGROUND,
+                            color=ThemeState.colors["foreground"],
                             font_size="2rem",
                             font_weight="700",
                             line_height="1.1",
@@ -174,7 +171,7 @@ def molar_mass_view() -> rx.Component:
                         ),
                         rx.text(
                             "g/mol",
-                            color=_LABEL_MUTED,
+                            color=ThemeState.colors["text_muted"],
                             font_size="1rem",
                         ),
                         spacing="2",
