@@ -1,0 +1,29 @@
+# .dockerignore for `docker build -f web/Dockerfile .` (run from repo root).
+# Docker BuildKit honours the .dockerignore at the build-context root,
+# so this file lives here even though the only Dockerfile is under web/.
+
+# Reflex / Python build state
+web/.venv/
+web/.web/
+web/.states/
+web/__pycache__/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+
+# Git / CI / IDE / OS noise
+.git/
+.github/
+.idea/
+.vscode/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Desktop-only assets (the web image only needs src/ + data/)
+assets/screenshots/
+docs/
+
+# Local environments
+.env
+.env.local
