@@ -10,13 +10,12 @@ __pycache__/
 
 # Local environments
 /.venv/
-/web/.venv/
 
-# Reflex (browser version) build artifacts
-/web/.web/
-/web/__pycache__/
-/web/assets/external/
-/web/.states/
+# Stale Reflex web port working directory — the web port has been removed
+# from the project, but a local /web/ may persist on disk while files are
+# still locked by a background process. Ignore it wholesale so git never
+# tracks anything under it again.
+/web/
 
 # Build and release outputs
 /build/
