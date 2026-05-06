@@ -347,7 +347,7 @@ def build_periodic_table_widget(
     return periodic_table_widget
 
 
-def build_right_panel_area(*, tr, numeric_ranges, on_right_mode_clicked):
+def build_right_panel_area(*, tr, numeric_ranges, on_right_mode_clicked, elements=None):
     """Create the right-side panel area (info, diagram, lewis) with mode buttons."""
     right_panel_buttons = {}
     right_panel_buttons_widget = QWidget()
@@ -387,6 +387,7 @@ def build_right_panel_area(*, tr, numeric_ranges, on_right_mode_clicked):
     lewis_panel = LewisPanel(
         tr("lewis_title"),
         tr("lewis_prompt"),
+        elements=elements,
     )
     lewis_page = wrap_in_scroll_area(lewis_panel)
 
