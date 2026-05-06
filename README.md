@@ -46,6 +46,8 @@ The runtime requirement file is intentionally minimal and currently contains onl
 
 ![Molar mass calculator with hydrate-aware placeholder (CuSO4·5H2O)](assets/screenshots/molar-mass.png)
 
+![Lewis panel showing the multi-atom diagram for H2O](assets/screenshots/lewis-multi-atom.png)
+
 ## Tests
 
 Install the test environment and run the suite:
@@ -68,6 +70,7 @@ python -m unittest discover -s tests -p "test_*.py"
 - Verified UI languages currently exposed in the app are `en`, `it`, `es`, `fr`, `de`, `zh` (Simplified Chinese), and `ru`.
 - Build a compound by selecting two elements, choosing oxidation states, and pressing `Calculate formula`. The current builder is intentionally limited to simple binary compounds. `Ctrl+L` resets it.
 - Hover the primary controls for short hints while learning the main flows.
+- The Lewis panel now also accepts molecule formulas (e.g., H2O, CO2, NH3) for a small library of common compounds.
 
 ## Building portable bundles
 
