@@ -15,6 +15,7 @@ import reflex as rx
 from pydantic import BaseModel, Field
 
 from periodic_table_web.i18n import TranslationState
+from periodic_table_web.theme import UI_FONT_FAMILY
 from periodic_table_web.theme_state import ThemeState
 from src.domain.electron_configuration import configuration_to_map
 from src.domain.lewis_diagram import distribute_dots, get_valence_electrons
@@ -178,7 +179,7 @@ def _lewis_svg(state) -> rx.Component:
             font_size="36",
             font_weight="700",
             fill=ThemeState.colors["foreground"],
-            font_family="'Segoe UI', system-ui, sans-serif",
+            font_family=UI_FONT_FAMILY,
         ),
         top,
         bottom,

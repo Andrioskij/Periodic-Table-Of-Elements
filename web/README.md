@@ -10,12 +10,15 @@ file is duplicated.
 
 ## Status
 
-Batch 10 closed — the web port now ships with full UI translations,
-a runtime theme switcher, and a deployable container image.
+Batch 11 closed — the web port now mirrors the desktop visual style,
+opens on a dedicated landing page with download CTAs for the desktop
+installers, and ships with a deploy guide for Reflex Hosting / fly.io
+/ Render.
 
-The app has two routes — `/` for the periodic table itself and
-`/tools` for calculators and lookups — linked through a header strip
-that also carries a 7-language selector and a dark/light theme toggle.
+The app has three routes — `/` for the landing page, `/table` for the
+periodic table itself, and `/tools` for calculators and lookups —
+linked through a header strip that also carries a 7-language selector
+and a dark/light theme toggle.
 
 `/tools` carries four tabs, each backed by the same `src.domain`
 module that powers the equivalent desktop panel:
@@ -53,9 +56,22 @@ language and theme choices. The Radix appearance is fixed to
 cards, accent buttons, borders, inputs) is driven directly by
 `ThemeState.colors` so the toggle takes effect without a page reload.
 
+The dark and light palettes — and the per-element category swatches —
+are now mirrored from the desktop QSS in `src/ui/theme.py` and
+`src/ui/styles.py`, so the two surfaces look like the same product.
+The web `theme.py` records the desktop source for each token in an
+inline comment; future tweaks should land on the desktop side first.
+
+The landing page at `/` greets first-time visitors with the project
+overview, an "Open in browser" CTA pointing to `/table`, and a
+download CTA pointing at the GitHub release for the visitor's
+detected operating system. Mobile visitors see only the in-browser
+CTA — the PySide6 desktop app does not target Android/iOS, and the
+landing copy says so explicitly.
+
 Multi-atom Lewis structures remain deferred.
 
-![/ page in Italian with the light theme active, showing the seven-language selector and the sun/moon toggle in the header](../assets/screenshots/web-batch10.png)
+![/ landing in Italian with the dark theme active, showing the hero copy and the OS-aware download CTA](../assets/screenshots/web-batch11.png)
 
 ## Prerequisites
 
@@ -132,6 +148,10 @@ For a hosted deploy without managing your own infrastructure,
 is the simplest path: it runs `reflex deploy` against your project
 directly, no Docker step required.
 
+Full deploy walkthrough — including fly.io and Render alternatives,
+required ports, and common snags — lives in
+[docs/DEPLOY.md](../docs/DEPLOY.md).
+
 ## Folder layout
 
 ```
@@ -142,7 +162,8 @@ web/
 ├── assets/                      # static assets served by the frontend
 ├── periodic_table_web/
 │   ├── __init__.py              # adds repo root to sys.path
-│   ├── periodic_table_web.py    # Reflex App, index page, /tools registration
+│   ├── periodic_table_web.py    # Reflex App, table at /table, /tools, landing at /
+│   ├── landing.py               # `/` landing — hero, OS-aware download CTAs, features
 │   ├── nav.py                   # shared header (Periodic Table / Tools + lang + theme)
 │   ├── state.py                 # rx.State (selection, search, trend, panel tab)
 │   ├── i18n.py                  # TranslationState + 7 web/{code}.json bundles
@@ -196,9 +217,15 @@ them up automatically — no sync step.
   four tabs: molar mass, stoichiometry (sympy-based balancer),
   compound builder (binary ionic, criss-cross GCD), and the full
   14×10 solubility matrix.
-- **Batch 10 — done (this batch)** — i18n with seven locales,
-  light/dark theme switcher with `rx.LocalStorage` persistence, and
-  a multi-stage Docker build with CI verification.
-- **Future** — first web-app release tag (`web-v1.0.0` + CHANGELOG),
-  hosted deploy (Reflex Hosting / fly.io / Render), end-to-end
-  Playwright suite integrated into CI, multi-atom Lewis structures.
+- **Batch 10 — done** — i18n with seven locales, light/dark theme
+  switcher with `rx.LocalStorage` persistence, and a multi-stage
+  Docker build with CI verification.
+- **Batch 11 — done (this batch)** — desktop palette and category
+  colours mirrored into `theme.py`, table moved from `/` to `/table`,
+  new landing page at `/` with OS-aware download CTAs, deploy guide
+  for Reflex Hosting / fly.io / Render under
+  [docs/DEPLOY.md](../docs/DEPLOY.md).
+- **Future** — first hosted deploy + `web-v1.0.0` tag with CHANGELOG,
+  end-to-end Playwright suite integrated into CI, complete i18n of
+  the four English fragments noted earlier, multi-atom Lewis
+  structures.

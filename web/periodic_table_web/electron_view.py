@@ -18,6 +18,7 @@ import reflex as rx
 from pydantic import BaseModel
 
 from periodic_table_web.i18n import TranslationState
+from periodic_table_web.theme import MONO_FONT_FAMILY
 from periodic_table_web.theme_state import ThemeState
 from src.config.static_data import ORBITAL_BOX_COUNTS, VALID_SUBSHELLS
 from src.domain.electron_configuration import configuration_to_map, fill_boxes
@@ -131,7 +132,7 @@ def _block(block: OrbitalBlock) -> rx.Component:
     return rx.vstack(
         rx.text(
             block.label,
-            font_family="'Cascadia Code', 'Consolas', monospace",
+            font_family=MONO_FONT_FAMILY,
             font_size="0.78rem",
             color=BLOCK_LABEL_COLOR,
             line_height="1",
@@ -204,7 +205,7 @@ def electron_view(state, placeholder) -> rx.Component:
                     " ",
                     el["electron_configuration"],
                 ),
-                font_family="'Cascadia Code', 'Consolas', monospace",
+                font_family=MONO_FONT_FAMILY,
                 font_size="0.8rem",
                 color=BLOCK_LABEL_COLOR,
                 margin_bottom="0.75rem",

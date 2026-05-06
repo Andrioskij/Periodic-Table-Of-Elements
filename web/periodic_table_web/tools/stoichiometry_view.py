@@ -12,6 +12,7 @@ import reflex as rx
 from pydantic import BaseModel
 
 from periodic_table_web.i18n import TranslationState
+from periodic_table_web.theme import MONO_FONT_FAMILY
 from periodic_table_web.theme_state import ThemeState
 from src.domain.molar_mass import FormulaError
 from src.domain.stoichiometry import (
@@ -142,21 +143,21 @@ def _stoich_row(row: StoichRow) -> rx.Component:
         rx.text(
             rx.fragment(row.molar_mass, " g/mol"),
             color=ThemeState.colors["foreground"],
-            font_family="'Cascadia Code', 'Consolas', monospace",
+            font_family=MONO_FONT_FAMILY,
             font_size="0.85rem",
             width="140px",
         ),
         rx.text(
             row.moles,
             color=ThemeState.colors["foreground"],
-            font_family="'Cascadia Code', 'Consolas', monospace",
+            font_family=MONO_FONT_FAMILY,
             font_size="0.85rem",
             width="100px",
         ),
         rx.text(
             rx.fragment(row.mass, " g"),
             color=ThemeState.colors["foreground"],
-            font_family="'Cascadia Code', 'Consolas', monospace",
+            font_family=MONO_FONT_FAMILY,
             font_size="0.85rem",
             text_align="right",
             flex_grow="1",
@@ -204,7 +205,7 @@ def stoichiometry_view() -> rx.Component:
             border="1px solid " + ThemeState.colors["border"],
             border_radius="6px",
             padding="8px 12px",
-            font_family="'Cascadia Code', 'Consolas', monospace",
+            font_family=MONO_FONT_FAMILY,
             width="100%",
             max_width="540px",
         ),
@@ -222,7 +223,7 @@ def stoichiometry_view() -> rx.Component:
                     rx.text(
                         StoichiometryState.balanced_text,
                         color=ThemeState.colors["foreground"],
-                        font_family="'Cascadia Code', 'Consolas', monospace",
+                        font_family=MONO_FONT_FAMILY,
                         font_size="1.1rem",
                         font_weight="600",
                         margin_top="0.5rem",

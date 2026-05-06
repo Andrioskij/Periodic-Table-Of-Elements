@@ -11,6 +11,7 @@ import reflex as rx
 
 from periodic_table_web.i18n import TranslationState
 from periodic_table_web.nav import header
+from periodic_table_web.theme import UI_FONT_FAMILY
 from periodic_table_web.theme_state import ThemeState
 from periodic_table_web.tools.compound_builder_view import compound_builder_view
 from periodic_table_web.tools.molar_mass_view import molar_mass_view
@@ -88,7 +89,8 @@ def tools_page() -> rx.Component:
             rx.box(
                 _tab_content(),
                 background=ThemeState.colors["panel"],
-                border_radius="8px",
+                border="1px solid " + ThemeState.colors["border"],
+                border_radius="14px",
                 padding="20px",
                 width="100%",
             ),
@@ -100,5 +102,5 @@ def tools_page() -> rx.Component:
         min_height="100vh",
         padding="1.5rem 1rem 2rem",
         color=ThemeState.colors["foreground"],
-        font_family="'Segoe UI', system-ui, -apple-system, sans-serif",
+        font_family=UI_FONT_FAMILY,
     )
