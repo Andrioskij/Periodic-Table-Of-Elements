@@ -17,6 +17,7 @@ from __future__ import annotations
 import reflex as rx
 
 from periodic_table_web.i18n import TranslationState
+from periodic_table_web.theme import MONO_FONT_FAMILY
 from periodic_table_web.theme_state import ThemeState
 from src.domain.compound_builder import build_binary_formula, parse_oxidation_states
 from src.services.data_loader import load_elements
@@ -250,7 +251,7 @@ def compound_builder_view() -> rx.Component:
                     color=ThemeState.colors["foreground"],
                     font_size="2rem",
                     font_weight="700",
-                    font_family="'Cascadia Code', 'Consolas', monospace",
+                    font_family=MONO_FONT_FAMILY,
                     line_height="1.1",
                 ),
                 spacing="1",

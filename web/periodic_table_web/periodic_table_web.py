@@ -7,7 +7,12 @@ from periodic_table_web.i18n import TranslationState
 from periodic_table_web.lewis_view import lewis_view
 from periodic_table_web.nav import header as nav_header
 from periodic_table_web.state import TableState
-from periodic_table_web.theme import DARK_LABEL_MUTED
+from periodic_table_web.theme import (
+    CELL_METRICS,
+    DARK_LABEL_MUTED,
+    MONO_FONT_FAMILY,
+    UI_FONT_FAMILY,
+)
 from periodic_table_web.theme_state import ThemeState
 from periodic_table_web.tools import tools_page
 from src.services.data_loader import load_elements
@@ -42,7 +47,7 @@ def _element_cell(element: dict) -> rx.Component:
     return rx.box(
         rx.text(
             str(atomic_number),
-            font_size="0.65rem",
+            font_size=CELL_METRICS["atomic_number_size"],
             color=DARK_LABEL_MUTED,
             line_height="1",
             text_align="left",
@@ -50,7 +55,7 @@ def _element_cell(element: dict) -> rx.Component:
         ),
         rx.text(
             element["symbol"],
-            font_size="1.4rem",
+            font_size=CELL_METRICS["symbol_size"],
             font_weight="700",
             color=DARK_LABEL_MUTED,
             line_height="1",
@@ -59,7 +64,7 @@ def _element_cell(element: dict) -> rx.Component:
         ),
         rx.text(
             element["name"],
-            font_size="0.55rem",
+            font_size=CELL_METRICS["name_size"],
             color=DARK_LABEL_MUTED,
             line_height="1.1",
             text_align="center",
@@ -72,17 +77,17 @@ def _element_cell(element: dict) -> rx.Component:
         border=rx.cond(
             is_selected,
             "2px solid " + ThemeState.colors["selection_border"],
-            "1px solid " + ThemeState.colors["border"],
+            "1px solid #202020",
         ),
         opacity=rx.cond(is_visible, "1", "0.25"),
         cursor="pointer",
-        border_radius="4px",
-        padding="3px 4px 2px",
+        border_radius=CELL_METRICS["border_radius"],
+        padding=CELL_METRICS["padding"],
         display="flex",
         flex_direction="column",
         justify_content="space-between",
         align_items="center",
-        height="64px",
+        height=CELL_METRICS["height"],
         grid_column=str(element["display_column"]),
         grid_row=str(_grid_row(element["display_row"])),
         on_click=TableState.select_element(atomic_number),
@@ -94,9 +99,9 @@ def _grid() -> rx.Component:
     return rx.box(
         *[_element_cell(e) for e in ELEMENTS],
         display="grid",
-        grid_template_columns="repeat(18, minmax(48px, 1fr))",
-        grid_template_rows="repeat(7, auto) 18px repeat(2, auto)",
-        gap="3px",
+        grid_template_columns=f"repeat(18, minmax({CELL_METRICS['min_width']}, 1fr))",
+        grid_template_rows="repeat(7, auto) 24px repeat(2, auto)",
+        gap="4px",
         width="100%",
         flex_grow="1",
         min_width="0",
@@ -234,7 +239,7 @@ def _info_card_content() -> rx.Component:
             TranslationState.t["info_electron_config"],
             rx.text(
                 el["electron_configuration"],
-                font_family="'Cascadia Code', 'Consolas', monospace",
+                font_family=MONO_FONT_FAMILY,
                 font_size="0.8rem",
                 color=ThemeState.colors["foreground"],
             ),
@@ -316,8 +321,9 @@ def _info_card() -> rx.Component:
             _info_tab_content(),
         ),
         background=ThemeState.colors["panel"],
-        border_radius="8px",
-        padding="16px",
+        border="1px solid " + ThemeState.colors["border"],
+        border_radius="14px",
+        padding="14px",
         width={"base": "100%", "lg": "360px"},
         flex_shrink="0",
         max_height={"base": "none", "lg": "calc(100vh - 9rem)"},
@@ -359,7 +365,7 @@ def index() -> rx.Component:
         min_height="100vh",
         padding="1.5rem 1rem 2rem",
         color=ThemeState.colors["foreground"],
-        font_family="'Segoe UI', system-ui, -apple-system, sans-serif",
+        font_family=UI_FONT_FAMILY,
     )
 
 
