@@ -4,6 +4,7 @@ import reflex as rx
 
 from periodic_table_web.electron_view import electron_view
 from periodic_table_web.i18n import TranslationState
+from periodic_table_web.landing import landing_page
 from periodic_table_web.lewis_view import lewis_view
 from periodic_table_web.nav import header as nav_header
 from periodic_table_web.state import TableState
@@ -334,7 +335,7 @@ def _info_card() -> rx.Component:
 def index() -> rx.Component:
     return rx.box(
         rx.vstack(
-            nav_header("home"),
+            nav_header("table"),
             rx.heading(
                 TranslationState.t["home_heading"],
                 size="6",
@@ -377,5 +378,6 @@ def index() -> rx.Component:
 app = rx.App(
     theme=rx.theme(appearance="inherit", accent_color="iris"),
 )
-app.add_page(index, title="Periodic Table")
+app.add_page(landing_page, route="/", title="Periodic Table Of Elements")
+app.add_page(index, route="/table", title="Periodic Table")
 app.add_page(tools_page, route="/tools", title="Tools — Periodic Table")

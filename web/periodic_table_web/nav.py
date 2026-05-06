@@ -13,7 +13,7 @@ from periodic_table_web.i18n import LANGUAGE_LABELS, TranslationState
 from periodic_table_web.theme_state import ThemeState
 
 _LINKS: list[tuple[str, str, str]] = [
-    ("home", "/", "nav_periodic_table"),
+    ("table", "/table", "nav_periodic_table"),
     ("tools", "/tools", "nav_tools"),
 ]
 
