@@ -1,5 +1,15 @@
 # Release notes
 
+## 1.3.0 "Chemistry Tool"
+
+Highlights
+- Lewis panel now renders multi-atom diagrams for ~22 common molecules (H2O, CO2, NH3, CH4, O2, …) via formula input.
+- Parser error messages from the molar mass and stoichiometry tools are now localized in all 7 UI languages (en, it, es, fr, de, zh, ru).
+- Molar mass and stoichiometry panels avoid redundant parse/balance work when re-rendering or recomputing masses.
+
+Quality
+- Test suite: 426 tests, ruff clean.
+
 ## 1.2.0 "Chemistry Tool"
 
 Highlights
