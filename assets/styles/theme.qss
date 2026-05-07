@@ -2,54 +2,54 @@
 QWidget {
     background-color: {{bg_primary}};
     color: {{text_primary}};
-    font-family: Segoe UI, Arial, sans-serif;
+    font-family: {{font_family_sans}};
 }
 
 QLabel#titleLabel {
-    font-size: 24px;
+    font-size: {{font_size_title}}px;
     font-weight: bold;
-    padding-bottom: 2px;
+    padding-bottom: {{spacing_title_padding_bottom}}px;
 }
 
 QLabel#searchStatusLabel,
 QLabel#trendStatusLabel {
-    font-size: 12px;
+    font-size: {{font_size_search_status}}px;
     color: {{text_secondary}};
 }
 
 QLabel#builderStatusLabel {
-    font-size: 11px;
+    font-size: {{font_size_builder_status}}px;
     font-weight: bold;
     color: {{text_strong}};
 }
 
 QLabel#builderScopeLabel,
 QLabel#compoundScopeLabel {
-    font-size: 11px;
+    font-size: {{font_size_builder_scope}}px;
     color: {{text_secondary}};
 }
 
 QWidget#searchCard {
     background-color: {{bg_search_card}};
-    border: 1px solid {{border_search}};
-    border-radius: 14px;
+    border: {{border_default_width}}px solid {{border_search}};
+    border-radius: {{radius_search_card}}px;
 }
 
 QWidget#compoundBuilderPanel {
     background-color: {{bg_card}};
-    border: 1px solid {{border_strong}};
-    border-radius: 10px;
+    border: {{border_default_width}}px solid {{border_strong}};
+    border-radius: {{radius_compound_panel}}px;
 }
 
 QWidget#builderSelectionCard,
 QWidget#builderSelectorCard {
     background-color: {{bg_inset}};
-    border: 1px solid {{border_strong}};
-    border-radius: 8px;
+    border: {{border_default_width}}px solid {{border_strong}};
+    border-radius: {{radius_selector_card}}px;
 }
 
 QLabel#searchTitleLabel {
-    font-size: 16px;
+    font-size: {{font_size_search_title}}px;
     font-weight: bold;
 }
 
@@ -57,19 +57,19 @@ QLabel#searchHelpLabel,
 QLabel#builderSelectionTitleLabel,
 QLabel#builderGuideLabel,
 QLabel#builderSelectorCaptionLabel {
-    font-size: 11px;
+    font-size: {{font_size_search_help}}px;
     color: {{text_secondary}};
 }
 
 QLabel#builderSelectionValueLabel,
 QLabel#builderSelectorSummaryLabel {
-    font-size: 12px;
+    font-size: {{font_size_builder_value}}px;
     font-weight: bold;
     color: {{text_primary}};
 }
 
 QLabel#builderSlotTitleLabel {
-    font-size: 11px;
+    font-size: {{font_size_builder_slot}}px;
     font-weight: bold;
     color: {{text_strong}};
 }
@@ -77,105 +77,105 @@ QLabel#builderSlotTitleLabel {
 QLabel#builderSlotBadgeLabel {
     background-color: {{accent}};
     color: {{text_on_accent}};
-    border-radius: 10px;
-    padding: 2px 8px;
-    font-size: 11px;
+    border-radius: {{radius_panel}}px;
+    padding: {{spacing_slot_badge_padding_y}}px {{spacing_slot_badge_padding_x}}px;
+    font-size: {{font_size_builder_badge}}px;
     font-weight: bold;
 }
 
 QLabel#infoLabel,
 QLabel#infoPromptLabel {
     background-color: {{bg_card_alt}};
-    border: 1px solid {{border}};
-    border-radius: 12px;
-    padding: 12px;
-    font-size: 13px;
+    border: {{border_default_width}}px solid {{border}};
+    border-radius: {{radius_info_section}}px;
+    padding: {{spacing_info_label_padding}}px;
+    font-size: {{font_size_info_label}}px;
 }
 
 QLabel#compoundResultLabel {
     background-color: {{bg_card_alt}};
-    border: 1px solid {{border}};
-    border-radius: 8px;
-    padding: 6px 8px;
-    font-size: 13px;
+    border: {{border_default_width}}px solid {{border}};
+    border-radius: {{radius_compound_result}}px;
+    padding: {{spacing_compound_result_padding_y}}px {{spacing_compound_result_padding_x}}px;
+    font-size: {{font_size_compound_result}}px;
 }
 
 QWidget#infoCard {
     background-color: {{bg_card_alt}};
-    border: 1px solid {{border}};
-    border-radius: 14px;
+    border: {{border_default_width}}px solid {{border}};
+    border-radius: {{radius_info_card}}px;
 }
 
 QWidget#infoHero {
     background-color: {{bg_hero}};
-    border: 1px solid {{border_subtle}};
-    border-radius: 12px;
+    border: {{border_default_width}}px solid {{border_subtle}};
+    border-radius: {{radius_info_hero}}px;
 }
 
 QWidget#infoHeroAccentBar {
     background-color: {{accent}};
-    border-radius: 3px;
+    border-radius: {{radius_accent_bar}}px;
 }
 
 QWidget#infoHeroSymbolCard {
     background-color: {{bg_inset}};
-    border: 1px solid {{border_subtle}};
-    border-radius: 12px;
+    border: {{border_default_width}}px solid {{border_subtle}};
+    border-radius: {{radius_symbol_card}}px;
 }
 
 QWidget#infoSectionCard,
 QWidget#sidePanelCard {
     background-color: {{bg_card}};
-    border: 1px solid {{border_strong}};
-    border-radius: 12px;
+    border: {{border_default_width}}px solid {{border_strong}};
+    border-radius: {{radius_info_section}}px;
 }
 
 QLabel#infoSectionTitle {
-    font-size: 11px;
+    font-size: {{font_size_info_section_title}}px;
     font-weight: bold;
     color: {{text_strong}};
-    padding-top: 2px;
-    letter-spacing: 0.4px;
+    padding-top: {{spacing_title_padding_top}}px;
+    letter-spacing: {{letter_spacing_info_section_title}}px;
 }
 
 QLabel#infoFieldLabel,
 QLabel#infoHeroCaptionLabel,
 QLabel#infoFooterLabel {
-    font-size: 11px;
+    font-size: {{font_size_info_field_label}}px;
     color: {{text_muted}};
 }
 
 QLabel#infoFieldValue,
 QLabel#infoHeroValueLabel {
-    font-size: 14px;
+    font-size: {{font_size_info_field_value}}px;
     font-weight: bold;
     color: {{text_primary}};
 }
 
 QLabel#infoHeroAtomicNumberLabel {
-    font-size: 28px;
+    font-size: {{font_size_info_hero_atomic_number}}px;
     font-weight: bold;
     color: {{accent}};
 }
 
 QLabel#infoHeroSymbolLabel {
-    font-size: 44px;
+    font-size: {{font_size_info_hero_symbol}}px;
     font-weight: bold;
     color: {{text_primary}};
-    min-width: 72px;
+    min-width: {{scale_info_hero_symbol_min_width}}px;
 }
 
 QLabel#infoHeroNameLabel {
-    font-size: 24px;
+    font-size: {{font_size_info_hero_name}}px;
     font-weight: bold;
     color: {{text_primary}};
 }
 
 QLabel#infoHeroBadgeLabel {
-    font-size: 11px;
+    font-size: {{font_size_info_hero_badge}}px;
     font-weight: bold;
-    padding: 4px 10px;
-    border-radius: 11px;
+    padding: {{spacing_badge_padding_y}}px {{spacing_badge_padding_x}}px;
+    border-radius: {{radius_badge}}px;
 }
 
 QWidget#infoMetricVisualWidget {
@@ -183,90 +183,90 @@ QWidget#infoMetricVisualWidget {
 }
 
 QProgressBar#infoMetricProgressBar {
-    background-color: rgba(122, 122, 122, 24);
-    border: 1px solid {{border_strong}};
-    border-radius: 4px;
+    background-color: {{metric_progress_track_rgba}};
+    border: {{border_default_width}}px solid {{border_strong}};
+    border-radius: {{radius_metric_progress}}px;
 }
 
 QProgressBar#infoMetricProgressBar::chunk {
     background-color: {{border_button}};
-    border-radius: 4px;
+    border-radius: {{radius_metric_progress}}px;
 }
 
 QLabel#diagramTitleLabel,
 QLabel#compoundTitleLabel,
 QLabel#builderTitleLabel {
-    font-size: 14px;
+    font-size: {{font_size_diagram_title}}px;
     font-weight: bold;
-    padding-top: 2px;
+    padding-top: {{spacing_title_padding_top}}px;
 }
 
 QLabel#diagramBoxLabel {
     background-color: {{bg_inset}};
-    border: 1px solid {{border_strong}};
-    border-radius: 12px;
-    padding: 10px;
+    border: {{border_default_width}}px solid {{border_strong}};
+    border-radius: {{radius_diagram_box}}px;
+    padding: {{spacing_diagram_box_padding}}px;
 }
 
 QLabel#headerLabel {
     color: {{text_secondary}};
-    font-size: 11px;
+    font-size: {{font_size_header_label}}px;
     font-weight: bold;
 }
 
 QLabel#transitionBlockLabel {
     color: {{text_strong}};
-    font-size: 14px;
+    font-size: {{font_size_transition_block}}px;
     font-weight: bold;
     padding: 0px;
 }
 
 QLabel#sideLabel {
     color: {{text_muted}};
-    font-size: 11px;
+    font-size: {{font_size_side_label}}px;
     font-weight: bold;
 }
 
 QLabel#seriesLabel {
     color: {{text_muted}};
-    font-size: 10px;
+    font-size: {{font_size_series_label}}px;
     font-weight: bold;
 }
 
 QLineEdit,
 QComboBox {
     background-color: {{bg_input}};
-    border: 1px solid {{border}};
-    border-radius: 8px;
-    padding: 6px;
-    font-size: 13px;
+    border: {{border_default_width}}px solid {{border}};
+    border-radius: {{radius_input}}px;
+    padding: {{spacing_input_padding}}px;
+    font-size: {{font_size_input}}px;
     color: {{text_primary}};
 }
 
 QComboBox {
-    min-width: 88px;
+    min-width: {{scale_combo_box_min_width}}px;
 }
 
 QLineEdit#searchInput {
-    min-height: 24px;
-    font-size: 14px;
+    min-height: {{scale_search_input_min_height}}px;
+    font-size: {{font_size_search_input}}px;
 }
 
 QLineEdit:focus,
 QComboBox:focus {
-    border: 2px solid {{accent}};
-    padding: 5px;
+    border: {{border_input_focused_width}}px solid {{accent}};
+    padding: {{spacing_input_padding_focused}}px;
 }
 
 QComboBox::drop-down {
     border: none;
-    width: 24px;
+    width: {{scale_combo_drop_down_width}}px;
 }
 
 QComboBox QAbstractItemView {
     background-color: {{bg_input}};
     color: {{text_primary}};
-    border: 1px solid {{border}};
+    border: {{border_default_width}}px solid {{border}};
     selection-background-color: {{selection_bg}};
 }
 
@@ -277,24 +277,24 @@ QPushButton#builderResetButton,
 QPushButton#panelMiniButton {
     background-color: {{bg_button}};
     color: {{selection_text}};
-    border: 1px solid {{border_button}};
-    border-radius: 8px;
-    padding: 6px 10px;
-    font-size: 12px;
+    border: {{border_default_width}}px solid {{border_button}};
+    border-radius: {{radius_button}}px;
+    padding: {{spacing_button_padding_y}}px {{spacing_button_padding_x}}px;
+    font-size: {{font_size_button_default}}px;
     font-weight: bold;
 }
 
 QPushButton#searchButton {
     background-color: {{accent}};
     color: {{text_on_accent}};
-    border: 1px solid {{accent_pressed}};
-    padding: 6px 12px;
+    border: {{border_default_width}}px solid {{accent_pressed}};
+    padding: {{spacing_button_padding_y}}px {{spacing_search_button_padding_x}}px;
 }
 
 QPushButton#builderButton,
 QPushButton#builderResetButton {
-    padding: 5px 9px;
-    font-size: 11px;
+    padding: {{spacing_button_compact_padding_y}}px {{spacing_button_compact_padding_x}}px;
+    font-size: {{font_size_builder_compact_button}}px;
 }
 
 QPushButton#searchButton:hover,
@@ -325,12 +325,12 @@ QPushButton#trendButton:checked,
 QPushButton#panelMiniButton:checked {
     background-color: {{accent}};
     color: {{text_on_accent}};
-    border: 1px solid {{accent_pressed}};
+    border: {{border_default_width}}px solid {{accent_pressed}};
 }
 
 QPushButton#panelMiniButton {
-    padding: 5px 9px;
-    font-size: 11px;
+    padding: {{spacing_button_compact_padding_y}}px {{spacing_button_compact_padding_x}}px;
+    font-size: {{font_size_panel_mini_button}}px;
 }
 
 QPushButton#searchButton:focus,
@@ -338,40 +338,40 @@ QPushButton#trendButton:focus,
 QPushButton#builderButton:focus,
 QPushButton#builderResetButton:focus,
 QPushButton#panelMiniButton:focus {
-    border: 2px solid {{accent}};
+    border: {{border_input_focused_width}}px solid {{accent}};
 }
 
 QPushButton:disabled,
 QComboBox:disabled {
     background-color: {{bg_disabled}};
     color: {{text_disabled}};
-    border: 1px solid {{border_disabled}};
+    border: {{border_default_width}}px solid {{border_disabled}};
 }
 
 QScrollArea#infoPanel:focus,
 QWidget#orbitalDiagramPanel:focus,
 QWidget#compoundPanel:focus,
 QWidget#periodicTableWidget:focus {
-    border: 1px solid {{accent}};
-    border-radius: 12px;
+    border: {{border_default_width}}px solid {{accent}};
+    border-radius: {{radius_info_section}}px;
 }
 
 QLabel#selectedElementNameLabel {
-    font-size: 20px;
+    font-size: {{font_size_selected_element_name}}px;
     font-weight: bold;
     color: {{text_primary}};
 }
 
 QListWidget {
     background-color: {{bg_input}};
-    border: 1px solid {{border}};
-    border-radius: 8px;
-    padding: 4px;
-    font-size: 12px;
+    border: {{border_default_width}}px solid {{border}};
+    border-radius: {{radius_list}}px;
+    padding: {{spacing_list_padding}}px;
+    font-size: {{font_size_list_widget}}px;
 }
 
 QListWidget::item {
-    padding: 6px;
+    padding: {{spacing_list_item_padding}}px;
 }
 
 QListWidget::item:selected {

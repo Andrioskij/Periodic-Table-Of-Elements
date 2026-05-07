@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from src.config.design_tokens import TOKENS
 from src.config.static_data import NUMERIC_TREND_PROPERTIES
 from src.ui.theme import get_theme
 
@@ -10,6 +11,55 @@ def _get_stylesheet_path():
     """Get path to the QSS template file."""
     base_dir = Path(__file__).parent.parent.parent  # Navigate to project root
     return base_dir / "assets" / "styles" / "theme.qss"
+
+
+_FONT_FAMILY_PLACEHOLDERS = {
+    f"font_family_{key}": value
+    for key, value in TOKENS["font"]["family"].items()
+}
+_FONT_SIZE_PLACEHOLDERS = {
+    f"font_size_{key}": str(value)
+    for key, value in TOKENS["font"]["size"].items()
+}
+_FONT_WEIGHT_PLACEHOLDERS = {
+    f"font_weight_{key}": str(value)
+    for key, value in TOKENS["font"]["weight"].items()
+}
+_LETTER_SPACING_PLACEHOLDERS = {
+    f"letter_spacing_{key}": str(value)
+    for key, value in TOKENS["font"]["letter_spacing"].items()
+}
+_SPACING_PLACEHOLDERS = {
+    f"spacing_{key}": str(value)
+    for key, value in TOKENS["spacing"].items()
+}
+_RADIUS_PLACEHOLDERS = {
+    f"radius_{key}": str(value)
+    for key, value in TOKENS["radius"].items()
+}
+_BORDER_PLACEHOLDERS = {
+    f"border_{key}": str(value)
+    for key, value in TOKENS["border"].items()
+}
+_SCALE_PLACEHOLDERS = {
+    f"scale_{key}": str(value)
+    for key, value in TOKENS["scale"].items()
+}
+_METRIC_TRACK_RGBA = TOKENS["color"]["metric_progress"]["track_rgba"]
+_NUMERIC_PLACEHOLDERS = {
+    **_FONT_FAMILY_PLACEHOLDERS,
+    **_FONT_SIZE_PLACEHOLDERS,
+    **_FONT_WEIGHT_PLACEHOLDERS,
+    **_LETTER_SPACING_PLACEHOLDERS,
+    **_SPACING_PLACEHOLDERS,
+    **_RADIUS_PLACEHOLDERS,
+    **_BORDER_PLACEHOLDERS,
+    **_SCALE_PLACEHOLDERS,
+    "metric_progress_track_rgba": (
+        f"rgba({_METRIC_TRACK_RGBA[0]}, {_METRIC_TRACK_RGBA[1]}, "
+        f"{_METRIC_TRACK_RGBA[2]}, {_METRIC_TRACK_RGBA[3]})"
+    ),
+}
 
 
 def get_stylesheet(theme="dark"):
@@ -29,56 +79,47 @@ def get_stylesheet(theme="dark"):
     palette = get_theme(theme)
     for key, value in palette.items():
         template = template.replace(f"{{{{{key}}}}}", value)
+    for key, value in _NUMERIC_PLACEHOLDERS.items():
+        template = template.replace(f"{{{{{key}}}}}", value)
 
     _STYLESHEET_CACHE[theme] = template
     return template
 
 
-DEFAULT_UI_COLOR = "#7A7A7A"
-NUMERIC_TREND_START_COLOR = "#2359A8"
-NUMERIC_TREND_END_COLOR = "#FFD60A"
-TREND_OVERLAY_COLORS = {
-    "metallic": "#56CCF2",
-    "nonmetallic": "#FFD60A",
+DEFAULT_UI_COLOR = TOKENS["color"]["fallback"]["ui"]
+NUMERIC_TREND_START_COLOR = TOKENS["color"]["trend"]["numeric_gradient"]["start"]
+NUMERIC_TREND_END_COLOR = TOKENS["color"]["trend"]["numeric_gradient"]["end"]
+TREND_OVERLAY_COLORS = dict(TOKENS["color"]["trend"]["directional"])
+TREND_OVERLAY_LABEL_BACKGROUND_RGBA = tuple(
+    TOKENS["color"]["trend"]["label_background_rgba"]
+)
+
+_CATEGORY_TOKEN_TO_PUBLIC_KEYS = {
+    "alkali_metal": ("alkali metal",),
+    "alkaline_earth_metal": ("alkaline earth metal",),
+    "transition_metal": ("transition metal",),
+    "post_transition_metal": ("post-transition metal",),
+    "metalloid": ("metalloid",),
+    "nonmetal": ("nonmetal",),
+    "halogen": ("halogen",),
+    "noble_gas": ("noble gas",),
+    "lanthanide": ("lanthanide", "lanthanoid"),
+    "actinide": ("actinide", "actinoid"),
 }
-TREND_OVERLAY_LABEL_BACKGROUND_RGBA = (20, 20, 20, 180)
-PERIODIC_TABLE_CATEGORY_COLORS = {
-    "alkali metal": "#F28E2B",
-    "alkaline earth metal": "#EDC948",
-    "transition metal": "#4E79A7",
-    "post-transition metal": "#2A9D8F",
-    "metalloid": "#B07AA1",
-    "nonmetal": "#E9D8A6",
-    "halogen": "#FF66C4",
-    "noble gas": "#56CCF2",
-    "lanthanide": "#CDB4DB",
-    "lanthanoid": "#CDB4DB",
-    "actinide": "#9D4EDD",
-    "actinoid": "#9D4EDD",
-}
-PERIODIC_TABLE_CATEGORY_COLORS_LIGHT = {
-    "alkali metal": "#C46A12",
-    "alkaline earth metal": "#9C8418",
-    "transition metal": "#2E5380",
-    "post-transition metal": "#1F7368",
-    "metalloid": "#7F4F77",
-    "nonmetal": "#A38B47",
-    "halogen": "#C44099",
-    "noble gas": "#1F8AB3",
-    "lanthanide": "#9077A4",
-    "lanthanoid": "#9077A4",
-    "actinide": "#6E2DA0",
-    "actinoid": "#6E2DA0",
-}
-BUTTON_BORDER_COLORS = {
-    "default": "#202020",
-    "default_hover": "#FFFFFF",
-    "focus": "#FFD60A",
-    "search_match": "#FFD60A",
-    "search_match_hover": "#FFF2A8",
-    "pressed": "#000000",
-    "selected": "#111111",
-}
+
+
+def _build_category_lookup(theme_key):
+    palette = {}
+    for token_key, public_keys in _CATEGORY_TOKEN_TO_PUBLIC_KEYS.items():
+        color = TOKENS["color"]["category"][theme_key][token_key]
+        for public_key in public_keys:
+            palette[public_key] = color
+    return palette
+
+
+PERIODIC_TABLE_CATEGORY_COLORS = _build_category_lookup("dark")
+PERIODIC_TABLE_CATEGORY_COLORS_LIGHT = _build_category_lookup("light")
+BUTTON_BORDER_COLORS = dict(TOKENS["color"]["button_border"])
 
 
 def interpolate_color(color1, color2, t):
@@ -121,7 +162,12 @@ def get_text_color(hex_color):
     g = int(hex_color[2:4], 16)
     b = int(hex_color[4:6], 16)
     luminance = (0.299 * r) + (0.587 * g) + (0.114 * b)
-    return "#111111" if luminance > 160 else "#FFFFFF"
+    threshold = TOKENS["luminance"]["text_on_color_threshold"]
+    return (
+        TOKENS["color"]["text_on_color"]["dark"]
+        if luminance > threshold
+        else TOKENS["color"]["text_on_color"]["light"]
+    )
 
 
 def get_category_color(category, theme="dark"):
@@ -198,11 +244,11 @@ def build_periodic_button_stylesheet(
     """
     if search_match:
         normal_border_color = BUTTON_BORDER_COLORS["search_match"]
-        normal_border_width = 3
+        normal_border_width = TOKENS["border"]["search_match_width"]
         hover_border_color = BUTTON_BORDER_COLORS["search_match_hover"]
     else:
         normal_border_color = BUTTON_BORDER_COLORS["default"]
-        normal_border_width = 1
+        normal_border_width = TOKENS["border"]["default_width"]
         hover_border_color = BUTTON_BORDER_COLORS["default_hover"]
 
     return f"""
@@ -210,29 +256,29 @@ def build_periodic_button_stylesheet(
                 background-color: {background_color};
                 color: {text_color};
                 border: {normal_border_width}px solid {normal_border_color};
-                border-radius: {max(4, int(cell_size * 0.16))}px;
+                border-radius: {max(TOKENS["radius"]["cell_min"], int(cell_size * TOKENS["radius"]["cell_ratio"]))}px;
                 padding: 2px;
                 font-size: {element_font_size}px;
                 font-weight: bold;
             }}
 
             QPushButton:hover {{
-                border: 2px solid {hover_border_color};
+                border: {TOKENS["border"]["hover_width"]}px solid {hover_border_color};
             }}
 
             QPushButton:pressed {{
-                border: 2px solid {BUTTON_BORDER_COLORS["pressed"]};
+                border: {TOKENS["border"]["pressed_width"]}px solid {BUTTON_BORDER_COLORS["pressed"]};
             }}
 
             QPushButton:focus {{
-                border: 3px solid {BUTTON_BORDER_COLORS["focus"]};
+                border: {TOKENS["border"]["focused_width"]}px solid {BUTTON_BORDER_COLORS["focus"]};
             }}
 
             QPushButton:checked {{
-                border: 3px solid {BUTTON_BORDER_COLORS["selected"]};
+                border: {TOKENS["border"]["selected_width"]}px solid {BUTTON_BORDER_COLORS["selected"]};
             }}
 
             QPushButton:checked:focus {{
-                border: 3px solid {BUTTON_BORDER_COLORS["focus"]};
+                border: {TOKENS["border"]["focused_width"]}px solid {BUTTON_BORDER_COLORS["focus"]};
             }}
         """

@@ -1,3 +1,4 @@
+from src.config.design_tokens import TOKENS
 from src.config.static_data import NUMERIC_TREND_PROPERTIES
 
 METAL_CATEGORIES = {
@@ -13,9 +14,9 @@ METAL_CATEGORIES = {
 SEMIMETAL_CATEGORIES = {"metalloid"}
 NONMETAL_CATEGORIES = {"nonmetal", "halogen", "noble gas"}
 MACRO_CLASS_COLORS = {
-    "Metal": "#4E79A7",
-    "Metalloid": "#B07AA1",
-    "Nonmetal": "#EDC948",
+    "Metal": TOKENS["color"]["macro_class"]["metal"],
+    "Metalloid": TOKENS["color"]["macro_class"]["metalloid"],
+    "Nonmetal": TOKENS["color"]["macro_class"]["nonmetal"],
 }
 
 
@@ -63,4 +64,4 @@ def get_macro_class_color(macro_class):
     'macroclass' visualization mode is active. Defaults to grey
     for unrecognized classes.
     """
-    return MACRO_CLASS_COLORS.get(macro_class, "#7A7A7A")
+    return MACRO_CLASS_COLORS.get(macro_class, TOKENS["color"]["fallback"]["ui"])

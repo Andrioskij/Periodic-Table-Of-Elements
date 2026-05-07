@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from src.config.design_tokens import TOKENS
 from src.domain.trends import get_macro_class, get_macro_class_color
 from src.ui.scientific_data_notes import build_scientific_data_note
 from src.ui.styles import (
@@ -21,6 +22,10 @@ from src.ui.styles import (
     interpolate_color,
 )
 from src.ui.widgets.flow_layout import FlowLayout
+
+_INFO_PANEL_TOKENS = TOKENS["color"]["info_panel"]
+_INTERPOLATION_TOKENS = TOKENS["interpolation"]
+_ALPHA_TOKENS = TOKENS["alpha"]
 
 _logger = logging.getLogger(__name__)
 
@@ -162,20 +167,30 @@ class _MetricVisual(QWidget):
         self.show()
 
     def apply_accent_color(self, accent_color):
-        track_color = hex_to_rgba(accent_color, 24)
-        track_border = interpolate_color("#404854", accent_color, 0.38)
-        fill_color = interpolate_color("#7E8EA4", accent_color, 0.78)
+        track_color = hex_to_rgba(accent_color, _ALPHA_TOKENS["metric_track"])
+        track_border = interpolate_color(
+            _INFO_PANEL_TOKENS["track_border_base"],
+            accent_color,
+            _INTERPOLATION_TOKENS["track_border_t"],
+        )
+        fill_color = interpolate_color(
+            _INFO_PANEL_TOKENS["fill_color_base"],
+            accent_color,
+            _INTERPOLATION_TOKENS["fill_color_t"],
+        )
+        border_width = TOKENS["border"]["default_width"]
+        progress_radius = TOKENS["radius"]["metric_progress"]
 
         self.progress_bar.setStyleSheet(
 
                 "QProgressBar#infoMetricProgressBar {"
                 f"background-color: {track_color};"
-                f"border: 1px solid {track_border};"
-                "border-radius: 4px;"
+                f"border: {border_width}px solid {track_border};"
+                f"border-radius: {progress_radius}px;"
                 "}"
                 "QProgressBar#infoMetricProgressBar::chunk {"
                 f"background-color: {fill_color};"
-                "border-radius: 4px;"
+                f"border-radius: {progress_radius}px;"
                 "}"
 
         )
@@ -225,7 +240,9 @@ class _IsotopesSection(QWidget):
             empty_text = translate("no_isotope_data") if translate else fallback
             empty_label = QLabel(empty_text)
             empty_label.setObjectName("infoFieldValue")
-            empty_label.setStyleSheet("color: #999;")
+            empty_label.setStyleSheet(
+                f"color: {_INFO_PANEL_TOKENS['empty_label_color']};"
+            )
             self.isotopes_layout.addWidget(empty_label)
             return
 
@@ -291,7 +308,9 @@ class _IndustrialUsesSection(QWidget):
             empty_text = translate("no_industrial_data") if translate else fallback
             empty_label = QLabel(empty_text)
             empty_label.setObjectName("infoFieldValue")
-            empty_label.setStyleSheet("color: #999;")
+            empty_label.setStyleSheet(
+                f"color: {_INFO_PANEL_TOKENS['empty_label_color']};"
+            )
             self.uses_layout.addWidget(empty_label)
             return
 
@@ -309,7 +328,11 @@ class _IndustrialUsesSection(QWidget):
 
             category_label = QLabel(use_category)
             category_label.setObjectName("infoFieldLabel")
-            category_label.setStyleSheet("font-weight: bold; font-size: 10px; color: #888;")
+            category_label.setStyleSheet(
+                "font-weight: bold; "
+                f"font-size: {TOKENS['font']['size']['info_industrial_category']}px; "
+                f"color: {_INFO_PANEL_TOKENS['industrial_category_color']};"
+            )
 
             use_label = QLabel(use_text)
             use_label.setObjectName("infoFieldValue")
@@ -745,23 +768,53 @@ class InfoPanel(QScrollArea):
 
     def _apply_accent_styles(self, element, values):
         accent_color = self._resolve_accent_color(element, values)
-        card_border = interpolate_color("#3C3C3C", accent_color, 0.24)
-        hero_border = interpolate_color("#44515B", accent_color, 0.5)
-        hero_background = hex_to_rgba(accent_color, 34)
-        symbol_background = hex_to_rgba(accent_color, 22)
-        symbol_border = interpolate_color("#44515B", accent_color, 0.55)
-        meta_text_color = interpolate_color("#F2F2F2", accent_color, 0.26)
-        symbol_text_color = interpolate_color("#F2F2F2", accent_color, 0.35)
+        card_border = interpolate_color(
+            _INFO_PANEL_TOKENS["card_border_base"],
+            accent_color,
+            _INTERPOLATION_TOKENS["card_border_t"],
+        )
+        hero_border = interpolate_color(
+            _INFO_PANEL_TOKENS["hero_border_base"],
+            accent_color,
+            _INTERPOLATION_TOKENS["hero_border_t"],
+        )
+        hero_background = hex_to_rgba(accent_color, _ALPHA_TOKENS["hero_background"])
+        symbol_background = hex_to_rgba(accent_color, _ALPHA_TOKENS["symbol_background"])
+        symbol_border = interpolate_color(
+            _INFO_PANEL_TOKENS["symbol_border_base"],
+            accent_color,
+            _INTERPOLATION_TOKENS["symbol_border_t"],
+        )
+        meta_text_color = interpolate_color(
+            _INFO_PANEL_TOKENS["meta_text_base"],
+            accent_color,
+            _INTERPOLATION_TOKENS["meta_text_t"],
+        )
+        symbol_text_color = interpolate_color(
+            _INFO_PANEL_TOKENS["symbol_text_base"],
+            accent_color,
+            _INTERPOLATION_TOKENS["symbol_text_t"],
+        )
+        border_width = TOKENS["border"]["default_width"]
 
         self.card_widget.setStyleSheet(
-            f"background-color: #252526; border: 1px solid {card_border}; border-radius: 14px;"
+            f"background-color: {_INFO_PANEL_TOKENS['card_background']}; "
+            f"border: {border_width}px solid {card_border}; "
+            f"border-radius: {TOKENS['radius']['info_card']}px;"
         )
         self.hero_widget.setStyleSheet(
-            f"background-color: {hero_background}; border: 1px solid {hero_border}; border-radius: 12px;"
+            f"background-color: {hero_background}; "
+            f"border: {border_width}px solid {hero_border}; "
+            f"border-radius: {TOKENS['radius']['info_hero']}px;"
         )
-        self.hero_accent_bar.setStyleSheet(f"background-color: {accent_color}; border-radius: 3px;")
+        self.hero_accent_bar.setStyleSheet(
+            f"background-color: {accent_color}; "
+            f"border-radius: {TOKENS['radius']['accent_bar']}px;"
+        )
         self.hero_symbol_card.setStyleSheet(
-            f"background-color: {symbol_background}; border: 1px solid {symbol_border}; border-radius: 12px;"
+            f"background-color: {symbol_background}; "
+            f"border: {border_width}px solid {symbol_border}; "
+            f"border-radius: {TOKENS['radius']['symbol_card']}px;"
         )
         self.hero_atomic_number_value_label.setStyleSheet(f"color: {accent_color};")
         self.hero_position_value_label.setStyleSheet(f"color: {meta_text_color};")
@@ -786,9 +839,17 @@ class InfoPanel(QScrollArea):
             visual_widget.set_metric_value(None)
 
     def _apply_badge_styles(self, accent_color):
-        category_border = interpolate_color(accent_color, "#FFFFFF", 0.18)
-        subtle_background = hex_to_rgba(accent_color, 34)
-        subtle_border = interpolate_color("#55606D", accent_color, 0.55)
+        category_border = interpolate_color(
+            accent_color,
+            _INFO_PANEL_TOKENS["category_border_target_white"],
+            _INTERPOLATION_TOKENS["category_border_t"],
+        )
+        subtle_background = hex_to_rgba(accent_color, _ALPHA_TOKENS["subtle_background"])
+        subtle_border = interpolate_color(
+            _INFO_PANEL_TOKENS["subtle_border_base"],
+            accent_color,
+            _INTERPOLATION_TOKENS["subtle_border_t"],
+        )
 
         self.hero_category_badge_label.setStyleSheet(
             self._build_badge_stylesheet(
@@ -807,7 +868,7 @@ class InfoPanel(QScrollArea):
                 self._build_badge_stylesheet(
                     background_color=subtle_background,
                     border_color=subtle_border,
-                    text_color="#F2F2F2",
+                    text_color=_INFO_PANEL_TOKENS["badge_secondary_text"],
                 )
             )
 
@@ -817,12 +878,13 @@ class InfoPanel(QScrollArea):
 
     def _build_badge_stylesheet(self, *, background_color, border_color, text_color):
         return (
-            "font-size: 11px; "
+            f"font-size: {TOKENS['font']['size']['info_hero_badge']}px; "
             "font-weight: bold; "
-            "padding: 4px 10px; "
-            "border-radius: 11px; "
+            f"padding: {TOKENS['spacing']['badge_padding_y']}px "
+            f"{TOKENS['spacing']['badge_padding_x']}px; "
+            f"border-radius: {TOKENS['radius']['badge']}px; "
             f"background-color: {background_color}; "
-            f"border: 1px solid {border_color}; "
+            f"border: {TOKENS['border']['default_width']}px solid {border_color}; "
             f"color: {text_color};"
         )
 
