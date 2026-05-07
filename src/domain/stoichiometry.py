@@ -132,6 +132,16 @@ def balance_equation(equation: str) -> list[int]:
     Raises EquationError if balancing is impossible or ambiguous.
     """
     reactants, products = parse_equation(equation)
+    return balance_parsed(reactants, products)
+
+
+def balance_parsed(reactants: list[str], products: list[str]) -> list[int]:
+    """Balance an already-parsed equation.
+
+    Same contract as :func:`balance_equation`, but skips the parse step so
+    callers that already hold ``(reactants, products)`` (e.g. UI panels that
+    parsed once for display) avoid a redundant parse.
+    """
     mat, elements = build_composition_matrix(reactants, products)
 
     nullspace = mat.nullspace()
@@ -214,6 +224,8 @@ def compute_stoichiometric_masses(
     elements: list[dict],
     given_compound: str | None = None,
     given_mass_grams: float | None = None,
+    *,
+    molar_masses: list[float] | None = None,
 ) -> list[dict]:
     """Compute stoichiometric masses for every compound in the equation.
 
@@ -221,17 +233,22 @@ def compute_stoichiometric_masses(
     moles and masses based on those values. Otherwise shows the base
     molar ratios (1x coefficients).
 
+    Pass ``molar_masses`` (one entry per compound, in ``reactants + products``
+    order) to skip the per-call parse + :func:`compute_molar_mass` work when a
+    caller has already computed them for the same equation.
+
     Returns: [{"compound": str, "coefficient": int, "molar_mass": float,
                "moles": float, "mass": float}, ...]
     """
     compounds = reactants + products
     n = len(compounds)
 
-    molar_masses = []
-    for compound in compounds:
-        atoms = parse_formula(compound)
-        mm = compute_molar_mass(atoms, elements)
-        molar_masses.append(mm)
+    if molar_masses is None:
+        molar_masses = []
+        for compound in compounds:
+            atoms = parse_formula(compound)
+            mm = compute_molar_mass(atoms, elements)
+            molar_masses.append(mm)
 
     # Find the given compound index
     given_idx = None

@@ -232,5 +232,23 @@ class TestFormulaErrorCodes(unittest.TestCase):
         self.assertEqual(ctx.exception.params, {"formula": "CuSO4·5"})
 
 
+def test_percent_composition_accepts_precomputed_total_mass():
+    atoms = parse_formula("CuSO4·5H2O")
+    total = compute_molar_mass(atoms, ELEMENTS)
+    reused = compute_percent_composition(atoms, ELEMENTS, total_mass=total)
+    recomputed = compute_percent_composition(atoms, ELEMENTS)
+    assert reused == recomputed
+
+
+def test_percent_composition_total_mass_is_keyword_only():
+    atoms = parse_formula("H2O")
+    total = compute_molar_mass(atoms, ELEMENTS)
+    try:
+        compute_percent_composition(atoms, ELEMENTS, total)
+    except TypeError:
+        return
+    raise AssertionError("total_mass should be keyword-only")
+
+
 if __name__ == "__main__":
     unittest.main()

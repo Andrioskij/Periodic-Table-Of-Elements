@@ -124,7 +124,9 @@ class MolarMassPanel(QWidget):
         try:
             atom_counts = parse_formula(formula)
             total_mass = compute_molar_mass(atom_counts, self.elements)
-            composition = compute_percent_composition(atom_counts, self.elements)
+            composition = compute_percent_composition(
+                atom_counts, self.elements, total_mass=total_mass
+            )
         except FormulaError as exc:
             message = format_formula_error(exc, self._translate)
             self.result_label.setText(f"<b>{self._error_prefix}:</b> {message}")

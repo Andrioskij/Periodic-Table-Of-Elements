@@ -3,6 +3,7 @@ import unittest
 from src.domain.stoichiometry import (
     EquationError,
     balance_equation,
+    balance_parsed,
     compute_stoichiometric_masses,
     format_balanced_equation,
     parse_equation,
@@ -142,6 +143,56 @@ class TestEquationErrorCodes(unittest.TestCase):
             )
         self.assertEqual(ctx.exception.code, "compound_not_found")
         self.assertEqual(ctx.exception.params, {"compound": "Cu"})
+
+
+def test_balance_parsed_matches_balance_equation():
+    expected = balance_equation("C3H8 + O2 -> CO2 + H2O")
+    assert balance_parsed(["C3H8", "O2"], ["CO2", "H2O"]) == expected
+
+
+def test_compute_stoichiometric_masses_accepts_precomputed_molar_masses():
+    reactants, products = ["Fe", "O2"], ["Fe2O3"]
+    coefficients = [4, 3, 2]
+
+    baseline = compute_stoichiometric_masses(
+        reactants, products, coefficients, ELEMENTS,
+        given_compound="Fe",
+        given_mass_grams=10.0,
+    )
+
+    cached_masses = [r["molar_mass"] for r in compute_stoichiometric_masses(
+        reactants, products, coefficients, ELEMENTS,
+    )]
+
+    reused = compute_stoichiometric_masses(
+        reactants, products, coefficients, ELEMENTS,
+        given_compound="Fe",
+        given_mass_grams=10.0,
+        molar_masses=cached_masses,
+    )
+
+    assert reused == baseline
+
+
+def test_compute_stoichiometric_masses_skips_parse_when_molar_masses_provided(
+    monkeypatch,
+):
+    from src.domain import stoichiometry as stoich_mod
+
+    calls = {"n": 0}
+
+    def _spy(formula):
+        calls["n"] += 1
+        return {"_": 1}
+
+    monkeypatch.setattr(stoich_mod, "parse_formula", _spy)
+    compute_stoichiometric_masses(
+        ["Fe", "O2"], ["Fe2O3"], [4, 3, 2], ELEMENTS,
+        given_compound="Fe",
+        given_mass_grams=10.0,
+        molar_masses=[55.85, 32.0, 159.7],
+    )
+    assert calls["n"] == 0
 
 
 if __name__ == "__main__":

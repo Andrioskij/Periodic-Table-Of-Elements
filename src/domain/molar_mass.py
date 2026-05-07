@@ -183,14 +183,21 @@ def compute_molar_mass(atom_counts: dict[str, int], elements: list[dict]) -> flo
 
 
 def compute_percent_composition(
-    atom_counts: dict[str, int], elements: list[dict]
+    atom_counts: dict[str, int],
+    elements: list[dict],
+    *,
+    total_mass: float | None = None,
 ) -> list[dict]:
     """Return the percent composition of each element in the formula.
 
     Output: [{"symbol": str, "count": int, "mass": float, "percent": float}, ...]
     sorted by percent descending.
+
+    Pass ``total_mass`` if it has already been computed for ``atom_counts`` to
+    skip the redundant :func:`compute_molar_mass` call.
     """
-    total_mass = compute_molar_mass(atom_counts, elements)
+    if total_mass is None:
+        total_mass = compute_molar_mass(atom_counts, elements)
     result = []
     for symbol, count in atom_counts.items():
         el = _find_element_by_symbol(symbol, elements)

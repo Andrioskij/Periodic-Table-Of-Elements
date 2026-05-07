@@ -11,10 +11,10 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from src.domain.molar_mass import FormulaError
+from src.domain.molar_mass import FormulaError, compute_molar_mass, parse_formula
 from src.domain.stoichiometry import (
     EquationError,
-    balance_equation,
+    balance_parsed,
     compute_stoichiometric_masses,
     format_balanced_equation,
     parse_equation,
@@ -36,6 +36,7 @@ class StoichiometryPanel(QWidget):
         self._current_reactants = []
         self._current_products = []
         self._current_coefficients = []
+        self._current_molar_masses = []
         self.setObjectName("stoichiometryPanel")
         self.setFocusPolicy(Qt.StrongFocus)
 
@@ -182,7 +183,11 @@ class StoichiometryPanel(QWidget):
 
         try:
             reactants, products = parse_equation(equation)
-            coefficients = balance_equation(equation)
+            coefficients = balance_parsed(reactants, products)
+            molar_masses = [
+                compute_molar_mass(parse_formula(c), self.elements)
+                for c in reactants + products
+            ]
             balanced = format_balanced_equation(reactants, products, coefficients)
         except EquationError as exc:
             message = format_equation_error(exc, self._translate)
@@ -205,6 +210,7 @@ class StoichiometryPanel(QWidget):
         self._current_reactants = reactants
         self._current_products = products
         self._current_coefficients = coefficients
+        self._current_molar_masses = molar_masses
 
         self.result_label.setText(f"<b>{balanced}</b>")
 
@@ -245,6 +251,7 @@ class StoichiometryPanel(QWidget):
                 self.elements,
                 given_compound=compound,
                 given_mass_grams=mass_grams,
+                molar_masses=self._current_molar_masses,
             )
         except EquationError as exc:
             message = format_equation_error(exc, self._translate)
