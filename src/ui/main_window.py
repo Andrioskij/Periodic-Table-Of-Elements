@@ -315,6 +315,7 @@ class MainWindow(QWidget):
             tr=self.tr,
             numeric_ranges=self.numeric_ranges,
             on_right_mode_clicked=self.set_right_panel_mode,
+            elements=self.elements,
         )
         self.right_panel_buttons = right["right_panel_buttons"]
         self.right_panel_buttons_widget = right["right_panel_buttons_widget"]
@@ -327,6 +328,7 @@ class MainWindow(QWidget):
         self.diagram_title_label = right["diagram_title_label"]
         self.diagram_label = right["diagram_label"]
         self.lewis_panel = right["lewis_panel"]
+        self.lewis_panel.set_translator(self.tr, format_value)
         self.lewis_page = right["lewis_page"]
         self.right_panel_container = right["right_panel_container"]
         self.right_panel_stack = right["right_panel_stack"]
@@ -698,6 +700,9 @@ class MainWindow(QWidget):
         self.lewis_panel.apply_language(
             title=self.tr("lewis_title"),
             prompt=self.tr("lewis_prompt"),
+            input_placeholder=self.tr("lewis_input_placeholder"),
+            show_button_text=self.tr("lewis_show_button"),
+            not_in_library_text=self.tr("lewis_not_in_library"),
         )
         self.solubility_panel.apply_language(
             title=self.tr("solubility_title"),
