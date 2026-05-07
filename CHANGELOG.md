@@ -11,6 +11,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 - Parser error messages (molar mass, stoichiometry) are now localized in all 7 UI languages.
+- Molar mass and stoichiometry panels avoid redundant parse/balance work when re-rendering or recomputing masses.
 
 ## [1.2.0] - 2026-04-29
 
