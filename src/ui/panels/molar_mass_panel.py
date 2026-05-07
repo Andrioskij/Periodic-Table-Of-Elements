@@ -16,6 +16,7 @@ from src.domain.molar_mass import (
     compute_percent_composition,
     parse_formula,
 )
+from src.ui.error_format import format_formula_error
 
 
 class MolarMassPanel(QWidget):
@@ -84,6 +85,11 @@ class MolarMassPanel(QWidget):
 
         self._calculate_label_text = "Calculate"
         self._error_prefix = "Error"
+        self._translate = None
+
+    def set_translator(self, translate):
+        """Provide the translator used to localize error messages."""
+        self._translate = translate
 
     def set_title(self, text):
         """Update the panel title."""
@@ -119,7 +125,11 @@ class MolarMassPanel(QWidget):
             atom_counts = parse_formula(formula)
             total_mass = compute_molar_mass(atom_counts, self.elements)
             composition = compute_percent_composition(atom_counts, self.elements)
-        except (FormulaError, Exception) as exc:
+        except FormulaError as exc:
+            message = format_formula_error(exc, self._translate)
+            self.result_label.setText(f"<b>{self._error_prefix}:</b> {message}")
+            return
+        except Exception as exc:
             self.result_label.setText(f"<b>{self._error_prefix}:</b> {exc}")
             return
 
