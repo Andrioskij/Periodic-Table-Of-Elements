@@ -161,5 +161,76 @@ class TestHydratedCompounds(unittest.TestCase):
             parse_formula("CuSO4·5")
 
 
+class TestFormulaErrorCodes(unittest.TestCase):
+    """Each FormulaError raise site must carry a non-empty code and coherent params."""
+
+    def _raises_with(self, fn, *, code: str, params: dict | None = None):
+        with self.assertRaises(FormulaError) as ctx:
+            fn()
+        exc = ctx.exception
+        self.assertEqual(exc.code, code)
+        self.assertIsInstance(exc.params, dict)
+        if params is not None:
+            self.assertEqual(exc.params, params)
+
+    def test_empty_formula_code(self):
+        self._raises_with(lambda: parse_formula(""), code="empty", params={})
+
+    def test_whitespace_only_code(self):
+        self._raises_with(lambda: parse_formula("   "), code="empty", params={})
+
+    def test_unmatched_close_carries_position(self):
+        self._raises_with(
+            lambda: parse_formula("H2O)"),
+            code="unmatched_close",
+            params={"position": 3},
+        )
+
+    def test_unmatched_open_code(self):
+        self._raises_with(lambda: parse_formula("Ca(OH"), code="unmatched_open", params={})
+
+    def test_unexpected_char_carries_context(self):
+        with self.assertRaises(FormulaError) as ctx:
+            parse_formula("H2@O")
+        exc = ctx.exception
+        self.assertEqual(exc.code, "unexpected_char")
+        self.assertEqual(exc.params["char"], "@")
+        self.assertEqual(exc.params["position"], 2)
+        self.assertEqual(exc.params["formula"], "H2@O")
+
+    def test_no_elements_carries_formula(self):
+        # A bare digit produces a parse with no elements collected.
+        with self.assertRaises(FormulaError) as ctx:
+            parse_formula("()")
+        exc = ctx.exception
+        self.assertEqual(exc.code, "no_elements")
+        self.assertEqual(exc.params, {"formula": "()"})
+
+    def test_unknown_symbol_carries_symbol(self):
+        with self.assertRaises(FormulaError) as ctx:
+            compute_molar_mass({"Xx": 1}, ELEMENTS)
+        exc = ctx.exception
+        self.assertEqual(exc.code, "unknown_symbol")
+        self.assertEqual(exc.params, {"symbol": "Xx"})
+
+    def test_unknown_symbol_via_percent_composition(self):
+        with self.assertRaises(FormulaError) as ctx:
+            compute_percent_composition({"Yy": 1}, ELEMENTS)
+        self.assertEqual(ctx.exception.code, "unknown_symbol")
+        self.assertEqual(ctx.exception.params, {"symbol": "Yy"})
+
+    def test_hydrate_malformed_carries_formula(self):
+        with self.assertRaises(FormulaError) as ctx:
+            parse_formula("CuSO4·")
+        self.assertEqual(ctx.exception.code, "hydrate_malformed")
+        self.assertEqual(ctx.exception.params, {"formula": "CuSO4·"})
+
+    def test_hydrate_no_formula_carries_formula(self):
+        with self.assertRaises(FormulaError) as ctx:
+            parse_formula("CuSO4·5")
+        self.assertEqual(ctx.exception.code, "hydrate_no_formula")
+        self.assertEqual(ctx.exception.params, {"formula": "CuSO4·5"})
+
+
 if __name__ == "__main__":
     unittest.main()

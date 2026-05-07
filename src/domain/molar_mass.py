@@ -1,8 +1,29 @@
-"""Parse chemical formulas and compute molar masses and percent composition."""
+"""Parse chemical formulas and compute molar masses and percent composition.
+
+FormulaError codes (used by the UI to look up localized messages):
+- ``empty``: formula is empty / whitespace-only.
+- ``hydrate_malformed``: hydrate notation has an empty segment. Params: ``formula``.
+- ``hydrate_no_formula``: hydrate multiplier without trailing formula. Params: ``formula``.
+- ``unmatched_close``: unmatched closing parenthesis. Params: ``position``.
+- ``unexpected_char``: unexpected character at position. Params: ``char``, ``position``, ``formula``.
+- ``unmatched_open``: unmatched opening parenthesis.
+- ``no_elements``: formula parsed without producing any element. Params: ``formula``.
+- ``unknown_symbol``: element symbol not in dataset. Params: ``symbol``.
+"""
 
 
 class FormulaError(ValueError):
-    """Raised when a chemical formula cannot be parsed or contains unknown symbols."""
+    """Raised when a chemical formula cannot be parsed or contains unknown symbols.
+
+    Carries an optional ``code`` and ``params`` dict so the UI layer can map
+    them to a localized message via :func:`src.ui.error_format.format_formula_error`.
+    The English ``message`` remains the fallback when no translation is available.
+    """
+
+    def __init__(self, message: str, *, code: str | None = None, params: dict | None = None):
+        super().__init__(message)
+        self.code = code
+        self.params = params or {}
 
 
 def parse_formula(formula: str) -> dict[str, int]:
@@ -17,7 +38,7 @@ def parse_formula(formula: str) -> dict[str, int]:
     parentheses, or malformed hydrate notation.
     """
     if not formula or not formula.strip():
-        raise FormulaError("Empty formula")
+        raise FormulaError("Empty formula", code="empty")
 
     formula = formula.strip()
 
@@ -36,7 +57,11 @@ def _parse_hydrate(formula: str) -> dict[str, int]:
     normalized = formula.replace("·", ".")
     parts = [p.strip() for p in normalized.split(".")]
     if any(not p for p in parts):
-        raise FormulaError(f"Malformed hydrate notation in '{formula}'")
+        raise FormulaError(
+            f"Malformed hydrate notation in '{formula}'",
+            code="hydrate_malformed",
+            params={"formula": formula},
+        )
 
     merged: dict[str, int] = {}
     for idx, part in enumerate(parts):
@@ -51,7 +76,9 @@ def _parse_hydrate(formula: str) -> dict[str, int]:
                 sub = sub[k:]
                 if not sub:
                     raise FormulaError(
-                        f"Hydrate multiplier without formula in '{formula}'"
+                        f"Hydrate multiplier without formula in '{formula}'",
+                        code="hydrate_no_formula",
+                        params={"formula": formula},
                     )
         atoms = _parse_simple(sub)
         for symbol, count in atoms.items():
@@ -75,7 +102,11 @@ def _parse_simple(formula: str) -> dict[str, int]:
 
         elif ch == ')':
             if len(stack) < 2:
-                raise FormulaError(f"Unmatched closing parenthesis at position {i}")
+                raise FormulaError(
+                    f"Unmatched closing parenthesis at position {i}",
+                    code="unmatched_close",
+                    params={"position": i},
+                )
             i += 1
             # Read the multiplier after ')'
             num_start = i
@@ -104,14 +135,23 @@ def _parse_simple(formula: str) -> dict[str, int]:
 
         else:
             raise FormulaError(
-                f"Unexpected character '{ch}' at position {i} in formula '{formula}'"
+                f"Unexpected character '{ch}' at position {i} in formula '{formula}'",
+                code="unexpected_char",
+                params={"char": ch, "position": i, "formula": formula},
             )
 
     if len(stack) != 1:
-        raise FormulaError("Unmatched opening parenthesis in formula")
+        raise FormulaError(
+            "Unmatched opening parenthesis in formula",
+            code="unmatched_open",
+        )
 
     if not stack[0]:
-        raise FormulaError(f"No elements found in formula '{formula}'")
+        raise FormulaError(
+            f"No elements found in formula '{formula}'",
+            code="no_elements",
+            params={"formula": formula},
+        )
 
     return stack[0]
 
@@ -133,7 +173,11 @@ def compute_molar_mass(atom_counts: dict[str, int], elements: list[dict]) -> flo
     for symbol, count in atom_counts.items():
         el = _find_element_by_symbol(symbol, elements)
         if el is None:
-            raise FormulaError(f"Unknown element symbol: '{symbol}'")
+            raise FormulaError(
+                f"Unknown element symbol: '{symbol}'",
+                code="unknown_symbol",
+                params={"symbol": symbol},
+            )
         total += el["atomic_mass"] * count
     return total
 
@@ -151,7 +195,11 @@ def compute_percent_composition(
     for symbol, count in atom_counts.items():
         el = _find_element_by_symbol(symbol, elements)
         if el is None:
-            raise FormulaError(f"Unknown element symbol: '{symbol}'")
+            raise FormulaError(
+                f"Unknown element symbol: '{symbol}'",
+                code="unknown_symbol",
+                params={"symbol": symbol},
+            )
         mass = el["atomic_mass"] * count
         percent = (mass / total_mass) * 100.0 if total_mass > 0 else 0.0
         result.append({

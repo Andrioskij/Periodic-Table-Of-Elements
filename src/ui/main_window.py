@@ -329,6 +329,8 @@ class MainWindow(QWidget):
         self.diagram_label = right["diagram_label"]
         self.lewis_panel = right["lewis_panel"]
         self.lewis_panel.set_translator(self.tr, format_value)
+        self.molar_mass_panel.set_translator(self.tr)
+        self.stoichiometry_panel.set_translator(self.tr)
         self.lewis_page = right["lewis_page"]
         self.right_panel_container = right["right_panel_container"]
         self.right_panel_stack = right["right_panel_stack"]

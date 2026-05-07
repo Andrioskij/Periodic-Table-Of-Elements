@@ -19,6 +19,7 @@ from src.domain.stoichiometry import (
     format_balanced_equation,
     parse_equation,
 )
+from src.ui.error_format import format_equation_error, format_formula_error
 
 
 class StoichiometryPanel(QWidget):
@@ -142,6 +143,11 @@ class StoichiometryPanel(QWidget):
         self._calc_masses_label = "Calculate masses"
         self._mass_section_text = "Enter mass for a compound:"
         self._error_prefix = "Error"
+        self._translate = None
+
+    def set_translator(self, translate):
+        """Provide the translator used to localize error messages."""
+        self._translate = translate
 
     def set_title(self, text):
         """Update the panel title."""
@@ -178,7 +184,19 @@ class StoichiometryPanel(QWidget):
             reactants, products = parse_equation(equation)
             coefficients = balance_equation(equation)
             balanced = format_balanced_equation(reactants, products, coefficients)
-        except (EquationError, FormulaError, Exception) as exc:
+        except EquationError as exc:
+            message = format_equation_error(exc, self._translate)
+            self.result_label.setText(f"<b>{self._error_prefix}:</b> {message}")
+            self.mass_section.setVisible(False)
+            self.mass_result_label.setVisible(False)
+            return
+        except FormulaError as exc:
+            message = format_formula_error(exc, self._translate)
+            self.result_label.setText(f"<b>{self._error_prefix}:</b> {message}")
+            self.mass_section.setVisible(False)
+            self.mass_result_label.setVisible(False)
+            return
+        except Exception as exc:
             self.result_label.setText(f"<b>{self._error_prefix}:</b> {exc}")
             self.mass_section.setVisible(False)
             self.mass_result_label.setVisible(False)
@@ -228,7 +246,17 @@ class StoichiometryPanel(QWidget):
                 given_compound=compound,
                 given_mass_grams=mass_grams,
             )
-        except (EquationError, FormulaError, Exception) as exc:
+        except EquationError as exc:
+            message = format_equation_error(exc, self._translate)
+            self.mass_result_label.setText(f"<b>{self._error_prefix}:</b> {message}")
+            self.mass_result_label.setVisible(True)
+            return
+        except FormulaError as exc:
+            message = format_formula_error(exc, self._translate)
+            self.mass_result_label.setText(f"<b>{self._error_prefix}:</b> {message}")
+            self.mass_result_label.setVisible(True)
+            return
+        except Exception as exc:
             self.mass_result_label.setText(f"<b>{self._error_prefix}:</b> {exc}")
             self.mass_result_label.setVisible(True)
             return
