@@ -98,5 +98,51 @@ class TestEquationErrors(unittest.TestCase):
             parse_equation("Fe O2")
 
 
+class TestEquationErrorCodes(unittest.TestCase):
+    """Each EquationError raise site must carry a non-empty code and coherent params."""
+
+    def test_empty_equation_code(self):
+        with self.assertRaises(EquationError) as ctx:
+            parse_equation("")
+        self.assertEqual(ctx.exception.code, "empty")
+        self.assertEqual(ctx.exception.params, {})
+
+    def test_no_separator_code(self):
+        with self.assertRaises(EquationError) as ctx:
+            parse_equation("Fe O2")
+        self.assertEqual(ctx.exception.code, "no_separator")
+
+    def test_both_sides_code(self):
+        with self.assertRaises(EquationError) as ctx:
+            parse_equation("-> O2")
+        self.assertEqual(ctx.exception.code, "both_sides")
+
+    def test_invalid_compound_code_carries_compound_and_detail(self):
+        # `Ca(` is malformed (unmatched open paren) — surfaces as invalid_compound
+        # at the matrix-build step.
+        with self.assertRaises(EquationError) as ctx:
+            balance_equation("H2 + Ca( -> H2O")
+        exc = ctx.exception
+        self.assertEqual(exc.code, "invalid_compound")
+        self.assertEqual(exc.params["compound"], "Ca(")
+        self.assertTrue(exc.params["detail"])
+
+    def test_cannot_balance_code(self):
+        with self.assertRaises(EquationError) as ctx:
+            balance_equation("H2 -> O2")
+        self.assertEqual(ctx.exception.code, "cannot_balance")
+
+    def test_compound_not_found_carries_compound(self):
+        with self.assertRaises(EquationError) as ctx:
+            compute_stoichiometric_masses(
+                ["Fe", "O2"], ["Fe2O3"], [4, 3, 2],
+                ELEMENTS,
+                given_compound="Cu",
+                given_mass_grams=10.0,
+            )
+        self.assertEqual(ctx.exception.code, "compound_not_found")
+        self.assertEqual(ctx.exception.params, {"compound": "Cu"})
+
+
 if __name__ == "__main__":
     unittest.main()

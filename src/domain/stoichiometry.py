@@ -1,4 +1,16 @@
-"""Balance chemical equations and compute stoichiometric masses."""
+"""Balance chemical equations and compute stoichiometric masses.
+
+EquationError codes (used by the UI to look up localized messages):
+- ``empty``: equation is empty / whitespace-only.
+- ``no_separator``: no recognized separator (``->``, ``→``, ``=``) found.
+- ``one_separator``: equation does not split cleanly on a single separator.
+- ``both_sides``: at least one side has no compounds.
+- ``invalid_compound``: a compound failed to parse. Params: ``compound``, ``detail``.
+- ``cannot_balance``: composition matrix has no nullspace.
+- ``under_determined``: nullspace has multiple independent solutions.
+- ``zero_coefficient``: balancing produced a zero coefficient.
+- ``compound_not_found``: requested compound is not part of the equation. Params: ``compound``.
+"""
 
 from sympy import Matrix, lcm
 
@@ -6,7 +18,17 @@ from src.domain.molar_mass import FormulaError, compute_molar_mass, parse_formul
 
 
 class EquationError(ValueError):
-    """Raised when a chemical equation cannot be parsed or balanced."""
+    """Raised when a chemical equation cannot be parsed or balanced.
+
+    Carries an optional ``code`` and ``params`` dict so the UI layer can map
+    them to a localized message via :func:`src.ui.error_format.format_equation_error`.
+    The English ``message`` remains the fallback when no translation is available.
+    """
+
+    def __init__(self, message: str, *, code: str | None = None, params: dict | None = None):
+        super().__init__(message)
+        self.code = code
+        self.params = params or {}
 
 
 _ARROW_SEPARATORS = ("->", "→", "=")
@@ -19,7 +41,7 @@ def parse_equation(equation: str) -> tuple[list[str], list[str]]:
     Raises EquationError on malformed input.
     """
     if not equation or not equation.strip():
-        raise EquationError("Empty equation")
+        raise EquationError("Empty equation", code="empty")
 
     equation = equation.strip()
 
@@ -31,22 +53,32 @@ def parse_equation(equation: str) -> tuple[list[str], list[str]]:
 
     if separator_used is None:
         raise EquationError(
-            "No separator found. Use '->', '→', or '=' between reactants and products."
+            "No separator found. Use '->', '→', or '=' between reactants and products.",
+            code="no_separator",
         )
 
     parts = equation.split(separator_used, 1)
     if len(parts) != 2:
-        raise EquationError("Equation must have exactly one separator.")
+        raise EquationError(
+            "Equation must have exactly one separator.",
+            code="one_separator",
+        )
 
     left, right = parts[0].strip(), parts[1].strip()
     if not left or not right:
-        raise EquationError("Both sides of the equation must contain compounds.")
+        raise EquationError(
+            "Both sides of the equation must contain compounds.",
+            code="both_sides",
+        )
 
     reactants = [c.strip() for c in left.split("+") if c.strip()]
     products = [c.strip() for c in right.split("+") if c.strip()]
 
     if not reactants or not products:
-        raise EquationError("Both sides of the equation must contain compounds.")
+        raise EquationError(
+            "Both sides of the equation must contain compounds.",
+            code="both_sides",
+        )
 
     return reactants, products
 
@@ -68,7 +100,11 @@ def build_composition_matrix(
         try:
             all_atoms.append(parse_formula(compound))
         except FormulaError as exc:
-            raise EquationError(f"Invalid compound '{compound}': {exc}") from exc
+            raise EquationError(
+                f"Invalid compound '{compound}': {exc}",
+                code="invalid_compound",
+                params={"compound": compound, "detail": str(exc)},
+            ) from exc
 
     elements = sorted(
         set().union(*(atoms.keys() for atoms in all_atoms))
@@ -102,12 +138,14 @@ def balance_equation(equation: str) -> list[int]:
 
     if not nullspace:
         raise EquationError(
-            "Cannot balance: elements differ between reactants and products."
+            "Cannot balance: elements differ between reactants and products.",
+            code="cannot_balance",
         )
 
     if len(nullspace) > 1:
         raise EquationError(
-            "Equation is under-determined (multiple independent solutions)."
+            "Equation is under-determined (multiple independent solutions).",
+            code="under_determined",
         )
 
     solution = nullspace[0]
@@ -128,7 +166,10 @@ def balance_equation(equation: str) -> list[int]:
         coeff = val * scale
         int_coeff = int(abs(coeff))
         if int_coeff == 0:
-            raise EquationError("Balancing produced a zero coefficient.")
+            raise EquationError(
+                "Balancing produced a zero coefficient.",
+                code="zero_coefficient",
+            )
         coefficients.append(int_coeff)
 
     # Reduce by GCD
@@ -200,7 +241,11 @@ def compute_stoichiometric_masses(
                 given_idx = i
                 break
         if given_idx is None:
-            raise EquationError(f"Compound '{given_compound}' not found in equation.")
+            raise EquationError(
+                f"Compound '{given_compound}' not found in equation.",
+                code="compound_not_found",
+                params={"compound": given_compound},
+            )
 
     result = []
     for i in range(n):
