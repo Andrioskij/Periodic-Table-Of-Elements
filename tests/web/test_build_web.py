@@ -18,7 +18,14 @@ def test_build_web_populates_python_data_and_tokens(tmp_path):
     written = build_web(dest)
 
     assert (dest / "python" / "molar_mass.py").is_file()
+    assert (dest / "python" / "electron_configuration.py").is_file()
     assert any("molar_mass.py" in str(path) for path in written["python"])
+    assert any("electron_configuration.py" in str(path) for path in written["python"])
+
+    # Config package mirror so Pyodide can resolve "from src.config.static_data".
+    assert (dest / "python" / "src" / "__init__.py").is_file()
+    assert (dest / "python" / "src" / "config" / "__init__.py").is_file()
+    assert (dest / "python" / "src" / "config" / "static_data.py").is_file()
 
     assert (dest / "data" / "elements.json").is_file()
     elements = json.loads((dest / "data" / "elements.json").read_text(encoding="utf-8"))
@@ -40,6 +47,24 @@ def test_build_web_populates_python_data_and_tokens(tmp_path):
     assert "light" in tokens["color"]["theme"]
     assert "dark" in tokens["color"]["category"]
     assert "light" in tokens["color"]["category"]
+
+
+def test_build_web_bundled_static_data_matches_source(tmp_path):
+    dest = tmp_path / "web_out"
+    build_web(dest)
+    bundled = (dest / "python" / "src" / "config" / "static_data.py").read_text(
+        encoding="utf-8",
+    )
+    from pathlib import Path
+
+    source = (
+        Path(__file__).resolve().parents[2] / "src" / "config" / "static_data.py"
+    ).read_text(encoding="utf-8")
+    assert bundled == source, (
+        "The web bundle must ship a byte-identical copy of src/config/static_data.py "
+        "so the desktop and the browser share one source of truth for orbital "
+        "constants."
+    )
 
 
 def test_build_web_idempotent(tmp_path):

@@ -10,6 +10,8 @@ browser at runtime.
 import json
 from pathlib import Path
 
+from src.config.static_data import ORBITAL_BOX_COUNTS, VALID_SUBSHELLS
+from src.domain.electron_configuration import configuration_to_map, fill_boxes
 from src.domain.molar_mass import (
     FormulaError,
     compute_molar_mass,
@@ -47,6 +49,24 @@ def test_compute_percent_composition_water():
     assert abs(by_symbol["O"]["percent"] - 88.81) < 0.5
     assert abs(by_symbol["H"]["percent"] - 11.19) < 0.5
     assert composition[0]["percent"] >= composition[-1]["percent"]
+
+
+def test_electron_configuration_parses_and_fills_boxes_for_oxygen():
+    # Oxygen: 1s2 2s2 2p4 — Hund's rule places 2 paired in 2p[0] then unpaired
+    # singletons in 2p[1] and 2p[2]; this is the layout the orbital diagram shows.
+    occupancy = configuration_to_map("1s2 2s2 2p4")
+    assert occupancy == {"1s": 2, "2s": 2, "2p": 4}
+    assert fill_boxes(4, ORBITAL_BOX_COUNTS["p"]) == [2, 1, 1]
+
+
+def test_electron_configuration_expands_noble_gas_core():
+    # Iron: [Ar]3d6 4s2 should expand into the full 1s..4s sequence.
+    occupancy = configuration_to_map("[Ar]3d6 4s2")
+    assert occupancy.get("3s") == 2
+    assert occupancy.get("3p") == 6
+    assert occupancy.get("3d") == 6
+    assert occupancy.get("4s") == 2
+    assert "p" in VALID_SUBSHELLS[2]
 
 
 def test_unknown_symbol_raises_with_code():

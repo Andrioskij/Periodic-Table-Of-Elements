@@ -526,6 +526,64 @@ input {
     border-bottom: none;
 }
 
+/* Orbital diagram: SVG mirroring the desktop QPainter layout. The painter_*
+ * tokens are shared with the desktop's electron-config panel so the visual
+ * identity stays in lockstep without duplicate values.
+ */
+.orbital-diagram-wrap {
+    background: var(--color-painter-bg, #20252c);
+    border: var(--border-default-width, 1px) solid var(--color-border-subtle, #44515b);
+    border-radius: var(--radius-info-section, 12px);
+    padding: var(--spacing-info-section-padding, 12px);
+    overflow-x: auto;
+}
+
+.orbital-diagram {
+    display: block;
+    width: 100%;
+    height: auto;
+    color: var(--color-painter-text, #eef3f8);
+}
+
+.orbital-diagram .level-label {
+    fill: var(--color-painter-subtext, #bec7d2);
+    font-size: 9px;
+    font-family: var(--font-family-sans);
+}
+
+.orbital-diagram .subshell-label {
+    fill: var(--color-painter-label, #d5dde8);
+    font-size: 8px;
+    font-family: var(--font-family-sans);
+}
+
+.orbital-diagram .symbol-label {
+    fill: var(--color-painter-text, #eef3f8);
+    font-size: 11px;
+    font-weight: var(--font-weight-bold, 700);
+    font-family: var(--font-family-sans);
+}
+
+.orbital-diagram .box {
+    fill: transparent;
+    stroke: var(--color-painter-box-border, #516071);
+    stroke-width: 1;
+}
+
+.orbital-diagram .arrow-up {
+    fill: var(--color-painter-arrow-up, #4fa3ff);
+    font-size: 11px;
+    font-weight: var(--font-weight-bold, 700);
+    font-family: var(--font-family-sans);
+}
+
+.orbital-diagram .arrow-down {
+    fill: var(--color-painter-arrow-down, #ff5f5f);
+    font-size: 11px;
+    font-weight: var(--font-weight-bold, 700);
+    font-family: var(--font-family-sans);
+}
+
 /* Footer */
 .appbar {
     padding: var(--spacing-info-section-padding, 12px) var(--spacing-info-card-padding, 12px);
