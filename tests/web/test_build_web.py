@@ -93,3 +93,15 @@ def test_build_web_localization_set_matches_languages_config():
 
 def test_build_web_module_exposes_build_function():
     assert callable(build_web_module.build_web)
+
+
+def test_web_app_js_includes_search_match_scorer():
+    from pathlib import Path
+
+    app_js = (
+        Path(__file__).resolve().parents[2] / "web" / "app.js"
+    ).read_text(encoding="utf-8")
+    assert "computeMatchScore" in app_js, (
+        "web/app.js must keep the search scorer; if you renamed it, update "
+        "this drift test to match."
+    )

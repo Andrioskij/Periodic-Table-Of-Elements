@@ -30,6 +30,20 @@
         </header>
 
         <main class="layout">
+            <section class="search-card" aria-labelledby="search-title">
+                <h2 id="search-title" class="search-title" data-i18n="search_title">Find an element</h2>
+                <p id="search-helper" class="search-helper" data-i18n="search_helper">
+                    Search by name, symbol, or atomic number.
+                </p>
+                <form id="search-form" class="search-form" autocomplete="off" role="search">
+                    <input id="search-input" class="search-input molar-input" type="search"
+                           spellcheck="false" data-i18n-placeholder="search_placeholder" />
+                    <button id="search-submit" class="control-button" type="submit"
+                            data-i18n="search_button">Search</button>
+                </form>
+                <p id="search-status" class="search-status molar-status" aria-live="polite"></p>
+            </section>
+
             <section class="table-wrapper" aria-labelledby="app-title">
                 <div id="periodic-table" class="periodic-table" role="grid"
                      aria-label="Periodic Table Of Elements">
