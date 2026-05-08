@@ -12,7 +12,8 @@ EquationError codes (used by the UI to look up localized messages):
 - ``compound_not_found``: requested compound is not part of the equation. Params: ``compound``.
 """
 
-from sympy import Matrix, lcm
+from fractions import Fraction
+from math import gcd, lcm
 
 from src.domain.molar_mass import FormulaError, compute_molar_mass, parse_formula
 
@@ -85,7 +86,7 @@ def parse_equation(equation: str) -> tuple[list[str], list[str]]:
 
 def build_composition_matrix(
     reactants: list[str], products: list[str]
-) -> tuple[Matrix, list[str]]:
+) -> tuple[list[list[int]], list[str]]:
     """Build the composition matrix for balancing.
 
     Columns = compounds (reactants then products).
@@ -122,7 +123,55 @@ def build_composition_matrix(
             row.append(count)
         mat.append(row)
 
-    return Matrix(mat), elements
+    return mat, elements
+
+
+def _rref(matrix: list[list[Fraction]]) -> None:
+    """Reduce ``matrix`` to reduced row-echelon form in place."""
+    rows = len(matrix)
+    cols = len(matrix[0]) if matrix else 0
+    pivot_row = 0
+    for col in range(cols):
+        if pivot_row >= rows:
+            break
+        sel = next(
+            (r for r in range(pivot_row, rows) if matrix[r][col] != 0),
+            None,
+        )
+        if sel is None:
+            continue
+        matrix[pivot_row], matrix[sel] = matrix[sel], matrix[pivot_row]
+        pivot = matrix[pivot_row][col]
+        matrix[pivot_row] = [v / pivot for v in matrix[pivot_row]]
+        for r in range(rows):
+            if r != pivot_row and matrix[r][col] != 0:
+                factor = matrix[r][col]
+                matrix[r] = [
+                    v - factor * matrix[pivot_row][i]
+                    for i, v in enumerate(matrix[r])
+                ]
+        pivot_row += 1
+
+
+def _nullspace_basis(
+    rref: list[list[Fraction]], n_cols: int
+) -> list[list[Fraction]]:
+    """Return a basis of the nullspace of an RREF matrix as column vectors."""
+    pivot_cols: list[int] = []
+    for row in rref:
+        for c in range(n_cols):
+            if row[c] != 0:
+                pivot_cols.append(c)
+                break
+    free_cols = [c for c in range(n_cols) if c not in pivot_cols]
+    basis: list[list[Fraction]] = []
+    for free in free_cols:
+        v = [Fraction(0)] * n_cols
+        v[free] = Fraction(1)
+        for i, pc in enumerate(pivot_cols):
+            v[pc] = -rref[i][free]
+        basis.append(v)
+    return basis
 
 
 def balance_equation(equation: str) -> list[int]:
@@ -142,9 +191,12 @@ def balance_parsed(reactants: list[str], products: list[str]) -> list[int]:
     callers that already hold ``(reactants, products)`` (e.g. UI panels that
     parsed once for display) avoid a redundant parse.
     """
-    mat, elements = build_composition_matrix(reactants, products)
+    mat, _elements = build_composition_matrix(reactants, products)
 
-    nullspace = mat.nullspace()
+    n_cols = len(mat[0]) if mat else 0
+    frac_mat = [[Fraction(v) for v in row] for row in mat]
+    _rref(frac_mat)
+    nullspace = _nullspace_basis(frac_mat, n_cols)
 
     if not nullspace:
         raise EquationError(
@@ -160,21 +212,13 @@ def balance_parsed(reactants: list[str], products: list[str]) -> list[int]:
 
     solution = nullspace[0]
 
-    # Find LCM of denominators to get integer coefficients
-    from sympy import Rational
-    denoms = []
+    scale = 1
     for val in solution:
-        r = Rational(val).limit_denominator(10**6)
-        denoms.append(r.q)
-
-    scale = denoms[0]
-    for d in denoms[1:]:
-        scale = lcm(scale, d)
+        scale = lcm(scale, val.denominator)
 
     coefficients = []
     for val in solution:
-        coeff = val * scale
-        int_coeff = int(abs(coeff))
+        int_coeff = abs(int(val * scale))
         if int_coeff == 0:
             raise EquationError(
                 "Balancing produced a zero coefficient.",
@@ -182,8 +226,6 @@ def balance_parsed(reactants: list[str], products: list[str]) -> list[int]:
             )
         coefficients.append(int_coeff)
 
-    # Reduce by GCD
-    from math import gcd
     g = coefficients[0]
     for c in coefficients[1:]:
         g = gcd(g, c)
