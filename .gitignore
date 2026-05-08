@@ -11,11 +11,15 @@ __pycache__/
 # Local environments
 /.venv/
 
-# Stale Reflex web port working directory — the web port has been removed
-# from the project, but a local /web/ may persist on disk while files are
-# still locked by a background process. Ignore it wholesale so git never
-# tracks anything under it again.
-/web/
+# Generated web build artifacts. The web frontend's static sources
+# (index.html, app.js, style.css, i18n.js) are tracked, but the Python
+# domain copy, the dataset/localization snapshots, and the exported
+# design-tokens JSON are produced on every push by tools/build_web.py
+# and the Pages deploy workflow. Keep src/ as the single source of truth.
+/web/python/
+/web/data/
+/web/design_tokens.json
+/web/.venv/
 
 # Build and release outputs
 /build/

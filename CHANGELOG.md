@@ -6,6 +6,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- Web companion frontend served from `web/` and deployed to GitHub Pages. The browser UI re-uses the desktop's Python molar-mass logic via Pyodide and consumes the canonical design tokens for visual parity. V1 scope: periodic table grid, element info card, molar mass calculator, light/dark theme switcher, 7-language picker.
+- `tools/export_design_tokens.py` and `tools/build_web.py` to assemble the web bundle on every deploy from `src/` as the single source of truth.
+- `.github/workflows/deploy-web.yml` Pages deploy workflow.
+
 ## [1.3.0] - 2026-05-07
 
 ### Added

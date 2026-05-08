@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="Periodic Table Of Elements — interactive web companion to the desktop app. Explore element data and compute molar masses in your browser." />
+    <title>Periodic Table Of Elements</title>
+    <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+    <div id="loader" class="loader" role="status" aria-live="polite">
+        <div class="loader-spinner" aria-hidden="true"></div>
+        <p id="loader-message">Loading…</p>
+    </div>
+
+    <div id="app" class="app" hidden>
+        <header class="topbar">
+            <h1 id="app-title" class="app-title">PERIODIC TABLE OF ELEMENTS</h1>
+            <div class="topbar-controls">
+                <select id="language-select" class="control-input"
+                        aria-label="Language"></select>
+                <button id="theme-toggle" class="control-button" type="button"
+                        aria-label="Toggle light/dark theme">
+                    <span class="theme-icon" aria-hidden="true">☾</span>
+                    <span id="theme-label">Light</span>
+                </button>
+            </div>
+        </header>
+
+        <main class="layout">
+            <section class="table-wrapper" aria-labelledby="app-title">
+                <div id="periodic-table" class="periodic-table" role="grid"
+                     aria-label="Periodic Table Of Elements"></div>
+                <div class="series-spacer" aria-hidden="true"></div>
+                <div id="periodic-series" class="periodic-series"
+                     aria-label="Lanthanides and actinides"></div>
+            </section>
+
+            <aside class="side-panel">
+                <nav class="tabs" role="tablist">
+                    <button id="tab-info" class="tab is-active" role="tab"
+                            aria-selected="true" aria-controls="panel-info">
+                        <span data-i18n="right_info">Info</span>
+                    </button>
+                    <button id="tab-molar" class="tab" role="tab"
+                            aria-selected="false" aria-controls="panel-molar">
+                        <span data-i18n="right_molar">Molar mass</span>
+                    </button>
+                </nav>
+
+                <section id="panel-info" class="panel" role="tabpanel"
+                         aria-labelledby="tab-info">
+                    <p id="info-empty" class="info-empty" data-i18n="info_prompt">
+                        Select an element to see its details.
+                    </p>
+                    <article id="info-card" class="info-card" hidden>
+                        <header class="info-hero">
+                            <span id="info-atomic-number" class="info-atomic-number"></span>
+                            <span id="info-symbol" class="info-symbol"></span>
+                            <div class="info-hero-text">
+                                <h2 id="info-name" class="info-name"></h2>
+                                <span id="info-category" class="info-category"></span>
+                            </div>
+                        </header>
+                        <dl id="info-grid" class="info-grid"></dl>
+                    </article>
+                </section>
+
+                <section id="panel-molar" class="panel" role="tabpanel"
+                         aria-labelledby="tab-molar" hidden>
+                    <h2 class="panel-title" data-i18n="molar_title">Molar mass calculator</h2>
+                    <p id="molar-prompt" class="panel-prompt" data-i18n="molar_prompt">
+                        Enter a chemical formula (e.g. H2O, Ca(OH)2) to calculate its molar mass.
+                    </p>
+                    <form id="molar-form" class="molar-form" autocomplete="off">
+                        <input id="molar-input" class="molar-input" type="text"
+                               spellcheck="false" required />
+                        <button id="molar-submit" class="control-button" type="submit"
+                                data-i18n="molar_calculate">Calculate</button>
+                    </form>
+                    <p id="molar-status" class="molar-status" aria-live="polite"></p>
+                    <div id="molar-result" class="molar-result" hidden>
+                        <p class="molar-total"><span id="molar-total-value"></span></p>
+                        <table class="molar-table">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="symbol">Symbol</th>
+                                    <th>n</th>
+                                    <th data-i18n="atomic_mass">Mass</th>
+                                    <th>%</th>
+                                </tr>
+                            </thead>
+                            <tbody id="molar-table-body"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </aside>
+        </main>
+
+        <footer class="appbar">
+            <span id="app-version" class="app-version"></span>
+            <span class="appbar-sep" aria-hidden="true">·</span>
+            <span id="pyodide-status" class="pyodide-status">Pyodide idle</span>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+    <script type="module" src="./app.js"></script>
+</body>
+</html>
