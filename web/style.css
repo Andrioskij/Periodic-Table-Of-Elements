@@ -9,6 +9,16 @@
     box-sizing: border-box;
 }
 
+/* The user-agent rule [hidden] { display: none } has the same specificity
+ * as our class-level layout rules (e.g. .loader { display: flex }) and
+ * comes earlier in the cascade, so author rules win and the hidden
+ * attribute is silently ignored. Force it to win for everything that
+ * carries the attribute, so toggling hidden in JS actually hides.
+ */
+[hidden] {
+    display: none !important;
+}
+
 html,
 body {
     margin: 0;
