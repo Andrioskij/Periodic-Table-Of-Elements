@@ -4,7 +4,7 @@ Vendor-neutral onboarding for any coding agent (Claude Code, Cursor, Aider,
 Codex, Copilot Chat, Cline, Continue, Windsurf). Read this once, then act.
 
 ## Stack
-- Python 3.14, PySide6 6.11, sympy 1.13.
+- Python 3.14, PySide6 6.11.
 - PyInstaller 6.19 for portable bundles (Windows, macOS, Linux).
 - ruff for lint. Tests are written with `unittest.TestCase` but discovered by pytest.
 
