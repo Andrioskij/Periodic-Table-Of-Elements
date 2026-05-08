@@ -145,17 +145,24 @@ function getCategoryColor(category) {
 function renderPeriodicTable() {
     const main = document.getElementById("periodic-table");
     const series = document.getElementById("periodic-series");
-    main.replaceChildren();
-    series.replaceChildren();
+    // Preserve the static structural cells declared in HTML (group headers,
+    // period numbers, transition-metals band, series labels). Only clear
+    // previously-rendered element cells.
+    main.querySelectorAll(".element-cell").forEach((node) => node.remove());
+    series.querySelectorAll(".element-cell").forEach((node) => node.remove());
 
     for (const element of state.elements) {
         const cell = document.createElement("button");
         cell.type = "button";
         cell.className = "element-cell";
         cell.dataset.symbol = element.symbol;
-        cell.style.gridColumn = String(element.display_column);
+        // The element grid is offset by +1 column to leave room for the
+        // period/series label column on the left, and the main grid is
+        // offset by +1 row for the group-header row.
+        cell.style.gridColumn = String(element.display_column + 1);
+        const inMain = element.display_row <= 7;
         cell.style.gridRow = String(
-            element.display_row <= 7 ? element.display_row : element.display_row - 7
+            inMain ? element.display_row + 1 : element.display_row - 7
         );
         const bg = getCategoryColor(element.category);
         cell.style.setProperty("--cell-bg", bg);
@@ -171,7 +178,7 @@ function renderPeriodicTable() {
 
         cell.addEventListener("click", () => selectElement(element.symbol));
 
-        if (element.display_row <= 7) {
+        if (inMain) {
             main.appendChild(cell);
         } else {
             series.appendChild(cell);
