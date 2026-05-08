@@ -29,7 +29,8 @@ if str(REPO_ROOT) not in sys.path:
 
 from tools.export_design_tokens import export_tokens  # noqa: E402
 
-DOMAIN_MODULES = ("molar_mass.py",)
+DOMAIN_MODULES = ("molar_mass.py", "electron_configuration.py")
+CONFIG_MODULES = ("static_data.py",)
 LOCALIZATION_FILES = (
     "en.json",
     "it.json",
@@ -42,7 +43,14 @@ LOCALIZATION_FILES = (
 
 
 def _copy_python_modules(dest_python: Path) -> list[Path]:
-    """Copy the V1-required domain modules into ``dest_python``."""
+    """Copy the V1-required domain modules into ``dest_python``.
+
+    Domain modules sit at the package root so the browser can ``import
+    molar_mass`` directly. Configuration modules are mirrored under
+    ``src/config/`` (with empty ``__init__`` markers) so existing
+    imports like ``from src.config.static_data import CORE_CONFIGS``
+    keep working unmodified inside Pyodide.
+    """
     dest_python.mkdir(parents=True, exist_ok=True)
     written = []
     for name in DOMAIN_MODULES:
@@ -52,6 +60,23 @@ def _copy_python_modules(dest_python: Path) -> list[Path]:
         target = dest_python / name
         shutil.copyfile(src, target)
         written.append(target)
+
+    config_pkg = dest_python / "src" / "config"
+    config_pkg.mkdir(parents=True, exist_ok=True)
+    src_pkg_init = dest_python / "src" / "__init__.py"
+    config_pkg_init = config_pkg / "__init__.py"
+    for marker in (src_pkg_init, config_pkg_init):
+        marker.write_text("", encoding="utf-8")
+        written.append(marker)
+
+    for name in CONFIG_MODULES:
+        src = REPO_ROOT / "src" / "config" / name
+        if not src.exists():
+            raise FileNotFoundError(f"Expected config module not found: {src}")
+        target = config_pkg / name
+        shutil.copyfile(src, target)
+        written.append(target)
+
     return written
 
 

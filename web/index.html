@@ -65,6 +65,10 @@
                             aria-selected="true" aria-controls="panel-info">
                         <span data-i18n="right_info">Info</span>
                     </button>
+                    <button id="tab-electron" class="tab" role="tab"
+                            aria-selected="false" aria-controls="panel-electron">
+                        <span data-i18n="right_diagram">Electron config.</span>
+                    </button>
                     <button id="tab-molar" class="tab" role="tab"
                             aria-selected="false" aria-controls="panel-molar">
                         <span data-i18n="right_molar">Molar mass</span>
@@ -87,6 +91,18 @@
                         </header>
                         <dl id="info-grid" class="info-grid"></dl>
                     </article>
+                </section>
+
+                <section id="panel-electron" class="panel" role="tabpanel"
+                         aria-labelledby="tab-electron" hidden>
+                    <h2 id="electron-title" class="panel-title"
+                        data-i18n="diagram_title">Electron configuration</h2>
+                    <p id="electron-prompt" class="panel-prompt"
+                       data-i18n="diagram_prompt">
+                        Select an element to display the orbital diagram.
+                    </p>
+                    <p id="electron-status" class="molar-status" aria-live="polite"></p>
+                    <div id="electron-diagram-wrap" class="orbital-diagram-wrap" hidden></div>
                 </section>
 
                 <section id="panel-molar" class="panel" role="tabpanel"

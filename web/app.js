@@ -205,6 +205,9 @@ function selectElement(symbol) {
     renderInfoCard();
     document.getElementById("info-empty").hidden = true;
     document.getElementById("info-card").hidden = false;
+    if (state.activeTab === "electron") {
+        renderElectronPanel();
+    }
 }
 
 function renderInfoCard() {
@@ -249,16 +252,20 @@ function renderInfoCard() {
     }
 }
 
+const TAB_IDS = ["info", "electron", "molar"];
+
 function setActiveTab(tabId) {
     state.activeTab = tabId;
-    const tabs = ["info", "molar"];
-    for (const id of tabs) {
+    for (const id of TAB_IDS) {
         const tab = document.getElementById(`tab-${id}`);
         const panel = document.getElementById(`panel-${id}`);
         const isActive = id === tabId;
         tab.classList.toggle("is-active", isActive);
         tab.setAttribute("aria-selected", isActive ? "true" : "false");
         panel.hidden = !isActive;
+    }
+    if (tabId === "electron") {
+        renderElectronPanel();
     }
 }
 
@@ -293,6 +300,7 @@ function populateLanguageSelect() {
         state.activeLanguage = code;
         applyStaticTranslations();
         if (state.selectedSymbol) renderInfoCard();
+        if (state.activeTab === "electron") renderElectronPanel();
     });
 }
 
@@ -309,8 +317,9 @@ function setupThemeToggle() {
 }
 
 function setupTabs() {
-    document.getElementById("tab-info").addEventListener("click", () => setActiveTab("info"));
-    document.getElementById("tab-molar").addEventListener("click", () => setActiveTab("molar"));
+    for (const id of TAB_IDS) {
+        document.getElementById(`tab-${id}`).addEventListener("click", () => setActiveTab(id));
+    }
 }
 
 async function ensurePyodide() {
@@ -325,20 +334,35 @@ async function ensurePyodide() {
         const pyodide = await loadPyodide({
             indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/",
         });
-        const moduleSource = await fetch("./python/molar_mass.py").then((response) => {
-            if (!response.ok) {
-                throw new Error(`Failed to fetch molar_mass.py: HTTP ${response.status}`);
-            }
-            return response.text();
-        });
+        const PYTHON_FILES = [
+            "molar_mass.py",
+            "electron_configuration.py",
+            "src/__init__.py",
+            "src/config/__init__.py",
+            "src/config/static_data.py",
+        ];
+        const sources = await Promise.all(
+            PYTHON_FILES.map(async (relPath) => {
+                const response = await fetch(`./python/${relPath}`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch ${relPath}: HTTP ${response.status}`);
+                }
+                return [relPath, await response.text()];
+            }),
+        );
         pyodide.FS.mkdirTree("/python");
-        pyodide.FS.writeFile("/python/molar_mass.py", moduleSource);
+        pyodide.FS.mkdirTree("/python/src");
+        pyodide.FS.mkdirTree("/python/src/config");
+        for (const [relPath, source] of sources) {
+            pyodide.FS.writeFile(`/python/${relPath}`, source);
+        }
         pyodide.globals.set("__elements_json", JSON.stringify(state.elements));
         pyodide.runPython(`
 import sys, json
 if '/python' not in sys.path:
     sys.path.insert(0, '/python')
 import molar_mass
+import electron_configuration
 ELEMENTS = json.loads(__elements_json)
 `);
         state.pyodide = pyodide;
@@ -369,6 +393,174 @@ except molar_mass.FormulaError as exc:
     json.dumps({"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)})
 `);
     return JSON.parse(result);
+}
+
+async function getOrbitalData(configText) {
+    const pyodide = await ensurePyodide();
+    pyodide.globals.set("__config_text", configText || "");
+    const result = pyodide.runPython(`
+import json
+from electron_configuration import configuration_to_map, fill_boxes
+from src.config.static_data import ORBITAL_BOX_COUNTS, VALID_SUBSHELLS
+
+occupancy = configuration_to_map(__config_text)
+rows = []
+for level in range(1, 8):
+    subshells = []
+    for subshell in VALID_SUBSHELLS[level]:
+        key = f"{level}{subshell}"
+        if key in occupancy:
+            count = occupancy[key]
+            box_count = ORBITAL_BOX_COUNTS[subshell]
+            subshells.append({
+                "subshell": subshell,
+                "key": key,
+                "boxes": fill_boxes(count, box_count),
+            })
+    if subshells:
+        rows.append({"level": level, "subshells": subshells})
+json.dumps(rows)
+`);
+    return JSON.parse(result);
+}
+
+function renderOrbitalDiagram(symbol, rows) {
+    const wrap = document.getElementById("electron-diagram-wrap");
+    if (!rows.length) {
+        wrap.replaceChildren();
+        wrap.hidden = true;
+        return;
+    }
+    const SVG_NS = "http://www.w3.org/2000/svg";
+    const SUBSHELL_BOXES = { s: 1, p: 3, d: 5, f: 7 };
+    const SUBSHELL_ORDER = ["s", "p", "d", "f"];
+    const boxW = 14;
+    const boxH = 20;
+    const boxGap = 2;
+    const colGap = 18;
+    const labelH = 14;
+    const rowGap = 6;
+    const leftMargin = 22;
+    const topMargin = 22;
+
+    const colX = {};
+    let cx = leftMargin;
+    for (const sub of SUBSHELL_ORDER) {
+        colX[sub] = cx;
+        const width = SUBSHELL_BOXES[sub] * boxW + (SUBSHELL_BOXES[sub] - 1) * boxGap;
+        cx += width + colGap;
+    }
+    const totalWidth = cx;
+    const perRow = labelH + boxH + rowGap;
+    const totalHeight = topMargin + 7 * perRow;
+
+    const svg = document.createElementNS(SVG_NS, "svg");
+    svg.setAttribute("class", "orbital-diagram");
+    svg.setAttribute("viewBox", `0 0 ${totalWidth} ${totalHeight}`);
+    svg.setAttribute("preserveAspectRatio", "xMinYMin meet");
+
+    const symbolText = document.createElementNS(SVG_NS, "text");
+    symbolText.setAttribute("class", "symbol-label");
+    symbolText.setAttribute("x", "4");
+    symbolText.setAttribute("y", "14");
+    symbolText.textContent = symbol;
+    svg.appendChild(symbolText);
+
+    for (const row of rows) {
+        const yBase = topMargin + (row.level - 1) * perRow;
+        const lvl = document.createElementNS(SVG_NS, "text");
+        lvl.setAttribute("class", "level-label");
+        lvl.setAttribute("x", "4");
+        lvl.setAttribute("y", String(yBase + labelH + boxH / 2 + 3));
+        lvl.textContent = String(row.level);
+        svg.appendChild(lvl);
+
+        for (const ss of row.subshells) {
+            const xBase = colX[ss.subshell];
+            const lab = document.createElementNS(SVG_NS, "text");
+            lab.setAttribute("class", "subshell-label");
+            lab.setAttribute("x", String(xBase));
+            lab.setAttribute("y", String(yBase + labelH - 2));
+            lab.textContent = ss.key;
+            svg.appendChild(lab);
+
+            for (let i = 0; i < ss.boxes.length; i++) {
+                const x = xBase + i * (boxW + boxGap);
+                const y = yBase + labelH;
+                const rect = document.createElementNS(SVG_NS, "rect");
+                rect.setAttribute("class", "box");
+                rect.setAttribute("x", String(x));
+                rect.setAttribute("y", String(y));
+                rect.setAttribute("width", String(boxW));
+                rect.setAttribute("height", String(boxH));
+                svg.appendChild(rect);
+
+                if (ss.boxes[i] >= 1) {
+                    const up = document.createElementNS(SVG_NS, "text");
+                    up.setAttribute("class", "arrow-up");
+                    up.setAttribute("x", String(x + 2));
+                    up.setAttribute("y", String(y + boxH - 4));
+                    up.textContent = "↑";
+                    svg.appendChild(up);
+                }
+                if (ss.boxes[i] === 2) {
+                    const dn = document.createElementNS(SVG_NS, "text");
+                    dn.setAttribute("class", "arrow-down");
+                    dn.setAttribute("x", String(x + boxW - 8));
+                    dn.setAttribute("y", String(y + boxH - 4));
+                    dn.textContent = "↓";
+                    svg.appendChild(dn);
+                }
+            }
+        }
+    }
+    wrap.replaceChildren(svg);
+    wrap.hidden = false;
+}
+
+async function renderElectronPanel() {
+    const element = state.selectedSymbol
+        ? state.elementsBySymbol.get(state.selectedSymbol)
+        : null;
+    const wrap = document.getElementById("electron-diagram-wrap");
+    const status = document.getElementById("electron-status");
+    const prompt = document.getElementById("electron-prompt");
+    const titleNode = document.getElementById("electron-title");
+
+    if (!element) {
+        wrap.hidden = true;
+        wrap.replaceChildren();
+        status.classList.remove("is-error");
+        status.textContent = "";
+        prompt.hidden = false;
+        titleNode.textContent = tr(state.activeLanguage, "diagram_title");
+        return;
+    }
+
+    titleNode.textContent = tr(state.activeLanguage, "diagram_title_symbol", {
+        symbol: element.symbol,
+    });
+    prompt.hidden = true;
+    status.classList.remove("is-error");
+    status.textContent = state.pyodide ? "" : "Loading Pyodide…";
+
+    try {
+        const rows = await getOrbitalData(element.electron_configuration);
+        if (!rows.length) {
+            status.classList.add("is-error");
+            status.textContent = tr(state.activeLanguage, "diagram_not_available");
+            wrap.hidden = true;
+            wrap.replaceChildren();
+            return;
+        }
+        status.textContent = "";
+        renderOrbitalDiagram(element.symbol, rows);
+    } catch (err) {
+        status.classList.add("is-error");
+        status.textContent = err.message;
+        wrap.hidden = true;
+        wrap.replaceChildren();
+    }
 }
 
 function formatErrorMessage(payload) {
