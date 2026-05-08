@@ -16,8 +16,9 @@
 
     <div id="app" class="app" hidden>
         <header class="topbar">
+            <div class="topbar-side topbar-side-left" aria-hidden="true"></div>
             <h1 id="app-title" class="app-title">PERIODIC TABLE OF ELEMENTS</h1>
-            <div class="topbar-controls">
+            <div class="topbar-side topbar-controls">
                 <select id="language-select" class="control-input"
                         aria-label="Language"></select>
                 <button id="theme-toggle" class="control-button" type="button"
@@ -31,10 +32,31 @@
         <main class="layout">
             <section class="table-wrapper" aria-labelledby="app-title">
                 <div id="periodic-table" class="periodic-table" role="grid"
-                     aria-label="Periodic Table Of Elements"></div>
+                     aria-label="Periodic Table Of Elements">
+                    <div class="group-header" style="grid-column:2;grid-row:1">IA</div>
+                    <div class="group-header" style="grid-column:3;grid-row:1">IIA</div>
+                    <div class="group-header" style="grid-column:14;grid-row:1">IIIA</div>
+                    <div class="group-header" style="grid-column:15;grid-row:1">IVA</div>
+                    <div class="group-header" style="grid-column:16;grid-row:1">VA</div>
+                    <div class="group-header" style="grid-column:17;grid-row:1">VIA</div>
+                    <div class="group-header" style="grid-column:18;grid-row:1">VIIA</div>
+                    <div class="group-header" style="grid-column:19;grid-row:1">VIIIA</div>
+                    <div class="period-label" style="grid-column:1;grid-row:2">1</div>
+                    <div class="period-label" style="grid-column:1;grid-row:3">2</div>
+                    <div class="period-label" style="grid-column:1;grid-row:4">3</div>
+                    <div class="period-label" style="grid-column:1;grid-row:5">4</div>
+                    <div class="period-label" style="grid-column:1;grid-row:6">5</div>
+                    <div class="period-label" style="grid-column:1;grid-row:7">6</div>
+                    <div class="period-label" style="grid-column:1;grid-row:8">7</div>
+                    <div class="transition-band" data-i18n="transition_metals"
+                         style="grid-column:4 / span 10;grid-row:4">TRANSITION METALS</div>
+                </div>
                 <div class="series-spacer" aria-hidden="true"></div>
                 <div id="periodic-series" class="periodic-series"
-                     aria-label="Lanthanides and actinides"></div>
+                     aria-label="Lanthanides and actinides">
+                    <div class="series-label" style="grid-column:1;grid-row:1">La-Lu</div>
+                    <div class="series-label" style="grid-column:1;grid-row:2">Ac-Lr</div>
+                </div>
             </section>
 
             <aside class="side-panel">
