@@ -28,6 +28,7 @@ const state = {
     selectedSymbol: null,
     pyodide: null,
     pyodideLoading: null,
+    stoich: null,
 };
 
 const INFO_FIELDS = [
@@ -252,7 +253,7 @@ function renderInfoCard() {
     }
 }
 
-const TAB_IDS = ["info", "electron", "molar"];
+const TAB_IDS = ["info", "electron", "stoichiometry", "molar"];
 
 function setActiveTab(tabId) {
     state.activeTab = tabId;
@@ -455,9 +456,12 @@ async function ensurePyodide() {
         const PYTHON_FILES = [
             "molar_mass.py",
             "electron_configuration.py",
+            "stoichiometry.py",
             "src/__init__.py",
             "src/config/__init__.py",
             "src/config/static_data.py",
+            "src/domain/__init__.py",
+            "src/domain/molar_mass.py",
         ];
         const sources = await Promise.all(
             PYTHON_FILES.map(async (relPath) => {
@@ -471,6 +475,7 @@ async function ensurePyodide() {
         pyodide.FS.mkdirTree("/python");
         pyodide.FS.mkdirTree("/python/src");
         pyodide.FS.mkdirTree("/python/src/config");
+        pyodide.FS.mkdirTree("/python/src/domain");
         for (const [relPath, source] of sources) {
             pyodide.FS.writeFile(`/python/${relPath}`, source);
         }
@@ -481,6 +486,7 @@ if '/python' not in sys.path:
     sys.path.insert(0, '/python')
 import molar_mass
 import electron_configuration
+import stoichiometry
 ELEMENTS = json.loads(__elements_json)
 `);
         state.pyodide = pyodide;
@@ -495,6 +501,50 @@ ELEMENTS = json.loads(__elements_json)
         state.pyodideLoading = null;
         throw err;
     }
+}
+
+async function balanceEquation(equation) {
+    const pyodide = await ensurePyodide();
+    pyodide.globals.set("__equation", equation);
+    const result = pyodide.runPython(`
+import json
+try:
+    reactants, products = stoichiometry.parse_equation(__equation)
+    coeffs = stoichiometry.balance_parsed(reactants, products)
+    formatted = stoichiometry.format_balanced_equation(reactants, products, coeffs)
+    json.dumps({"ok": True, "reactants": reactants, "products": products,
+                "coefficients": coeffs, "formatted": formatted})
+except stoichiometry.EquationError as exc:
+    json.dumps({"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)})
+`);
+    return JSON.parse(result);
+}
+
+async function computeStoichiometricMasses(
+    reactants,
+    products,
+    coefficients,
+    givenCompound,
+    givenMassGrams,
+) {
+    const pyodide = await ensurePyodide();
+    pyodide.globals.set("__r", JSON.stringify(reactants));
+    pyodide.globals.set("__p", JSON.stringify(products));
+    pyodide.globals.set("__c", JSON.stringify(coefficients));
+    pyodide.globals.set("__given_compound", givenCompound);
+    pyodide.globals.set("__given_mass", givenMassGrams);
+    const result = pyodide.runPython(`
+import json
+try:
+    rows = stoichiometry.compute_stoichiometric_masses(
+        json.loads(__r), json.loads(__p), json.loads(__c),
+        ELEMENTS, __given_compound, __given_mass,
+    )
+    json.dumps({"ok": True, "rows": rows})
+except stoichiometry.EquationError as exc:
+    json.dumps({"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)})
+`);
+    return JSON.parse(result);
 }
 
 async function computeMolarMass(formula) {
@@ -681,9 +731,9 @@ async function renderElectronPanel() {
     }
 }
 
-function formatErrorMessage(payload) {
+function formatErrorMessage(payload, prefix = "formula_error") {
     if (!payload.code) return payload.message;
-    const key = `formula_error_${payload.code}`;
+    const key = `${prefix}_${payload.code}`;
     return tr(state.activeLanguage, key, payload.params);
 }
 
@@ -732,6 +782,114 @@ function setupMolarForm() {
     });
 }
 
+function setupStoichForm() {
+    const form = document.getElementById("stoich-form");
+    const input = document.getElementById("stoich-input");
+    const status = document.getElementById("stoich-status");
+    const balanced = document.getElementById("stoich-balanced");
+    const massSection = document.getElementById("stoich-mass-section");
+    const compoundSelect = document.getElementById("stoich-compound");
+    const massInput = document.getElementById("stoich-mass-input");
+    const calcButton = document.getElementById("stoich-calc");
+    const massTable = document.getElementById("stoich-mass-table");
+    const massTbody = document.getElementById("stoich-mass-tbody");
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const equation = input.value.trim();
+        if (!equation) return;
+
+        status.classList.remove("is-error");
+        status.textContent = "…";
+        balanced.hidden = true;
+        balanced.textContent = "";
+        massSection.hidden = true;
+        massTable.hidden = true;
+
+        try {
+            const payload = await balanceEquation(equation);
+            if (!payload.ok) {
+                status.classList.add("is-error");
+                status.textContent = formatErrorMessage(payload, "equation_error");
+                state.stoich = null;
+                return;
+            }
+            status.textContent = "";
+            balanced.textContent = payload.formatted;
+            balanced.hidden = false;
+
+            const compounds = [...payload.reactants, ...payload.products];
+            compoundSelect.replaceChildren();
+            for (const compound of compounds) {
+                const option = document.createElement("option");
+                option.value = compound;
+                option.textContent = compound;
+                compoundSelect.appendChild(option);
+            }
+            state.stoich = {
+                reactants: payload.reactants,
+                products: payload.products,
+                coefficients: payload.coefficients,
+            };
+            massSection.hidden = false;
+        } catch (err) {
+            status.classList.add("is-error");
+            status.textContent = err.message;
+            state.stoich = null;
+        }
+    });
+
+    calcButton.addEventListener("click", async () => {
+        if (!state.stoich) return;
+        const given = compoundSelect.value;
+        const mass = parseFloat(massInput.value);
+        if (!given || !Number.isFinite(mass) || mass < 0) {
+            status.classList.add("is-error");
+            status.textContent = tr(state.activeLanguage, "stoichiometry_error");
+            return;
+        }
+
+        status.classList.remove("is-error");
+        status.textContent = "…";
+        try {
+            const payload = await computeStoichiometricMasses(
+                state.stoich.reactants,
+                state.stoich.products,
+                state.stoich.coefficients,
+                given,
+                mass,
+            );
+            if (!payload.ok) {
+                status.classList.add("is-error");
+                status.textContent = formatErrorMessage(payload, "equation_error");
+                return;
+            }
+            status.textContent = "";
+            massTbody.replaceChildren();
+            for (const row of payload.rows) {
+                const tr = document.createElement("tr");
+                const cells = [
+                    row.compound,
+                    String(row.coefficient),
+                    row.molar_mass.toFixed(3),
+                    row.moles.toFixed(4),
+                    row.mass.toFixed(4),
+                ];
+                for (const value of cells) {
+                    const td = document.createElement("td");
+                    td.textContent = value;
+                    tr.appendChild(td);
+                }
+                massTbody.appendChild(tr);
+            }
+            massTable.hidden = false;
+        } catch (err) {
+            status.classList.add("is-error");
+            status.textContent = err.message;
+        }
+    });
+}
+
 async function bootstrap() {
     const loader = document.getElementById("loader");
     const loaderMessage = document.getElementById("loader-message");
@@ -756,12 +914,24 @@ async function bootstrap() {
     setupThemeToggle();
     setupTabs();
     setupMolarForm();
+    setupStoichForm();
     setupSearchForm();
     applyStaticTranslations();
     renderPeriodicTable();
 
     loader.hidden = true;
     document.getElementById("app").hidden = false;
+
+    const preload = () => {
+        ensurePyodide().catch((err) =>
+            console.warn("Pyodide preload failed", err),
+        );
+    };
+    if (typeof requestIdleCallback === "function") {
+        requestIdleCallback(preload);
+    } else {
+        setTimeout(preload, 0);
+    }
 }
 
 bootstrap().catch((err) => {
