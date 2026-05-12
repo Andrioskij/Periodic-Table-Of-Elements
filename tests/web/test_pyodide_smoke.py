@@ -18,6 +18,11 @@ from src.domain.molar_mass import (
     compute_percent_composition,
     parse_formula,
 )
+from src.domain.stoichiometry import (
+    balance_equation,
+    compute_stoichiometric_masses,
+    parse_equation,
+)
 
 
 def _load_elements():
@@ -79,3 +84,23 @@ def test_unknown_symbol_raises_with_code():
         assert exc.params.get("symbol") == "Xx"
     else:
         raise AssertionError("Expected FormulaError for unknown symbol")
+
+
+def test_balance_equation_iron_oxide():
+    assert balance_equation("Fe + O2 -> Fe2O3") == [4, 3, 2]
+
+
+def test_balance_equation_combustion():
+    assert balance_equation("C3H8 + O2 -> CO2 + H2O") == [1, 5, 3, 4]
+
+
+def test_stoichiometric_masses_water_from_hydrogen():
+    elements = _load_elements()
+    reactants, products = parse_equation("H2 + O2 -> H2O")
+    coeffs = balance_equation("H2 + O2 -> H2O")
+    rows = compute_stoichiometric_masses(
+        reactants, products, coeffs, elements,
+        given_compound="H2", given_mass_grams=2.0,
+    )
+    h2o = next(row for row in rows if row["compound"] == "H2O")
+    assert abs(h2o["mass"] - 18.015) < 0.5

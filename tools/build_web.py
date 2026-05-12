@@ -29,7 +29,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from tools.export_design_tokens import export_tokens  # noqa: E402
 
-DOMAIN_MODULES = ("molar_mass.py", "electron_configuration.py")
+DOMAIN_MODULES = ("molar_mass.py", "electron_configuration.py", "stoichiometry.py")
 CONFIG_MODULES = ("static_data.py",)
 LOCALIZATION_FILES = (
     "en.json",
@@ -46,10 +46,13 @@ def _copy_python_modules(dest_python: Path) -> list[Path]:
     """Copy the V1-required domain modules into ``dest_python``.
 
     Domain modules sit at the package root so the browser can ``import
-    molar_mass`` directly. Configuration modules are mirrored under
-    ``src/config/`` (with empty ``__init__`` markers) so existing
-    imports like ``from src.config.static_data import CORE_CONFIGS``
-    keep working unmodified inside Pyodide.
+    molar_mass`` directly. The same modules are also mirrored under
+    ``src/domain/`` (with an empty ``__init__`` marker) so cross-module
+    imports like ``from src.domain.molar_mass import ...`` inside
+    ``stoichiometry.py`` resolve the same way they do on the desktop.
+    Configuration modules are mirrored under ``src/config/`` for the
+    matching reason — ``from src.config.static_data import CORE_CONFIGS``
+    keeps working unmodified inside Pyodide.
     """
     dest_python.mkdir(parents=True, exist_ok=True)
     written = []
@@ -61,13 +64,28 @@ def _copy_python_modules(dest_python: Path) -> list[Path]:
         shutil.copyfile(src, target)
         written.append(target)
 
-    config_pkg = dest_python / "src" / "config"
+    src_pkg = dest_python / "src"
+    src_pkg.mkdir(parents=True, exist_ok=True)
+    src_pkg_init = src_pkg / "__init__.py"
+    src_pkg_init.write_text("", encoding="utf-8")
+    written.append(src_pkg_init)
+
+    domain_pkg = src_pkg / "domain"
+    domain_pkg.mkdir(parents=True, exist_ok=True)
+    domain_pkg_init = domain_pkg / "__init__.py"
+    domain_pkg_init.write_text("", encoding="utf-8")
+    written.append(domain_pkg_init)
+    for name in DOMAIN_MODULES:
+        src = REPO_ROOT / "src" / "domain" / name
+        target = domain_pkg / name
+        shutil.copyfile(src, target)
+        written.append(target)
+
+    config_pkg = src_pkg / "config"
     config_pkg.mkdir(parents=True, exist_ok=True)
-    src_pkg_init = dest_python / "src" / "__init__.py"
     config_pkg_init = config_pkg / "__init__.py"
-    for marker in (src_pkg_init, config_pkg_init):
-        marker.write_text("", encoding="utf-8")
-        written.append(marker)
+    config_pkg_init.write_text("", encoding="utf-8")
+    written.append(config_pkg_init)
 
     for name in CONFIG_MODULES:
         src = REPO_ROOT / "src" / "config" / name

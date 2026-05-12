@@ -19,13 +19,20 @@ def test_build_web_populates_python_data_and_tokens(tmp_path):
 
     assert (dest / "python" / "molar_mass.py").is_file()
     assert (dest / "python" / "electron_configuration.py").is_file()
+    assert (dest / "python" / "stoichiometry.py").is_file()
     assert any("molar_mass.py" in str(path) for path in written["python"])
     assert any("electron_configuration.py" in str(path) for path in written["python"])
+    assert any("stoichiometry.py" in str(path) for path in written["python"])
 
-    # Config package mirror so Pyodide can resolve "from src.config.static_data".
+    # Config + domain package mirrors so Pyodide can resolve both
+    # "from src.config.static_data" and the cross-module
+    # "from src.domain.molar_mass" import inside stoichiometry.py.
     assert (dest / "python" / "src" / "__init__.py").is_file()
     assert (dest / "python" / "src" / "config" / "__init__.py").is_file()
     assert (dest / "python" / "src" / "config" / "static_data.py").is_file()
+    assert (dest / "python" / "src" / "domain" / "__init__.py").is_file()
+    assert (dest / "python" / "src" / "domain" / "molar_mass.py").is_file()
+    assert (dest / "python" / "src" / "domain" / "stoichiometry.py").is_file()
 
     assert (dest / "data" / "elements.json").is_file()
     elements = json.loads((dest / "data" / "elements.json").read_text(encoding="utf-8"))
@@ -64,6 +71,29 @@ def test_build_web_bundled_static_data_matches_source(tmp_path):
         "The web bundle must ship a byte-identical copy of src/config/static_data.py "
         "so the desktop and the browser share one source of truth for orbital "
         "constants."
+    )
+
+
+def test_build_web_bundled_stoichiometry_matches_source(tmp_path):
+    dest = tmp_path / "web_out"
+    build_web(dest)
+    from pathlib import Path
+
+    source_path = (
+        Path(__file__).resolve().parents[2] / "src" / "domain" / "stoichiometry.py"
+    )
+    source = source_path.read_text(encoding="utf-8")
+
+    flat = (dest / "python" / "stoichiometry.py").read_text(encoding="utf-8")
+    nested = (
+        dest / "python" / "src" / "domain" / "stoichiometry.py"
+    ).read_text(encoding="utf-8")
+    assert flat == source
+    assert nested == source, (
+        "The nested src/domain/stoichiometry.py mirror must stay byte-identical "
+        "with the desktop source so the cross-module import inside the module "
+        "(from src.domain.molar_mass import ...) resolves the same way in "
+        "Pyodide as on the desktop."
     )
 
 

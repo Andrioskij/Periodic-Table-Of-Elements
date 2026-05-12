@@ -570,6 +570,45 @@ input {
     border-bottom: none;
 }
 
+/* Stoichiometry panel */
+.stoich-balanced {
+    margin: 0;
+    padding: var(--spacing-info-section-padding, 12px);
+    background: var(--color-bg-card-alt, #252526);
+    border: var(--border-default-width, 1px) solid var(--color-border-subtle, #44515b);
+    border-radius: var(--radius-info-section, 12px);
+    color: var(--color-text-strong, #dfe7ef);
+    font-size: var(--font-size-info-hero-name, 24px);
+    font-weight: var(--font-weight-bold, 700);
+    text-align: center;
+}
+
+.stoich-section-title {
+    margin: 0 0 var(--spacing-info-section-gap, 10px);
+    font-size: var(--font-size-info-field-value, 14px);
+    font-weight: var(--font-weight-medium, 500);
+    color: var(--color-text-strong, #dfe7ef);
+}
+
+.stoich-mass-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-badge-gap, 6px);
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-info-section-gap, 10px);
+}
+
+.stoich-mass-row .control-input,
+.stoich-mass-row .molar-input {
+    flex: 1 1 auto;
+    min-width: var(--scale-combo-box-min-width, 88px);
+}
+
+.stoich-mass-unit {
+    color: var(--color-text-muted, #bdbdbd);
+    font-size: var(--font-size-info-field-label, 11px);
+}
+
 /* Orbital diagram: SVG mirroring the desktop QPainter layout. The painter_*
  * tokens are shared with the desktop's electron-config panel so the visual
  * identity stays in lockstep without duplicate values.

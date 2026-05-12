@@ -83,6 +83,10 @@
                             aria-selected="false" aria-controls="panel-electron">
                         <span data-i18n="right_diagram">Electron config.</span>
                     </button>
+                    <button id="tab-stoichiometry" class="tab" role="tab"
+                            aria-selected="false" aria-controls="panel-stoichiometry">
+                        <span data-i18n="right_stoichiometry">Stoichiometry</span>
+                    </button>
                     <button id="tab-molar" class="tab" role="tab"
                             aria-selected="false" aria-controls="panel-molar">
                         <span data-i18n="right_molar">Molar mass</span>
@@ -117,6 +121,47 @@
                     </p>
                     <p id="electron-status" class="molar-status" aria-live="polite"></p>
                     <div id="electron-diagram-wrap" class="orbital-diagram-wrap" hidden></div>
+                </section>
+
+                <section id="panel-stoichiometry" class="panel" role="tabpanel"
+                         aria-labelledby="tab-stoichiometry" hidden>
+                    <h2 class="panel-title" data-i18n="stoichiometry_title">Equation balancer</h2>
+                    <p class="panel-prompt" data-i18n="stoichiometry_prompt">
+                        Enter a chemical equation (e.g. Fe + O2 -&gt; Fe2O3) to balance it.
+                    </p>
+                    <form id="stoich-form" class="molar-form" autocomplete="off">
+                        <input id="stoich-input" class="molar-input" type="text"
+                               spellcheck="false" placeholder="Fe + O2 -> Fe2O3" required />
+                        <button id="stoich-balance" class="control-button" type="submit"
+                                data-i18n="stoichiometry_balance">Balance</button>
+                    </form>
+                    <p id="stoich-status" class="molar-status" aria-live="polite"></p>
+                    <div id="stoich-balanced" class="stoich-balanced" hidden></div>
+
+                    <div id="stoich-mass-section" hidden>
+                        <h3 class="stoich-section-title"
+                            data-i18n="stoichiometry_mass_section">Enter mass for a compound:</h3>
+                        <div class="stoich-mass-row">
+                            <select id="stoich-compound" class="control-input"></select>
+                            <input id="stoich-mass-input" class="molar-input"
+                                   type="number" min="0" step="any" />
+                            <span class="stoich-mass-unit">g</span>
+                            <button id="stoich-calc" class="control-button" type="button"
+                                    data-i18n="stoichiometry_calc_masses">Calculate masses</button>
+                        </div>
+                        <table id="stoich-mass-table" class="molar-table" hidden>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="stoichiometry_compound">Compound</th>
+                                    <th data-i18n="stoichiometry_coefficient">Coeff.</th>
+                                    <th data-i18n="atomic_mass">Mass</th>
+                                    <th data-i18n="stoichiometry_moles">Moles</th>
+                                    <th data-i18n="stoichiometry_mass_grams">Mass (g)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stoich-mass-tbody"></tbody>
+                        </table>
+                    </div>
                 </section>
 
                 <section id="panel-molar" class="panel" role="tabpanel"
