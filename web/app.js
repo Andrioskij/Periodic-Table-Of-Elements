@@ -278,6 +278,9 @@ function applyStaticTranslations() {
     for (const node of document.querySelectorAll("[data-i18n]")) {
         node.textContent = tr(state.activeLanguage, node.dataset.i18n);
     }
+    for (const node of document.querySelectorAll("[data-i18n-placeholder]")) {
+        node.placeholder = tr(state.activeLanguage, node.dataset.i18nPlaceholder);
+    }
     document.getElementById("info-empty").textContent = tr(
         state.activeLanguage,
         "info_prompt",
@@ -320,6 +323,121 @@ function setupTabs() {
     for (const id of TAB_IDS) {
         document.getElementById(`tab-${id}`).addEventListener("click", () => setActiveTab(id));
     }
+}
+
+function computeMatchScore(element, query, localizedName) {
+    const q = (query || "").trim().toLowerCase();
+    if (!q) return 0;
+    const name = String(element.name || "").toLowerCase();
+    const loc = String(localizedName || element.name || "").toLowerCase();
+    const sym = String(element.symbol || "").toLowerCase();
+    const num = String(element.atomic_number || "");
+    if (q === sym) return 100;
+    if (q === num) return 98;
+    if (q === name) return 96;
+    if (q === loc) return 95;
+    if (name.startsWith(q)) return 90;
+    if (loc.startsWith(q)) return 89;
+    if (sym.startsWith(q)) return 88;
+    if (num.startsWith(q)) return 86;
+    if (name.includes(q)) return 78;
+    if (loc.includes(q)) return 77;
+    if (sym.includes(q)) return 74;
+    return 0;
+}
+
+function searchElements(query) {
+    const ranked = [];
+    for (const element of state.elements) {
+        const score = computeMatchScore(element, query, element.name);
+        if (score > 0) ranked.push({ score, element });
+    }
+    ranked.sort((a, b) =>
+        b.score - a.score || a.element.atomic_number - b.element.atomic_number,
+    );
+    return ranked.map((row) => row.element);
+}
+
+function clearSearchHighlights() {
+    document
+        .querySelectorAll(".element-cell.is-search-match")
+        .forEach((node) => node.classList.remove("is-search-match"));
+}
+
+function highlightMatches(matches) {
+    clearSearchHighlights();
+    for (const element of matches) {
+        const node = document.querySelector(
+            `.element-cell[data-symbol="${CSS.escape(element.symbol)}"]`,
+        );
+        if (node) node.classList.add("is-search-match");
+    }
+}
+
+function setupSearchForm() {
+    const form = document.getElementById("search-form");
+    const input = document.getElementById("search-input");
+    const status = document.getElementById("search-status");
+    let debounceTimer = null;
+
+    const updateLive = () => {
+        const query = input.value.trim();
+        status.classList.remove("is-error");
+        if (!query) {
+            clearSearchHighlights();
+            status.textContent = "";
+            return;
+        }
+        const matches = searchElements(query);
+        highlightMatches(matches);
+        if (!matches.length) {
+            status.textContent = "";
+            return;
+        }
+        const top = matches[0];
+        status.textContent = tr(state.activeLanguage, "search_found", {
+            name: top.name,
+            symbol: top.symbol,
+        });
+    };
+
+    input.addEventListener("input", () => {
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(updateLive, 80);
+    });
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (debounceTimer) {
+            clearTimeout(debounceTimer);
+            debounceTimer = null;
+        }
+        const query = input.value.trim();
+        if (!query) {
+            clearSearchHighlights();
+            status.classList.remove("is-error");
+            status.textContent = "";
+            return;
+        }
+        const matches = searchElements(query);
+        highlightMatches(matches);
+        if (!matches.length) {
+            status.classList.add("is-error");
+            status.textContent = tr(state.activeLanguage, "search_not_found");
+            return;
+        }
+        const top = matches[0];
+        status.classList.remove("is-error");
+        status.textContent = tr(state.activeLanguage, "search_found", {
+            name: top.name,
+            symbol: top.symbol,
+        });
+        selectElement(top.symbol);
+        const cell = document.querySelector(
+            `.element-cell[data-symbol="${CSS.escape(top.symbol)}"]`,
+        );
+        if (cell) cell.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    });
 }
 
 async function ensurePyodide() {
@@ -638,6 +756,7 @@ async function bootstrap() {
     setupThemeToggle();
     setupTabs();
     setupMolarForm();
+    setupSearchForm();
     applyStaticTranslations();
     renderPeriodicTable();
 
