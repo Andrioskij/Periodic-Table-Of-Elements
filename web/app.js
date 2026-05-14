@@ -25,10 +25,12 @@ const state = {
     activeLanguage: "en",
     activeTheme: "dark",
     activeTab: "info",
+    activeToolTab: "molar",
     selectedSymbol: null,
     pyodide: null,
     pyodideLoading: null,
     stoich: null,
+    toolsModalReturnFocus: null,
 };
 
 const INFO_FIELDS = [
@@ -253,21 +255,32 @@ function renderInfoCard() {
     }
 }
 
-const TAB_IDS = ["info", "electron", "stoichiometry", "molar"];
+const SIDE_TAB_IDS = ["info", "electron"];
+const TOOL_TAB_IDS = ["molar", "stoichiometry"];
 
-function setActiveTab(tabId) {
-    state.activeTab = tabId;
-    for (const id of TAB_IDS) {
+function _setActiveTabIn(ids, activeId) {
+    for (const id of ids) {
         const tab = document.getElementById(`tab-${id}`);
         const panel = document.getElementById(`panel-${id}`);
-        const isActive = id === tabId;
+        if (!tab || !panel) continue;
+        const isActive = id === activeId;
         tab.classList.toggle("is-active", isActive);
         tab.setAttribute("aria-selected", isActive ? "true" : "false");
         panel.hidden = !isActive;
     }
+}
+
+function setActiveTab(tabId) {
+    state.activeTab = tabId;
+    _setActiveTabIn(SIDE_TAB_IDS, tabId);
     if (tabId === "electron") {
         renderElectronPanel();
     }
+}
+
+function setActiveToolTab(tabId) {
+    state.activeToolTab = tabId;
+    _setActiveTabIn(TOOL_TAB_IDS, tabId);
 }
 
 function applyStaticTranslations() {
@@ -281,6 +294,12 @@ function applyStaticTranslations() {
     }
     for (const node of document.querySelectorAll("[data-i18n-placeholder]")) {
         node.placeholder = tr(state.activeLanguage, node.dataset.i18nPlaceholder);
+    }
+    for (const node of document.querySelectorAll("[data-i18n-aria-label]")) {
+        node.setAttribute(
+            "aria-label",
+            tr(state.activeLanguage, node.dataset.i18nAriaLabel),
+        );
     }
     document.getElementById("info-empty").textContent = tr(
         state.activeLanguage,
@@ -321,9 +340,54 @@ function setupThemeToggle() {
 }
 
 function setupTabs() {
-    for (const id of TAB_IDS) {
+    for (const id of SIDE_TAB_IDS) {
         document.getElementById(`tab-${id}`).addEventListener("click", () => setActiveTab(id));
     }
+    for (const id of TOOL_TAB_IDS) {
+        document.getElementById(`tab-${id}`).addEventListener("click", () => setActiveToolTab(id));
+    }
+}
+
+function openToolsModal() {
+    const modal = document.getElementById("tools-modal");
+    state.toolsModalReturnFocus = document.activeElement;
+    modal.hidden = false;
+    document.body.classList.add("is-modal-open");
+    const activePanel = document.getElementById(`panel-${state.activeToolTab}`);
+    const focusable = activePanel
+        ? activePanel.querySelector("input, button, select")
+        : null;
+    if (focusable) {
+        focusable.focus();
+    } else {
+        document.getElementById("tools-close").focus();
+    }
+}
+
+function closeToolsModal() {
+    const modal = document.getElementById("tools-modal");
+    if (modal.hidden) return;
+    modal.hidden = true;
+    document.body.classList.remove("is-modal-open");
+    const returnTo = state.toolsModalReturnFocus;
+    state.toolsModalReturnFocus = null;
+    if (returnTo && typeof returnTo.focus === "function") {
+        returnTo.focus();
+    }
+}
+
+function setupToolsModal() {
+    document.getElementById("tools-open").addEventListener("click", openToolsModal);
+    const modal = document.getElementById("tools-modal");
+    for (const node of modal.querySelectorAll("[data-tools-close]")) {
+        node.addEventListener("click", closeToolsModal);
+    }
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !modal.hidden) {
+            event.preventDefault();
+            closeToolsModal();
+        }
+    });
 }
 
 function computeMatchScore(element, query, localizedName) {
@@ -916,6 +980,7 @@ async function bootstrap() {
     setupMolarForm();
     setupStoichForm();
     setupSearchForm();
+    setupToolsModal();
     applyStaticTranslations();
     renderPeriodicTable();
 

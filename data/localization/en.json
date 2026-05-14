@@ -13,6 +13,7 @@
     "right_compound": "Compounds",
     "right_molar": "Molar mass",
     "right_stoichiometry": "Stoichiometry",
+    "tools_button": "Calculators",
     "molar_title": "Molar mass calculator",
     "molar_prompt": "Enter a chemical formula (e.g. H2O, Ca(OH)2) to calculate its molar mass.",
     "molar_calculate": "Calculate",

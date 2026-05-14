@@ -13,6 +13,7 @@
     "right_compound": "Composti",
     "right_molar": "Massa molare",
     "right_stoichiometry": "Stechiometria",
+    "tools_button": "Calcolatori",
     "molar_title": "Calcolatrice massa molare",
     "molar_prompt": "Inserisci una formula chimica (es. H2O, Ca(OH)2) per calcolarne la massa molare.",
     "molar_calculate": "Calcola",
