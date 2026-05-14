@@ -9,6 +9,8 @@ FormulaError codes (used by the UI to look up localized messages):
 - ``unmatched_open``: unmatched opening parenthesis.
 - ``no_elements``: formula parsed without producing any element. Params: ``formula``.
 - ``unknown_symbol``: element symbol not in dataset. Params: ``symbol``.
+- ``empirical_empty``: empirical-formula composition received no rows.
+- ``invalid_amount``: empirical-formula row has a non-positive amount. Params: ``symbol``.
 """
 
 
@@ -217,3 +219,153 @@ def compute_percent_composition(
         })
     result.sort(key=lambda x: x["percent"], reverse=True)
     return result
+
+
+def empirical_formula_from_composition(
+    rows: list[dict],
+    elements: list[dict],
+    *,
+    total_molar_mass: float | None = None,
+    tolerance: float = 0.05,
+    max_multiplier: int = 6,
+) -> dict:
+    """Derive an empirical (and optionally molecular) formula from composition.
+
+    ``rows`` is a list of ``{"symbol": "C", "amount": 40.0}`` entries. The
+    ``amount`` is the mass fraction (a percentage like 40.0) or the mass in
+    grams of that element in a 100-g basis — both interpretations give the
+    same ratio, so the caller can pick whichever is convenient.
+
+    The algorithm divides the moles of each element by the smallest, then
+    multiplies the resulting ratios by 2, 3, … up to ``max_multiplier`` until
+    every value is within ``tolerance`` of an integer.
+
+    Returns::
+
+        {
+            "empirical": "CH2O",
+            "empirical_atoms": {"C": 1, "H": 2, "O": 1},
+            "empirical_mass": 30.026,
+            "molecular": "C6H12O6" | None,
+            "molecular_atoms": {"C": 6, "H": 12, "O": 6} | None,
+            "multiplier": int | None,
+        }
+
+    Raises ``FormulaError(code="empirical_empty")`` if ``rows`` is empty and
+    ``FormulaError(code="unknown_symbol")`` if a symbol is not in ``elements``
+    and ``FormulaError(code="invalid_amount")`` if any amount is non-positive.
+    """
+    if not rows:
+        raise FormulaError(
+            "Empirical-formula composition is empty.",
+            code="empirical_empty",
+            params={},
+        )
+
+    moles: list[tuple[str, float]] = []
+    for row in rows:
+        symbol = row.get("symbol")
+        amount = row.get("amount")
+        if not symbol:
+            raise FormulaError(
+                "Empirical-formula row is missing a symbol.",
+                code="invalid_amount",
+                params={"symbol": ""},
+            )
+        if amount is None or amount <= 0:
+            raise FormulaError(
+                f"Empirical-formula row '{symbol}' must have a positive amount.",
+                code="invalid_amount",
+                params={"symbol": symbol},
+            )
+        el = _find_element_by_symbol(symbol, elements)
+        if el is None:
+            raise FormulaError(
+                f"Unknown element symbol: '{symbol}'",
+                code="unknown_symbol",
+                params={"symbol": symbol},
+            )
+        moles.append((symbol, amount / el["atomic_mass"]))
+
+    smallest = min(m for _, m in moles)
+    base_ratios = [(sym, value / smallest) for sym, value in moles]
+
+    def _all_near_integer(ratios: list[float]) -> bool:
+        return all(abs(r - round(r)) <= tolerance for r in ratios)
+
+    integer_counts: list[int] = []
+    for mult in range(1, max_multiplier + 1):
+        scaled = [value * mult for _, value in base_ratios]
+        if _all_near_integer(scaled):
+            integer_counts = [max(1, round(v)) for v in scaled]
+            break
+
+    if not integer_counts:
+        # Fall back to the original (mult=1) integer rounding even if the
+        # values are not crisp; this still gives the student a reasonable
+        # first answer.
+        integer_counts = [max(1, round(value)) for _, value in base_ratios]
+
+    # Reduce by GCD so the result is the simplest whole-number ratio.
+    from math import gcd
+
+    if integer_counts:
+        g = integer_counts[0]
+        for count in integer_counts[1:]:
+            g = gcd(g, count)
+        if g > 1:
+            integer_counts = [count // g for count in integer_counts]
+
+    empirical_atoms = {
+        sym: count
+        for (sym, _), count in zip(base_ratios, integer_counts, strict=True)
+    }
+    empirical_str = _format_formula_string(empirical_atoms)
+    empirical_mass = compute_molar_mass(empirical_atoms, elements)
+
+    molecular_str = None
+    molecular_atoms = None
+    molecular_multiplier = None
+    if total_molar_mass is not None and total_molar_mass > 0 and empirical_mass > 0:
+        molecular_multiplier = max(1, round(total_molar_mass / empirical_mass))
+        if molecular_multiplier > 1:
+            molecular_atoms = {
+                sym: count * molecular_multiplier
+                for sym, count in empirical_atoms.items()
+            }
+            molecular_str = _format_formula_string(molecular_atoms)
+        else:
+            molecular_atoms = dict(empirical_atoms)
+            molecular_str = empirical_str
+
+    return {
+        "empirical": empirical_str,
+        "empirical_atoms": empirical_atoms,
+        "empirical_mass": round(empirical_mass, 4),
+        "molecular": molecular_str,
+        "molecular_atoms": molecular_atoms,
+        "multiplier": molecular_multiplier,
+    }
+
+
+def _format_formula_string(atoms: dict[str, int]) -> str:
+    """Render an {symbol: count} mapping as a Hill-system formula string.
+
+    Carbon comes first, then hydrogen, then the rest alphabetically — the
+    convention used by IUPAC for organic compounds. Counts of 1 are omitted.
+    """
+    keys = list(atoms.keys())
+    ordered: list[str] = []
+    if "C" in keys:
+        ordered.append("C")
+        if "H" in keys:
+            ordered.append("H")
+        for k in sorted(set(keys) - {"C", "H"}):
+            ordered.append(k)
+    else:
+        ordered = sorted(keys)
+    parts = []
+    for sym in ordered:
+        count = atoms[sym]
+        parts.append(f"{sym}{count}" if count > 1 else sym)
+    return "".join(parts)

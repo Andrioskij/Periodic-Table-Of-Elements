@@ -256,7 +256,7 @@ function renderInfoCard() {
 }
 
 const SIDE_TAB_IDS = ["info", "electron"];
-const TOOL_TAB_IDS = ["molar", "stoichiometry", "concentration", "gas-laws", "ph"];
+const TOOL_TAB_IDS = ["molar", "stoichiometry", "concentration", "gas-laws", "ph", "empirical"];
 
 function _setActiveTabIn(ids, activeId) {
     for (const id of ids) {
@@ -606,6 +606,28 @@ try:
     )
     json.dumps({"ok": True, "rows": rows})
 except stoichiometry.EquationError as exc:
+    json.dumps({"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)})
+`);
+    return JSON.parse(result);
+}
+
+async function computeEmpiricalFormula(rows, totalMolarMass) {
+    const pyodide = await ensurePyodide();
+    pyodide.globals.set("__rows", JSON.stringify(rows));
+    pyodide.globals.set(
+        "__total_mass",
+        totalMolarMass === null || totalMolarMass === undefined ? "" : String(totalMolarMass),
+    );
+    const result = pyodide.runPython(`
+import json
+total_raw = __total_mass.strip()
+total = float(total_raw) if total_raw else None
+try:
+    payload = molar_mass.empirical_formula_from_composition(
+        json.loads(__rows), ELEMENTS, total_molar_mass=total,
+    )
+    json.dumps({"ok": True, "payload": payload})
+except molar_mass.FormulaError as exc:
     json.dumps({"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)})
 `);
     return JSON.parse(result);
@@ -1742,6 +1764,108 @@ function setupPhForm() {
     });
 }
 
+function setupEmpiricalForm() {
+    const form = document.getElementById("emp-form");
+    const rowsWrap = document.getElementById("emp-rows");
+    const addBtn = document.getElementById("emp-add-row");
+    const totalInput = document.getElementById("emp-total-mass");
+    const status = document.getElementById("emp-status");
+    const resultWrap = document.getElementById("emp-result");
+    const resultList = document.getElementById("emp-result-list");
+
+    const makeRow = () => {
+        const row = document.createElement("div");
+        row.className = "gas-dalton-row";
+        const sym = document.createElement("input");
+        sym.type = "text";
+        sym.className = "molar-input";
+        sym.placeholder = tr(state.activeLanguage, "empirical_row_element");
+        sym.dataset.role = "symbol";
+        sym.spellcheck = false;
+        const value = document.createElement("input");
+        value.type = "number";
+        value.min = "0";
+        value.step = "any";
+        value.className = "molar-input";
+        value.placeholder = `${tr(state.activeLanguage, "empirical_row_value")} (%)`;
+        value.dataset.role = "amount";
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "control-button";
+        remove.textContent = tr(state.activeLanguage, "empirical_remove");
+        remove.addEventListener("click", () => row.remove());
+        row.append(sym, value, remove);
+        return row;
+    };
+
+    addBtn.addEventListener("click", () => rowsWrap.appendChild(makeRow()));
+    rowsWrap.appendChild(makeRow());
+    rowsWrap.appendChild(makeRow());
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        status.classList.remove("is-error");
+        status.textContent = "";
+        resultWrap.hidden = true;
+
+        const rows = [];
+        for (const rowEl of rowsWrap.querySelectorAll(".gas-dalton-row")) {
+            const symInput = rowEl.querySelector("input[data-role='symbol']");
+            const amountInput = rowEl.querySelector("input[data-role='amount']");
+            const symbol = symInput.value.trim();
+            const amountRaw = amountInput.value.trim();
+            if (!symbol && !amountRaw) continue;
+            const amount = Number(amountRaw);
+            if (!symbol || !Number.isFinite(amount) || amount <= 0) {
+                status.classList.add("is-error");
+                status.textContent = tr(state.activeLanguage, "empirical_error_no_rows");
+                return;
+            }
+            rows.push({ symbol, amount });
+        }
+        if (rows.length === 0) {
+            status.classList.add("is-error");
+            status.textContent = tr(state.activeLanguage, "empirical_error_no_rows");
+            return;
+        }
+        const totalRaw = totalInput.value.trim();
+        const totalMass = totalRaw === "" ? null : Number(totalRaw);
+        if (totalRaw !== "" && (!Number.isFinite(totalMass) || totalMass <= 0)) {
+            status.classList.add("is-error");
+            status.textContent = tr(state.activeLanguage, "ph_error_invalid_input");
+            return;
+        }
+
+        status.textContent = "…";
+        try {
+            const payload = await computeEmpiricalFormula(rows, totalMass);
+            if (!payload.ok) {
+                status.classList.add("is-error");
+                status.textContent = formatErrorMessage(payload);
+                return;
+            }
+            status.textContent = "";
+            resultList.replaceChildren();
+            const empiricalDt = document.createElement("dt");
+            empiricalDt.textContent = tr(state.activeLanguage, "empirical_result_empirical");
+            const empiricalDd = document.createElement("dd");
+            empiricalDd.textContent = payload.payload.empirical;
+            resultList.append(empiricalDt, empiricalDd);
+            if (payload.payload.molecular) {
+                const molDt = document.createElement("dt");
+                molDt.textContent = tr(state.activeLanguage, "empirical_result_molecular");
+                const molDd = document.createElement("dd");
+                molDd.textContent = payload.payload.molecular;
+                resultList.append(molDt, molDd);
+            }
+            resultWrap.hidden = false;
+        } catch (err) {
+            status.classList.add("is-error");
+            status.textContent = err.message;
+        }
+    });
+}
+
 async function bootstrap() {
     const loader = document.getElementById("loader");
     const loaderMessage = document.getElementById("loader-message");
@@ -1770,6 +1894,7 @@ async function bootstrap() {
     setupConcentrationForm();
     setupGasLawsForm();
     setupPhForm();
+    setupEmpiricalForm();
     setupSearchForm();
     setupToolsModal();
     applyStaticTranslations();

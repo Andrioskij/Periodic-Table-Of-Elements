@@ -4,6 +4,7 @@ from src.domain.molar_mass import (
     FormulaError,
     compute_molar_mass,
     compute_percent_composition,
+    empirical_formula_from_composition,
     parse_formula,
 )
 from src.services.data_loader import load_elements
@@ -248,6 +249,61 @@ def test_percent_composition_total_mass_is_keyword_only():
     except TypeError:
         return
     raise AssertionError("total_mass should be keyword-only")
+
+
+def test_empirical_formula_glucose_ratio_from_percent():
+    # 40.0 % C, 6.7 % H, 53.3 % O → CH2O (formaldehyde-like ratio).
+    result = empirical_formula_from_composition(
+        [
+            {"symbol": "C", "amount": 40.0},
+            {"symbol": "H", "amount": 6.7},
+            {"symbol": "O", "amount": 53.3},
+        ],
+        ELEMENTS,
+    )
+    assert result["empirical"] == "CH2O"
+    assert result["empirical_atoms"] == {"C": 1, "H": 2, "O": 1}
+
+
+def test_empirical_formula_glucose_molecular_from_total_mass():
+    result = empirical_formula_from_composition(
+        [
+            {"symbol": "C", "amount": 40.0},
+            {"symbol": "H", "amount": 6.7},
+            {"symbol": "O", "amount": 53.3},
+        ],
+        ELEMENTS,
+        total_molar_mass=180.0,
+    )
+    assert result["empirical"] == "CH2O"
+    assert result["molecular"] == "C6H12O6"
+    assert result["multiplier"] == 6
+
+
+def test_empirical_formula_co2():
+    result = empirical_formula_from_composition(
+        [
+            {"symbol": "C", "amount": 27.3},
+            {"symbol": "O", "amount": 72.7},
+        ],
+        ELEMENTS,
+    )
+    assert result["empirical"] == "CO2"
+
+
+def test_empirical_formula_rejects_empty_rows():
+    with unittest.TestCase().assertRaises(FormulaError) as ctx:
+        empirical_formula_from_composition([], ELEMENTS)
+    assert ctx.exception.code == "empirical_empty"
+
+
+def test_empirical_formula_rejects_unknown_symbol():
+    with unittest.TestCase().assertRaises(FormulaError) as ctx:
+        empirical_formula_from_composition(
+            [{"symbol": "Xx", "amount": 50.0}, {"symbol": "C", "amount": 50.0}],
+            ELEMENTS,
+        )
+    assert ctx.exception.code == "unknown_symbol"
 
 
 if __name__ == "__main__":

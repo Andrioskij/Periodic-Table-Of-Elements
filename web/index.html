@@ -158,6 +158,10 @@
                             aria-selected="false" aria-controls="panel-ph">
                         <span data-i18n="ph_title">pH calculator</span>
                     </button>
+                    <button id="tab-empirical" class="tab" role="tab"
+                            aria-selected="false" aria-controls="panel-empirical">
+                        <span data-i18n="empirical_title">Empirical formula</span>
+                    </button>
                 </nav>
                 <div class="tools-modal-body">
                     <section id="panel-molar" class="panel" role="tabpanel"
@@ -663,6 +667,33 @@
                         <p id="ph-status" class="molar-status" aria-live="polite"></p>
                         <div id="ph-result" class="molar-result" hidden>
                             <dl id="ph-result-list" class="conc-result-list"></dl>
+                        </div>
+                    </section>
+
+                    <section id="panel-empirical" class="panel" role="tabpanel"
+                             aria-labelledby="tab-empirical" hidden>
+                        <p class="panel-prompt" data-i18n="empirical_prompt">
+                            Enter element percentages or masses; optionally a molar mass to get the molecular formula.
+                        </p>
+                        <form id="emp-form" class="conc-form" autocomplete="off">
+                            <div id="emp-rows" class="gas-dalton-rows"></div>
+                            <div class="conc-mode-row">
+                                <button id="emp-add-row" class="control-button" type="button"
+                                        data-i18n="empirical_add_row">Add row</button>
+                            </div>
+                            <label>
+                                <span data-i18n="empirical_total_molar_mass">
+                                    Total molar mass (g/mol)
+                                </span>
+                                <input id="emp-total-mass" class="molar-input" type="number"
+                                       min="0" step="any" />
+                            </label>
+                            <button class="control-button" type="submit"
+                                    data-i18n="empirical_calculate">Calculate</button>
+                        </form>
+                        <p id="emp-status" class="molar-status" aria-live="polite"></p>
+                        <div id="emp-result" class="molar-result" hidden>
+                            <dl id="emp-result-list" class="conc-result-list"></dl>
                         </div>
                     </section>
                 </div>
