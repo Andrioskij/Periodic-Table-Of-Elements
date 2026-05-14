@@ -146,6 +146,10 @@
                             aria-selected="false" aria-controls="panel-stoichiometry">
                         <span data-i18n="right_stoichiometry">Stoichiometry</span>
                     </button>
+                    <button id="tab-concentration" class="tab" role="tab"
+                            aria-selected="false" aria-controls="panel-concentration">
+                        <span data-i18n="concentration_title">Concentration calculator</span>
+                    </button>
                 </nav>
                 <div class="tools-modal-body">
                     <section id="panel-molar" class="panel" role="tabpanel"
@@ -213,6 +217,118 @@
                                 </thead>
                                 <tbody id="stoich-mass-tbody"></tbody>
                             </table>
+                        </div>
+                    </section>
+
+                    <section id="panel-concentration" class="panel" role="tabpanel"
+                             aria-labelledby="tab-concentration" hidden>
+                        <p class="panel-prompt" data-i18n="concentration_prompt">
+                            Compute molarity / molality / mass-% or solve a dilution.
+                        </p>
+
+                        <label class="conc-mode-row">
+                            <span class="conc-mode-label" data-i18n="concentration_mode_label">Mode</span>
+                            <select id="conc-mode" class="control-input">
+                                <option value="solution" data-i18n="concentration_mode_solution">
+                                    Solution composition
+                                </option>
+                                <option value="dilution" data-i18n="concentration_mode_dilution">
+                                    Dilution (M₁·V₁ = M₂·V₂)
+                                </option>
+                            </select>
+                        </label>
+
+                        <form id="conc-solution-form" class="conc-form" autocomplete="off">
+                            <div class="conc-grid">
+                                <label>
+                                    <span data-i18n="concentration_solute_formula">Solute formula</span>
+                                    <input id="conc-solute-formula" class="molar-input" type="text"
+                                           spellcheck="false" placeholder="NaCl" />
+                                </label>
+                                <label>
+                                    <span data-i18n="concentration_solute_mass">Solute mass (g)</span>
+                                    <input id="conc-solute-mass" class="molar-input" type="number"
+                                           min="0" step="any" />
+                                </label>
+                                <label>
+                                    <span data-i18n="concentration_solute_moles">Solute moles (mol)</span>
+                                    <input id="conc-solute-moles" class="molar-input" type="number"
+                                           min="0" step="any" />
+                                </label>
+                                <label>
+                                    <span data-i18n="concentration_solvent_mass">Solvent mass (g)</span>
+                                    <input id="conc-solvent-mass" class="molar-input" type="number"
+                                           min="0" step="any" />
+                                </label>
+                                <label class="conc-volume-cell">
+                                    <span data-i18n="concentration_solution_volume">Solution volume</span>
+                                    <span class="conc-volume-row">
+                                        <input id="conc-solution-volume" class="molar-input"
+                                               type="number" min="0" step="any" />
+                                        <select id="conc-volume-unit" class="control-input">
+                                            <option value="mL" data-i18n="concentration_unit_ml">mL</option>
+                                            <option value="L" data-i18n="concentration_unit_l">L</option>
+                                        </select>
+                                    </span>
+                                </label>
+                            </div>
+                            <button id="conc-solution-calc" class="control-button" type="submit"
+                                    data-i18n="concentration_calculate">Calculate</button>
+                        </form>
+
+                        <form id="conc-dilution-form" class="conc-form" autocomplete="off" hidden>
+                            <label class="conc-mode-row">
+                                <span class="conc-mode-label" data-i18n="concentration_dilution_solve_for">
+                                    Solve for
+                                </span>
+                                <select id="conc-dilution-solve-for" class="control-input">
+                                    <option value="M1">M₁</option>
+                                    <option value="V1">V₁</option>
+                                    <option value="M2" selected>M₂</option>
+                                    <option value="V2">V₂</option>
+                                </select>
+                            </label>
+                            <div class="conc-grid">
+                                <label>
+                                    <span data-i18n="concentration_dilution_m1">Initial concentration M₁ (mol/L)</span>
+                                    <input id="conc-dilution-m1" class="molar-input" type="number"
+                                           min="0" step="any" />
+                                </label>
+                                <label class="conc-volume-cell">
+                                    <span data-i18n="concentration_dilution_v1">Initial volume V₁</span>
+                                    <span class="conc-volume-row">
+                                        <input id="conc-dilution-v1" class="molar-input" type="number"
+                                               min="0" step="any" />
+                                        <select id="conc-dilution-v1-unit" class="control-input">
+                                            <option value="mL" data-i18n="concentration_unit_ml">mL</option>
+                                            <option value="L" data-i18n="concentration_unit_l">L</option>
+                                        </select>
+                                    </span>
+                                </label>
+                                <label>
+                                    <span data-i18n="concentration_dilution_m2">Final concentration M₂ (mol/L)</span>
+                                    <input id="conc-dilution-m2" class="molar-input" type="number"
+                                           min="0" step="any" />
+                                </label>
+                                <label class="conc-volume-cell">
+                                    <span data-i18n="concentration_dilution_v2">Final volume V₂</span>
+                                    <span class="conc-volume-row">
+                                        <input id="conc-dilution-v2" class="molar-input" type="number"
+                                               min="0" step="any" />
+                                        <select id="conc-dilution-v2-unit" class="control-input">
+                                            <option value="mL" data-i18n="concentration_unit_ml">mL</option>
+                                            <option value="L" data-i18n="concentration_unit_l">L</option>
+                                        </select>
+                                    </span>
+                                </label>
+                            </div>
+                            <button id="conc-dilution-calc" class="control-button" type="submit"
+                                    data-i18n="concentration_calculate">Calculate</button>
+                        </form>
+
+                        <p id="conc-status" class="molar-status" aria-live="polite"></p>
+                        <div id="conc-result" class="molar-result" hidden>
+                            <dl id="conc-result-list" class="conc-result-list"></dl>
                         </div>
                     </section>
                 </div>

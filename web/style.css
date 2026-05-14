@@ -651,6 +651,78 @@ input {
     font-size: var(--font-size-info-field-label, 11px);
 }
 
+/* Concentration / dilution panel */
+.conc-mode-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-badge-gap, 6px);
+    margin-bottom: var(--spacing-info-section-gap, 10px);
+}
+
+.conc-mode-label {
+    color: var(--color-text-muted, #bdbdbd);
+    font-size: var(--font-size-info-field-label, 11px);
+    text-transform: uppercase;
+    letter-spacing: var(--font-letter-spacing-info-section-title, 0.4px);
+}
+
+.conc-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-info-section-gap, 10px);
+}
+
+.conc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-info-grid-v-gap, 8px) var(--spacing-info-grid-h-gap, 12px);
+}
+
+.conc-grid label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-info-metric-gap, 4px);
+    font-size: var(--font-size-info-field-label, 11px);
+    color: var(--color-text-muted, #bdbdbd);
+}
+
+.conc-grid label span {
+    text-transform: uppercase;
+    letter-spacing: var(--font-letter-spacing-info-section-title, 0.4px);
+}
+
+.conc-volume-row {
+    display: flex;
+    gap: var(--spacing-badge-gap, 6px);
+}
+
+.conc-volume-row .molar-input {
+    flex: 1 1 auto;
+}
+
+.conc-result-list {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: var(--spacing-info-grid-h-gap, 12px);
+    row-gap: var(--spacing-info-metric-gap, 4px);
+    margin: 0;
+}
+
+.conc-result-list dt {
+    margin: 0;
+    color: var(--color-text-muted, #bdbdbd);
+    font-size: var(--font-size-info-field-label, 11px);
+    text-transform: uppercase;
+    letter-spacing: var(--font-letter-spacing-info-section-title, 0.4px);
+}
+
+.conc-result-list dd {
+    margin: 0;
+    color: var(--color-text-strong, #dfe7ef);
+    font-size: var(--font-size-info-field-value, 14px);
+    font-weight: var(--font-weight-bold, 700);
+}
+
 /* Orbital diagram: SVG mirroring the desktop QPainter layout. The painter_*
  * tokens are shared with the desktop's electron-config panel so the visual
  * identity stays in lockstep without duplicate values.
