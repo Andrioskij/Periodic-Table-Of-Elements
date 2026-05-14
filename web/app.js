@@ -256,7 +256,7 @@ function renderInfoCard() {
 }
 
 const SIDE_TAB_IDS = ["info", "electron"];
-const TOOL_TAB_IDS = ["molar", "stoichiometry", "concentration", "gas-laws"];
+const TOOL_TAB_IDS = ["molar", "stoichiometry", "concentration", "gas-laws", "ph"];
 
 function _setActiveTabIn(ids, activeId) {
     for (const id of ids) {
@@ -1449,6 +1449,153 @@ function setupGasLawsForm() {
     });
 }
 
+function setupPhForm() {
+    const modeSelect = document.getElementById("ph-mode");
+    const interconvertForm = document.getElementById("ph-interconvert-form");
+    const strongForm = document.getElementById("ph-strong-form");
+    const status = document.getElementById("ph-status");
+    const resultWrap = document.getElementById("ph-result");
+    const resultList = document.getElementById("ph-result-list");
+
+    const showError = (key) => {
+        status.classList.add("is-error");
+        status.textContent = tr(state.activeLanguage, key);
+        resultWrap.hidden = true;
+    };
+    const clearStatus = () => {
+        status.classList.remove("is-error");
+        status.textContent = "";
+    };
+    const renderResult = (rows) => {
+        resultList.replaceChildren();
+        for (const { label, value } of rows) {
+            const dt = document.createElement("dt");
+            dt.textContent = label;
+            const dd = document.createElement("dd");
+            dd.textContent = value;
+            resultList.append(dt, dd);
+        }
+        resultWrap.hidden = false;
+    };
+
+    modeSelect.addEventListener("change", () => {
+        clearStatus();
+        resultWrap.hidden = true;
+        interconvertForm.hidden = modeSelect.value !== "interconvert";
+        strongForm.hidden = modeSelect.value !== "strong";
+    });
+
+    const formatPh = (value) => value.toFixed(2);
+    const formatConc = (value) => {
+        if (!Number.isFinite(value) || value <= 0) return "—";
+        return value.toExponential(3);
+    };
+
+    interconvertForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        clearStatus();
+        const phRaw = document.getElementById("ph-input-ph").value.trim();
+        const pohRaw = document.getElementById("ph-input-poh").value.trim();
+        const hRaw = document.getElementById("ph-input-h").value.trim();
+        const ohRaw = document.getElementById("ph-input-oh").value.trim();
+
+        const filled = [phRaw, pohRaw, hRaw, ohRaw].filter((v) => v !== "");
+        if (filled.length !== 1) {
+            showError("ph_error_multiple_inputs");
+            return;
+        }
+
+        let ph;
+        let poh;
+        let hConc;
+        let ohConc;
+        if (phRaw !== "") {
+            ph = Number(phRaw);
+            if (!Number.isFinite(ph)) {
+                showError("ph_error_invalid_input");
+                return;
+            }
+            poh = 14 - ph;
+            hConc = Math.pow(10, -ph);
+            ohConc = Math.pow(10, -poh);
+        } else if (pohRaw !== "") {
+            poh = Number(pohRaw);
+            if (!Number.isFinite(poh)) {
+                showError("ph_error_invalid_input");
+                return;
+            }
+            ph = 14 - poh;
+            hConc = Math.pow(10, -ph);
+            ohConc = Math.pow(10, -poh);
+        } else if (hRaw !== "") {
+            hConc = Number(hRaw);
+            if (!Number.isFinite(hConc) || hConc <= 0) {
+                showError("ph_error_invalid_input");
+                return;
+            }
+            ph = -Math.log10(hConc);
+            poh = 14 - ph;
+            ohConc = Math.pow(10, -poh);
+        } else {
+            ohConc = Number(ohRaw);
+            if (!Number.isFinite(ohConc) || ohConc <= 0) {
+                showError("ph_error_invalid_input");
+                return;
+            }
+            poh = -Math.log10(ohConc);
+            ph = 14 - poh;
+            hConc = Math.pow(10, -ph);
+        }
+
+        renderResult([
+            { label: tr(state.activeLanguage, "ph_value_ph"), value: formatPh(ph) },
+            { label: tr(state.activeLanguage, "ph_value_poh"), value: formatPh(poh) },
+            { label: tr(state.activeLanguage, "ph_value_h_plus"), value: formatConc(hConc) },
+            { label: tr(state.activeLanguage, "ph_value_oh_minus"), value: formatConc(ohConc) },
+        ]);
+    });
+
+    strongForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        clearStatus();
+        const kind = document.getElementById("ph-strong-kind").value;
+        const concRaw = document.getElementById("ph-strong-conc").value.trim();
+        const polyRaw = document.getElementById("ph-strong-poly").value.trim();
+        const conc = Number(concRaw);
+        const poly = polyRaw === "" ? 1 : Number(polyRaw);
+        if (!Number.isFinite(conc) || conc <= 0) {
+            showError("ph_error_invalid_input");
+            return;
+        }
+        if (!Number.isFinite(poly) || poly < 1) {
+            showError("ph_error_invalid_input");
+            return;
+        }
+        const effective = conc * poly;
+        let ph;
+        let poh;
+        let hConc;
+        let ohConc;
+        if (kind === "acid") {
+            hConc = effective;
+            ph = -Math.log10(hConc);
+            poh = 14 - ph;
+            ohConc = Math.pow(10, -poh);
+        } else {
+            ohConc = effective;
+            poh = -Math.log10(ohConc);
+            ph = 14 - poh;
+            hConc = Math.pow(10, -ph);
+        }
+        renderResult([
+            { label: tr(state.activeLanguage, "ph_value_ph"), value: formatPh(ph) },
+            { label: tr(state.activeLanguage, "ph_value_poh"), value: formatPh(poh) },
+            { label: tr(state.activeLanguage, "ph_value_h_plus"), value: formatConc(hConc) },
+            { label: tr(state.activeLanguage, "ph_value_oh_minus"), value: formatConc(ohConc) },
+        ]);
+    });
+}
+
 async function bootstrap() {
     const loader = document.getElementById("loader");
     const loaderMessage = document.getElementById("loader-message");
@@ -1476,6 +1623,7 @@ async function bootstrap() {
     setupStoichForm();
     setupConcentrationForm();
     setupGasLawsForm();
+    setupPhForm();
     setupSearchForm();
     setupToolsModal();
     applyStaticTranslations();
