@@ -256,7 +256,7 @@ function renderInfoCard() {
 }
 
 const SIDE_TAB_IDS = ["info", "electron"];
-const TOOL_TAB_IDS = ["molar", "stoichiometry"];
+const TOOL_TAB_IDS = ["molar", "stoichiometry", "concentration"];
 
 function _setActiveTabIn(ids, activeId) {
     for (const id of ids) {
@@ -954,6 +954,209 @@ function setupStoichForm() {
     });
 }
 
+function parsePositiveNumber(value) {
+    if (value === null || value === undefined || value === "") return null;
+    const num = Number(value);
+    if (!Number.isFinite(num) || num <= 0) return null;
+    return num;
+}
+
+function formatNumberSmart(value) {
+    if (!Number.isFinite(value)) return "—";
+    const abs = Math.abs(value);
+    if (abs !== 0 && (abs < 1e-3 || abs >= 1e6)) {
+        return value.toExponential(4);
+    }
+    if (abs >= 100) return value.toFixed(2);
+    if (abs >= 1) return value.toFixed(4);
+    return value.toFixed(5);
+}
+
+function setupConcentrationForm() {
+    const modeSelect = document.getElementById("conc-mode");
+    const solutionForm = document.getElementById("conc-solution-form");
+    const dilutionForm = document.getElementById("conc-dilution-form");
+    const status = document.getElementById("conc-status");
+    const resultWrap = document.getElementById("conc-result");
+    const resultList = document.getElementById("conc-result-list");
+
+    const renderResult = (rows) => {
+        resultList.replaceChildren();
+        for (const { labelKey, value, fallbackLabel } of rows) {
+            const dt = document.createElement("dt");
+            dt.textContent = tr(state.activeLanguage, labelKey) || fallbackLabel;
+            const dd = document.createElement("dd");
+            dd.textContent = value;
+            resultList.append(dt, dd);
+        }
+        resultWrap.hidden = false;
+    };
+
+    const showError = (key) => {
+        status.classList.add("is-error");
+        status.textContent = tr(state.activeLanguage, key);
+        resultWrap.hidden = true;
+    };
+
+    const clearStatus = () => {
+        status.classList.remove("is-error");
+        status.textContent = "";
+    };
+
+    modeSelect.addEventListener("change", () => {
+        clearStatus();
+        resultWrap.hidden = true;
+        if (modeSelect.value === "dilution") {
+            solutionForm.hidden = true;
+            dilutionForm.hidden = false;
+        } else {
+            solutionForm.hidden = false;
+            dilutionForm.hidden = true;
+        }
+    });
+
+    solutionForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        clearStatus();
+        const formulaRaw = document.getElementById("conc-solute-formula").value.trim();
+        const soluteMassG = parsePositiveNumber(
+            document.getElementById("conc-solute-mass").value,
+        );
+        const soluteMoles = parsePositiveNumber(
+            document.getElementById("conc-solute-moles").value,
+        );
+        const solventMassG = parsePositiveNumber(
+            document.getElementById("conc-solvent-mass").value,
+        );
+        const volumeRaw = parsePositiveNumber(
+            document.getElementById("conc-solution-volume").value,
+        );
+        const volumeUnit = document.getElementById("conc-volume-unit").value;
+        const volumeL = volumeRaw === null
+            ? null
+            : (volumeUnit === "L" ? volumeRaw : volumeRaw / 1000);
+
+        // We need a way to compute moles of solute: either user gave moles
+        // directly, or user gave mass + formula (so we can call Pyodide for
+        // the molar mass).
+        if (soluteMoles === null && (soluteMassG === null || !formulaRaw)) {
+            showError("concentration_error_missing_inputs");
+            return;
+        }
+
+        let molesSolute = soluteMoles;
+        let molarMassSolute = null;
+        if (molesSolute === null) {
+            status.textContent = "…";
+            try {
+                const payload = await computeMolarMass(formulaRaw);
+                if (!payload.ok) {
+                    status.classList.add("is-error");
+                    status.textContent = formatErrorMessage(payload);
+                    resultWrap.hidden = true;
+                    return;
+                }
+                molarMassSolute = payload.total;
+                molesSolute = soluteMassG / molarMassSolute;
+            } catch (err) {
+                status.classList.add("is-error");
+                status.textContent = err.message;
+                resultWrap.hidden = true;
+                return;
+            }
+            status.textContent = "";
+        }
+
+        const rows = [];
+        if (volumeL !== null && volumeL > 0) {
+            const molarity = molesSolute / volumeL;
+            rows.push({
+                labelKey: "concentration_result_molarity",
+                value: `${formatNumberSmart(molarity)} mol/L`,
+                fallbackLabel: "Molarity",
+            });
+        }
+        if (solventMassG !== null && solventMassG > 0) {
+            const molality = molesSolute / (solventMassG / 1000);
+            rows.push({
+                labelKey: "concentration_result_molality",
+                value: `${formatNumberSmart(molality)} mol/kg`,
+                fallbackLabel: "Molality",
+            });
+            if (soluteMassG !== null && soluteMassG > 0) {
+                const massPercent = (soluteMassG / (soluteMassG + solventMassG)) * 100;
+                rows.push({
+                    labelKey: "concentration_result_mass_percent",
+                    value: `${formatNumberSmart(massPercent)} %`,
+                    fallbackLabel: "Mass percent",
+                });
+            }
+        }
+        if (rows.length === 0) {
+            showError("concentration_error_missing_inputs");
+            return;
+        }
+        renderResult(rows);
+    });
+
+    dilutionForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        clearStatus();
+        const solveFor = document.getElementById("conc-dilution-solve-for").value;
+        const m1 = parsePositiveNumber(document.getElementById("conc-dilution-m1").value);
+        const m2 = parsePositiveNumber(document.getElementById("conc-dilution-m2").value);
+        const v1Raw = parsePositiveNumber(document.getElementById("conc-dilution-v1").value);
+        const v2Raw = parsePositiveNumber(document.getElementById("conc-dilution-v2").value);
+        const v1Unit = document.getElementById("conc-dilution-v1-unit").value;
+        const v2Unit = document.getElementById("conc-dilution-v2-unit").value;
+        const v1 = v1Raw === null ? null : (v1Unit === "L" ? v1Raw : v1Raw / 1000);
+        const v2 = v2Raw === null ? null : (v2Unit === "L" ? v2Raw : v2Raw / 1000);
+
+        const inputs = { M1: m1, V1: v1, M2: m2, V2: v2 };
+        for (const key of Object.keys(inputs)) {
+            if (key === solveFor) continue;
+            if (inputs[key] === null) {
+                showError("concentration_error_missing_inputs");
+                return;
+            }
+        }
+
+        let result;
+        let unit;
+        switch (solveFor) {
+            case "M1":
+                result = (inputs.M2 * inputs.V2) / inputs.V1;
+                unit = "mol/L";
+                break;
+            case "M2":
+                result = (inputs.M1 * inputs.V1) / inputs.V2;
+                unit = "mol/L";
+                break;
+            case "V1": {
+                const litres = (inputs.M2 * inputs.V2) / inputs.M1;
+                result = v1Unit === "L" ? litres : litres * 1000;
+                unit = v1Unit;
+                break;
+            }
+            case "V2": {
+                const litres = (inputs.M1 * inputs.V1) / inputs.M2;
+                result = v2Unit === "L" ? litres : litres * 1000;
+                unit = v2Unit;
+                break;
+            }
+            default:
+                showError("concentration_error_missing_inputs");
+                return;
+        }
+
+        renderResult([{
+            labelKey: `concentration_dilution_${solveFor.toLowerCase()}`,
+            value: `${formatNumberSmart(result)} ${unit}`,
+            fallbackLabel: solveFor,
+        }]);
+    });
+}
+
 async function bootstrap() {
     const loader = document.getElementById("loader");
     const loaderMessage = document.getElementById("loader-message");
@@ -979,6 +1182,7 @@ async function bootstrap() {
     setupTabs();
     setupMolarForm();
     setupStoichForm();
+    setupConcentrationForm();
     setupSearchForm();
     setupToolsModal();
     applyStaticTranslations();
