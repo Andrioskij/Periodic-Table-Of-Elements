@@ -105,6 +105,7 @@ input {
 
 .topbar-controls {
     justify-content: flex-end;
+    flex-wrap: wrap;
 }
 
 @media (max-width: 720px) {
@@ -722,4 +723,109 @@ input {
 
 .appbar-sep {
     opacity: 0.5;
+}
+
+/* Calculators modal — opens from the topbar Calculators button. Centered
+ * card on desktop; full-screen sheet at the existing 720px topbar
+ * breakpoint so the modal stays usable on mobile.
+ */
+body.is-modal-open {
+    overflow: hidden;
+}
+
+.tools-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-info-card-padding, 12px);
+}
+
+.tools-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.tools-modal-card {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-info-card-inner-gap, 12px);
+    width: 100%;
+    max-width: 720px;
+    max-height: 85vh;
+    background: var(--color-bg-card, #23272f);
+    border: var(--border-default-width, 1px) solid var(--color-border-strong, #404854);
+    border-radius: var(--radius-info-card, 14px);
+    padding: var(--spacing-info-card-padding, 12px);
+    overflow: hidden;
+}
+
+.tools-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-badge-gap, 6px);
+}
+
+.tools-modal-title {
+    margin: 0;
+    font-size: var(--font-size-info-hero-name, 24px);
+    font-weight: var(--font-weight-bold, 700);
+    color: var(--color-text-strong, #dfe7ef);
+}
+
+.tools-modal-close {
+    background: transparent;
+    color: var(--color-text-primary, #f2f2f2);
+    border: var(--border-default-width, 1px) solid var(--color-border-button, #5f7384);
+    border-radius: var(--radius-button, 8px);
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tools-modal-close:hover {
+    background: var(--color-bg-button-hover, #4b6478);
+}
+
+.tools-modal-close:focus-visible {
+    outline: var(--border-input-focused-width, 2px) solid var(--color-accent, #FFD60A);
+    outline-offset: 2px;
+}
+
+.tools-modal-tabs {
+    flex: 0 0 auto;
+}
+
+.tools-modal-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-info-section-gap, 10px);
+}
+
+@media (max-width: 720px) {
+    .tools-modal {
+        padding: 0;
+    }
+    .tools-modal-card {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        border: none;
+    }
 }

@@ -19,6 +19,11 @@
             <div class="topbar-side topbar-side-left" aria-hidden="true"></div>
             <h1 id="app-title" class="app-title">PERIODIC TABLE OF ELEMENTS</h1>
             <div class="topbar-side topbar-controls">
+                <button id="tools-open" class="control-button" type="button"
+                        aria-haspopup="dialog" aria-controls="tools-modal">
+                    <span class="tools-icon" aria-hidden="true">🧮</span>
+                    <span data-i18n="tools_button">Calculators</span>
+                </button>
                 <select id="language-select" class="control-input"
                         aria-label="Language"></select>
                 <button id="theme-toggle" class="control-button" type="button"
@@ -83,14 +88,6 @@
                             aria-selected="false" aria-controls="panel-electron">
                         <span data-i18n="right_diagram">Electron config.</span>
                     </button>
-                    <button id="tab-stoichiometry" class="tab" role="tab"
-                            aria-selected="false" aria-controls="panel-stoichiometry">
-                        <span data-i18n="right_stoichiometry">Stoichiometry</span>
-                    </button>
-                    <button id="tab-molar" class="tab" role="tab"
-                            aria-selected="false" aria-controls="panel-molar">
-                        <span data-i18n="right_molar">Molar mass</span>
-                    </button>
                 </nav>
 
                 <section id="panel-info" class="panel" role="tabpanel"
@@ -123,77 +120,104 @@
                     <div id="electron-diagram-wrap" class="orbital-diagram-wrap" hidden></div>
                 </section>
 
-                <section id="panel-stoichiometry" class="panel" role="tabpanel"
-                         aria-labelledby="tab-stoichiometry" hidden>
-                    <h2 class="panel-title" data-i18n="stoichiometry_title">Equation balancer</h2>
-                    <p class="panel-prompt" data-i18n="stoichiometry_prompt">
-                        Enter a chemical equation (e.g. Fe + O2 -&gt; Fe2O3) to balance it.
-                    </p>
-                    <form id="stoich-form" class="molar-form" autocomplete="off">
-                        <input id="stoich-input" class="molar-input" type="text"
-                               spellcheck="false" placeholder="Fe + O2 -> Fe2O3" required />
-                        <button id="stoich-balance" class="control-button" type="submit"
-                                data-i18n="stoichiometry_balance">Balance</button>
-                    </form>
-                    <p id="stoich-status" class="molar-status" aria-live="polite"></p>
-                    <div id="stoich-balanced" class="stoich-balanced" hidden></div>
-
-                    <div id="stoich-mass-section" hidden>
-                        <h3 class="stoich-section-title"
-                            data-i18n="stoichiometry_mass_section">Enter mass for a compound:</h3>
-                        <div class="stoich-mass-row">
-                            <select id="stoich-compound" class="control-input"></select>
-                            <input id="stoich-mass-input" class="molar-input"
-                                   type="number" min="0" step="any" />
-                            <span class="stoich-mass-unit">g</span>
-                            <button id="stoich-calc" class="control-button" type="button"
-                                    data-i18n="stoichiometry_calc_masses">Calculate masses</button>
-                        </div>
-                        <table id="stoich-mass-table" class="molar-table" hidden>
-                            <thead>
-                                <tr>
-                                    <th data-i18n="stoichiometry_compound">Compound</th>
-                                    <th data-i18n="stoichiometry_coefficient">Coeff.</th>
-                                    <th data-i18n="atomic_mass">Mass</th>
-                                    <th data-i18n="stoichiometry_moles">Moles</th>
-                                    <th data-i18n="stoichiometry_mass_grams">Mass (g)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="stoich-mass-tbody"></tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <section id="panel-molar" class="panel" role="tabpanel"
-                         aria-labelledby="tab-molar" hidden>
-                    <h2 class="panel-title" data-i18n="molar_title">Molar mass calculator</h2>
-                    <p id="molar-prompt" class="panel-prompt" data-i18n="molar_prompt">
-                        Enter a chemical formula (e.g. H2O, Ca(OH)2) to calculate its molar mass.
-                    </p>
-                    <form id="molar-form" class="molar-form" autocomplete="off">
-                        <input id="molar-input" class="molar-input" type="text"
-                               spellcheck="false" required />
-                        <button id="molar-submit" class="control-button" type="submit"
-                                data-i18n="molar_calculate">Calculate</button>
-                    </form>
-                    <p id="molar-status" class="molar-status" aria-live="polite"></p>
-                    <div id="molar-result" class="molar-result" hidden>
-                        <p class="molar-total"><span id="molar-total-value"></span></p>
-                        <table class="molar-table">
-                            <thead>
-                                <tr>
-                                    <th data-i18n="symbol">Symbol</th>
-                                    <th>n</th>
-                                    <th data-i18n="atomic_mass">Mass</th>
-                                    <th>%</th>
-                                </tr>
-                            </thead>
-                            <tbody id="molar-table-body"></tbody>
-                        </table>
-                    </div>
-                </section>
             </aside>
         </main>
+
+        <div id="tools-modal" class="tools-modal" role="dialog" aria-modal="true"
+             aria-labelledby="tools-modal-title" hidden>
+            <div class="tools-modal-backdrop" data-tools-close></div>
+            <div class="tools-modal-card" role="document">
+                <header class="tools-modal-header">
+                    <h2 id="tools-modal-title" class="tools-modal-title"
+                        data-i18n="tools_button">Calculators</h2>
+                    <button id="tools-close" class="tools-modal-close" type="button"
+                            data-tools-close
+                            data-i18n-aria-label="close_dialog"
+                            aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </header>
+                <nav class="tabs tools-modal-tabs" role="tablist">
+                    <button id="tab-molar" class="tab is-active" role="tab"
+                            aria-selected="true" aria-controls="panel-molar">
+                        <span data-i18n="right_molar">Molar mass</span>
+                    </button>
+                    <button id="tab-stoichiometry" class="tab" role="tab"
+                            aria-selected="false" aria-controls="panel-stoichiometry">
+                        <span data-i18n="right_stoichiometry">Stoichiometry</span>
+                    </button>
+                </nav>
+                <div class="tools-modal-body">
+                    <section id="panel-molar" class="panel" role="tabpanel"
+                             aria-labelledby="tab-molar">
+                        <p id="molar-prompt" class="panel-prompt" data-i18n="molar_prompt">
+                            Enter a chemical formula (e.g. H2O, Ca(OH)2) to calculate its molar mass.
+                        </p>
+                        <form id="molar-form" class="molar-form" autocomplete="off">
+                            <input id="molar-input" class="molar-input" type="text"
+                                   spellcheck="false" required />
+                            <button id="molar-submit" class="control-button" type="submit"
+                                    data-i18n="molar_calculate">Calculate</button>
+                        </form>
+                        <p id="molar-status" class="molar-status" aria-live="polite"></p>
+                        <div id="molar-result" class="molar-result" hidden>
+                            <p class="molar-total"><span id="molar-total-value"></span></p>
+                            <table class="molar-table">
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="symbol">Symbol</th>
+                                        <th>n</th>
+                                        <th data-i18n="atomic_mass">Mass</th>
+                                        <th>%</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="molar-table-body"></tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section id="panel-stoichiometry" class="panel" role="tabpanel"
+                             aria-labelledby="tab-stoichiometry" hidden>
+                        <p class="panel-prompt" data-i18n="stoichiometry_prompt">
+                            Enter a chemical equation (e.g. Fe + O2 -&gt; Fe2O3) to balance it.
+                        </p>
+                        <form id="stoich-form" class="molar-form" autocomplete="off">
+                            <input id="stoich-input" class="molar-input" type="text"
+                                   spellcheck="false" placeholder="Fe + O2 -> Fe2O3" required />
+                            <button id="stoich-balance" class="control-button" type="submit"
+                                    data-i18n="stoichiometry_balance">Balance</button>
+                        </form>
+                        <p id="stoich-status" class="molar-status" aria-live="polite"></p>
+                        <div id="stoich-balanced" class="stoich-balanced" hidden></div>
+
+                        <div id="stoich-mass-section" hidden>
+                            <h3 class="stoich-section-title"
+                                data-i18n="stoichiometry_mass_section">Enter mass for a compound:</h3>
+                            <div class="stoich-mass-row">
+                                <select id="stoich-compound" class="control-input"></select>
+                                <input id="stoich-mass-input" class="molar-input"
+                                       type="number" min="0" step="any" />
+                                <span class="stoich-mass-unit">g</span>
+                                <button id="stoich-calc" class="control-button" type="button"
+                                        data-i18n="stoichiometry_calc_masses">Calculate masses</button>
+                            </div>
+                            <table id="stoich-mass-table" class="molar-table" hidden>
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="stoichiometry_compound">Compound</th>
+                                        <th data-i18n="stoichiometry_coefficient">Coeff.</th>
+                                        <th data-i18n="atomic_mass">Mass</th>
+                                        <th data-i18n="stoichiometry_moles">Moles</th>
+                                        <th data-i18n="stoichiometry_mass_grams">Mass (g)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stoich-mass-tbody"></tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
 
         <footer class="appbar">
             <span id="app-version" class="app-version"></span>

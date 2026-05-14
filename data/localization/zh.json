@@ -13,6 +13,7 @@
     "right_compound": "化合物",
     "right_molar": "摩尔质量",
     "right_stoichiometry": "化学计量",
+    "tools_button": "计算器",
     "molar_title": "摩尔质量计算器",
     "molar_prompt": "输入化学式（如 H2O、Ca(OH)2）以计算其摩尔质量。",
     "molar_calculate": "计算",

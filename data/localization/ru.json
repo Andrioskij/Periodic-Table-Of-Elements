@@ -13,6 +13,7 @@
     "right_compound": "Соединения",
     "right_molar": "Молярная масса",
     "right_stoichiometry": "Стехиометрия",
+    "tools_button": "Калькуляторы",
     "molar_title": "Калькулятор молярной массы",
     "molar_prompt": "Введите химическую формулу (напр. H2O, Ca(OH)2) для расчёта молярной массы.",
     "molar_calculate": "Рассчитать",
