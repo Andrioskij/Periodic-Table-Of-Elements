@@ -16,6 +16,7 @@ from src.domain.molar_mass import (
     FormulaError,
     compute_molar_mass,
     compute_percent_composition,
+    empirical_formula_from_composition,
     parse_formula,
 )
 from src.domain.stoichiometry import (
@@ -117,3 +118,18 @@ def test_compute_limiting_reagent_water_synthesis():
     h2o = result["yields"][0]
     assert h2o["compound"] == "H2O"
     assert abs(h2o["theoretical_mass_g"] - 18.015) < 0.1
+
+
+def test_empirical_formula_glucose_smoke():
+    elements = _load_elements()
+    result = empirical_formula_from_composition(
+        [
+            {"symbol": "C", "amount": 40.0},
+            {"symbol": "H", "amount": 6.7},
+            {"symbol": "O", "amount": 53.3},
+        ],
+        elements,
+        total_molar_mass=180.0,
+    )
+    assert result["empirical"] == "CH2O"
+    assert result["molecular"] == "C6H12O6"
