@@ -103,6 +103,31 @@ def test_build_web_bundled_compound_builder_matches_source(tmp_path):
     assert nested == source
 
 
+def test_build_web_bundled_trends_matches_source(tmp_path):
+    dest = tmp_path / "web_out"
+    build_web(dest)
+    from pathlib import Path
+
+    source = (
+        Path(__file__).resolve().parents[2] / "src" / "domain" / "trends.py"
+    ).read_text(encoding="utf-8")
+    flat = (dest / "python" / "trends.py").read_text(encoding="utf-8")
+    nested = (dest / "python" / "src" / "domain" / "trends.py").read_text(
+        encoding="utf-8",
+    )
+    assert flat == source
+    assert nested == source
+
+
+def test_build_web_bundles_design_tokens_module(tmp_path):
+    dest = tmp_path / "web_out"
+    build_web(dest)
+    # The design_tokens.py module sits next to static_data.py under
+    # src/config/ so trends.py can resolve its TOKENS import inside
+    # Pyodide.
+    assert (dest / "python" / "src" / "config" / "design_tokens.py").is_file()
+
+
 def test_build_web_bundled_solubility_matches_source(tmp_path):
     dest = tmp_path / "web_out"
     build_web(dest)

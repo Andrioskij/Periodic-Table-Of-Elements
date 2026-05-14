@@ -31,6 +31,8 @@ const state = {
     pyodideLoading: null,
     stoich: null,
     toolsModalReturnFocus: null,
+    activeTrend: "normal",
+    numericTrendRanges: null,
 };
 
 const INFO_FIELDS = [
@@ -145,6 +147,166 @@ function getCategoryColor(category) {
     return themed[tokenKey] ?? state.tokens?.color?.fallback?.ui ?? "#7A7A7A";
 }
 
+// Trend-overlay helpers — pure JS arithmetic over the dataset and the
+// design tokens. Kept on the JS side so a trend switch repaints
+// instantly without paying the Pyodide cold-start cost; the Python
+// `src/domain/trends.py` is still bundled for any future need to share
+// the macro-class taxonomy across web + desktop.
+
+const METAL_CATEGORIES = new Set([
+    "alkali metal", "alkaline earth metal", "transition metal",
+    "post-transition metal", "lanthanide", "lanthanoid",
+    "actinide", "actinoid",
+]);
+const SEMIMETAL_CATEGORIES = new Set(["metalloid"]);
+const NONMETAL_CATEGORIES = new Set(["nonmetal", "halogen", "noble gas"]);
+
+const NUMERIC_TREND_FIELD = {
+    radius: "atomic_radius",
+    ionization: "ionization_energy",
+    affinity: "electron_affinity",
+    electronegativity: "electronegativity",
+};
+
+function getMacroClass(category) {
+    const c = String(category || "").toLowerCase();
+    if (METAL_CATEGORIES.has(c)) return "Metal";
+    if (SEMIMETAL_CATEGORIES.has(c)) return "Metalloid";
+    if (NONMETAL_CATEGORIES.has(c)) return "Nonmetal";
+    return "fallback";
+}
+
+function getMacroClassColor(macroClass) {
+    const colors = state.tokens?.color?.macro_class ?? {};
+    const fallback = state.tokens?.color?.fallback?.ui ?? "#7A7A7A";
+    if (macroClass === "Metal") return colors.metal ?? fallback;
+    if (macroClass === "Metalloid") return colors.metalloid ?? fallback;
+    if (macroClass === "Nonmetal") return colors.nonmetal ?? fallback;
+    return fallback;
+}
+
+function hexToRgb(hex) {
+    const m = /^#?([0-9a-f]{6})$/i.exec(hex || "");
+    if (!m) return null;
+    const v = parseInt(m[1], 16);
+    return { r: (v >> 16) & 0xff, g: (v >> 8) & 0xff, b: v & 0xff };
+}
+
+function rgbToHex({ r, g, b }) {
+    const to = (v) => Math.max(0, Math.min(255, Math.round(v)))
+        .toString(16).padStart(2, "0");
+    return `#${to(r)}${to(g)}${to(b)}`;
+}
+
+function lerpColor(a, b, t) {
+    const ra = hexToRgb(a);
+    const rb = hexToRgb(b);
+    if (!ra || !rb) return a;
+    const tt = Math.max(0, Math.min(1, t));
+    return rgbToHex({
+        r: ra.r + (rb.r - ra.r) * tt,
+        g: ra.g + (rb.g - ra.g) * tt,
+        b: ra.b + (rb.b - ra.b) * tt,
+    });
+}
+
+function computeNumericTrendRanges() {
+    const ranges = {};
+    for (const [mode, field] of Object.entries(NUMERIC_TREND_FIELD)) {
+        const values = state.elements
+            .map((el) => el[field])
+            .filter((v) => typeof v === "number" && Number.isFinite(v));
+        ranges[mode] = values.length > 0
+            ? { min: Math.min(...values), max: Math.max(...values) }
+            : { min: 0, max: 1 };
+    }
+    state.numericTrendRanges = ranges;
+}
+
+function getTrendCellColor(element, trend) {
+    const fallback = state.tokens?.color?.fallback?.ui ?? "#7A7A7A";
+    if (trend === "normal") {
+        return { bg: getCategoryColor(element.category), na: false };
+    }
+    if (trend === "macroclass") {
+        const cls = getMacroClass(element.category);
+        return { bg: getMacroClassColor(cls), na: cls === "fallback" };
+    }
+    const directional = state.tokens?.color?.trend?.directional ?? {};
+    if (trend === "metallic" || trend === "nonmetallic") {
+        const value = element.electronegativity;
+        if (typeof value !== "number" || !Number.isFinite(value)) {
+            return { bg: fallback, na: true };
+        }
+        const range = state.numericTrendRanges?.electronegativity;
+        if (!range || range.max === range.min) return { bg: fallback, na: true };
+        const t = (value - range.min) / (range.max - range.min);
+        // Metallic mode: low electronegativity = "more metallic" → metallic end.
+        // Nonmetallic mode: high electronegativity = "more nonmetallic" → nonmetallic end.
+        if (trend === "metallic") {
+            return {
+                bg: lerpColor(directional.metallic ?? "#56CCF2", directional.nonmetallic ?? "#FFD60A", t),
+                na: false,
+            };
+        }
+        return {
+            bg: lerpColor(directional.nonmetallic ?? "#FFD60A", directional.metallic ?? "#56CCF2", 1 - t),
+            na: false,
+        };
+    }
+    const numeric = state.tokens?.color?.trend?.numeric_gradient ?? {};
+    const field = NUMERIC_TREND_FIELD[trend];
+    if (!field) return { bg: fallback, na: true };
+    const value = element[field];
+    if (typeof value !== "number" || !Number.isFinite(value)) {
+        return { bg: fallback, na: true };
+    }
+    const range = state.numericTrendRanges?.[trend];
+    if (!range || range.max === range.min) return { bg: fallback, na: true };
+    const t = (value - range.min) / (range.max - range.min);
+    return {
+        bg: lerpColor(numeric.start ?? "#2359A8", numeric.end ?? "#FFD60A", t),
+        na: false,
+    };
+}
+
+function applyTrendToCells() {
+    const cells = document.querySelectorAll(".element-cell");
+    for (const cell of cells) {
+        const element = state.elementsBySymbol.get(cell.dataset.symbol);
+        if (!element) continue;
+        const { bg, na } = getTrendCellColor(element, state.activeTrend);
+        cell.style.setProperty("--cell-bg", bg);
+        cell.style.setProperty("--cell-text", readableTextColor(bg));
+        if (na) {
+            cell.classList.add("is-trend-na");
+            cell.title = "n/a";
+        } else {
+            cell.classList.remove("is-trend-na");
+            cell.title = "";
+        }
+    }
+}
+
+function setupTrendControls() {
+    computeNumericTrendRanges();
+    const buttons = document.querySelectorAll(".trend-button");
+    for (const btn of buttons) {
+        btn.addEventListener("click", () => {
+            const trend = btn.dataset.trend;
+            state.activeTrend = trend;
+            for (const other of buttons) {
+                other.classList.toggle("is-active", other === btn);
+                other.setAttribute(
+                    "aria-pressed",
+                    other === btn ? "true" : "false",
+                );
+            }
+            applyTrendToCells();
+        });
+    }
+}
+
 function renderPeriodicTable() {
     const main = document.getElementById("periodic-table");
     const series = document.getElementById("periodic-series");
@@ -190,6 +352,9 @@ function renderPeriodicTable() {
 
     if (state.selectedSymbol) {
         markSelectedCell(state.selectedSymbol);
+    }
+    if (state.activeTrend && state.activeTrend !== "normal") {
+        applyTrendToCells();
     }
 }
 
@@ -2570,6 +2735,7 @@ async function bootstrap() {
     setupToolsModal();
     applyStaticTranslations();
     renderPeriodicTable();
+    setupTrendControls();
 
     loader.hidden = true;
     document.getElementById("app").hidden = false;

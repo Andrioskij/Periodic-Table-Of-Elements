@@ -38,6 +38,11 @@ from src.domain.stoichiometry import (
     compute_stoichiometric_masses,
     parse_equation,
 )
+from src.domain.trends import (
+    compute_numeric_ranges,
+    get_macro_class,
+    get_macro_class_color,
+)
 
 
 def _load_elements():
@@ -161,6 +166,20 @@ def test_lewis_lookup_water_molecule():
 def test_lewis_lookup_is_case_insensitive():
     assert lookup_molecule("h2o") is not None
     assert lookup_molecule("XXNotAMolecule") is None
+
+
+def test_trends_smoke():
+    elements = _load_elements()
+    ranges = compute_numeric_ranges(elements)
+    for key in ("radius", "ionization", "affinity", "electronegativity"):
+        assert key in ranges
+        lo, hi = ranges[key]
+        assert hi >= lo
+    assert get_macro_class("alkali metal") == "Metal"
+    assert get_macro_class("metalloid") == "Metalloid"
+    assert get_macro_class("noble gas") == "Nonmetal"
+    color = get_macro_class_color("Metal")
+    assert color.startswith("#")
 
 
 def test_solubility_smoke():

@@ -37,8 +37,9 @@ DOMAIN_MODULES = (
     "lewis_library.py",
     "compound_builder.py",
     "solubility.py",
+    "trends.py",
 )
-CONFIG_MODULES = ("static_data.py",)
+CONFIG_MODULES = ("static_data.py", "design_tokens.py")
 LOCALIZATION_FILES = (
     "en.json",
     "it.json",
