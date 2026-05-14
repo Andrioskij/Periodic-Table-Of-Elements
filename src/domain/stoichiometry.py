@@ -10,6 +10,7 @@ EquationError codes (used by the UI to look up localized messages):
 - ``under_determined``: nullspace has multiple independent solutions.
 - ``zero_coefficient``: balancing produced a zero coefficient.
 - ``compound_not_found``: requested compound is not part of the equation. Params: ``compound``.
+- ``invalid_mass``: a reactant mass is missing or non-positive. Params: ``compound``.
 """
 
 from fractions import Fraction
@@ -329,3 +330,114 @@ def compute_stoichiometric_masses(
         })
 
     return result
+
+
+def compute_limiting_reagent(
+    reactants: list[str],
+    products: list[str],
+    coefficients: list[int],
+    elements: list[dict],
+    reactant_masses_g: dict[str, float],
+    *,
+    molar_masses: list[float] | None = None,
+) -> dict:
+    """Compute the limiting reagent, theoretical yields, and excesses.
+
+    ``reactant_masses_g`` is a mapping from reactant compound to its supplied
+    mass in grams. Every reactant must appear with a positive mass; otherwise
+    an ``EquationError(code="invalid_mass")`` is raised.
+
+    ``molar_masses`` is the same precomputed list accepted by
+    :func:`compute_stoichiometric_masses` — one entry per compound in
+    ``reactants + products`` order.
+
+    Returns::
+
+        {
+            "limiting": str,                                # compound formula
+            "limiting_moles": float,                        # moles of the limiting reactant
+            "extent": float,                                # reaction extent (mol)
+            "yields": [{"compound": str, "theoretical_moles": float,
+                        "theoretical_mass_g": float}, ...],   # one per product
+            "excess":  [{"compound": str, "excess_moles": float,
+                         "excess_g": float}, ...],            # non-limiting reactants
+        }
+
+    Notation: the reaction extent ξ is moles_supplied(reactant) / coeff(reactant)
+    for each reactant; the limiting reagent is the one that yields the smallest
+    ξ. Product moles = coeff(product) · ξ_min, excess of any other reactant =
+    (ξ_i − ξ_min) · coeff(reactant_i).
+    """
+    if not reactants:
+        raise EquationError(
+            "Equation has no reactants.",
+            code="both_sides",
+        )
+
+    compounds = reactants + products
+    n_reactants = len(reactants)
+
+    if molar_masses is None:
+        molar_masses = []
+        for compound in compounds:
+            atoms = parse_formula(compound)
+            molar_masses.append(compute_molar_mass(atoms, elements))
+
+    # Every reactant must come with a positive mass.
+    moles_supplied: dict[str, float] = {}
+    for i, reactant in enumerate(reactants):
+        mass = reactant_masses_g.get(reactant)
+        if mass is None or mass <= 0:
+            raise EquationError(
+                f"Reactant '{reactant}' is missing a positive mass.",
+                code="invalid_mass",
+                params={"compound": reactant},
+            )
+        moles_supplied[reactant] = mass / molar_masses[i]
+
+    # Any extra entries the caller passed in must correspond to known reactants.
+    for compound in reactant_masses_g:
+        if compound not in reactants:
+            raise EquationError(
+                f"Compound '{compound}' is not a reactant in this equation.",
+                code="compound_not_found",
+                params={"compound": compound},
+            )
+
+    # Reaction extent for each reactant: ξ_i = n_i / coeff_i. The limiting
+    # reagent is the one with the smallest extent.
+    extents: list[tuple[float, int, str]] = []
+    for i, reactant in enumerate(reactants):
+        extents.append((moles_supplied[reactant] / coefficients[i], i, reactant))
+    extent_min, limiting_idx, limiting_compound = min(extents, key=lambda t: t[0])
+
+    yields = []
+    for j, product in enumerate(products):
+        coeff = coefficients[n_reactants + j]
+        mm = molar_masses[n_reactants + j]
+        theoretical_moles = coeff * extent_min
+        yields.append({
+            "compound": product,
+            "theoretical_moles": round(theoretical_moles, 6),
+            "theoretical_mass_g": round(theoretical_moles * mm, 6),
+        })
+
+    excess = []
+    for i, reactant in enumerate(reactants):
+        if i == limiting_idx:
+            continue
+        extra_extent = (moles_supplied[reactant] / coefficients[i]) - extent_min
+        excess_moles = extra_extent * coefficients[i]
+        excess.append({
+            "compound": reactant,
+            "excess_moles": round(excess_moles, 6),
+            "excess_g": round(excess_moles * molar_masses[i], 6),
+        })
+
+    return {
+        "limiting": limiting_compound,
+        "limiting_moles": round(moles_supplied[limiting_compound], 6),
+        "extent": round(extent_min, 6),
+        "yields": yields,
+        "excess": excess,
+    }

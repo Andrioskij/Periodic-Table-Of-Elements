@@ -308,7 +308,14 @@
     "ph_strong_polyprotic": "Factor poliprótico",
     "ph_calculate": "Calcular",
     "ph_error_invalid_input": "Introduce un número positivo.",
-    "ph_error_multiple_inputs": "Rellena un único campo; los otros se calculan."
+    "ph_error_multiple_inputs": "Rellena un único campo; los otros se calculan.",
+    "stoichiometry_multi_toggle": "Mostrar modo multi-reactivo",
+    "stoichiometry_multi_section": "Introduce la masa de cada reactivo",
+    "stoichiometry_compute_limiting": "Calcular reactivo limitante",
+    "stoichiometry_limiting_label": "Reactivo limitante",
+    "stoichiometry_yield_section": "Rendimientos teóricos",
+    "stoichiometry_excess_section": "Reactivos en exceso",
+    "equation_error_invalid_mass": "Introduce una masa positiva para cada reactivo."
   },
   "localized_category_texts": {
     "actinide": "Actínido",

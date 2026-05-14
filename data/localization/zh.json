@@ -308,7 +308,14 @@
     "ph_strong_polyprotic": "多元酸/碱因子",
     "ph_calculate": "计算",
     "ph_error_invalid_input": "请输入正数。",
-    "ph_error_multiple_inputs": "只填一个字段，其它字段会被自动计算。"
+    "ph_error_multiple_inputs": "只填一个字段，其它字段会被自动计算。",
+    "stoichiometry_multi_toggle": "显示多反应物模式",
+    "stoichiometry_multi_section": "为每种反应物输入质量",
+    "stoichiometry_compute_limiting": "计算限制性反应物",
+    "stoichiometry_limiting_label": "限制性反应物",
+    "stoichiometry_yield_section": "理论产率",
+    "stoichiometry_excess_section": "过量反应物",
+    "equation_error_invalid_mass": "请为每种反应物输入正数质量。"
   },
   "localized_category_texts": {
     "actinide": "锕系元素",
