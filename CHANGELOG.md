@@ -6,6 +6,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-05-15
+
 ### Added
 - Web companion frontend served from `web/` and deployed to GitHub Pages. The browser UI re-uses the desktop's Python logic via Pyodide and consumes the canonical design tokens for visual parity.
 - Web Calculators modal grouping all chemistry tools behind a single launcher: molar mass, stoichiometry (with limiting-reagent + theoretical yield), concentration/dilution, gas laws, pH/pOH, and empirical/molecular formula.
@@ -93,7 +95,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ruff lint baseline reduced to zero findings and enforced by Windows CI.
 - Project configuration consolidated into pyproject.toml.
 
-[Unreleased]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.0.1...v1.1.0

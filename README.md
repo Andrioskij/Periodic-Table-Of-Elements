@@ -1,6 +1,6 @@
 # Periodic Table Of Elements
 
-Release target: `1.3.0 "Chemistry Tool"`
+Release target: `1.4.0 "Chemistry Tool"`
 
 PySide6 desktop app for exploring the periodic table, quick trends, electron configuration, and compound nomenclature.
 
@@ -94,7 +94,7 @@ To pin the build to a specific local venv without activating it first, the scrip
 powershell -ExecutionPolicy Bypass -File tools/build_windows.ps1 -Clean -PythonExe .\.venv\Scripts\python.exe
 ```
 
-Expected output: `dist/release/PeriodicTableApp-1.3.0-chemistry-tool-win.zip`.
+Expected output: `dist/release/PeriodicTableApp-1.4.0-chemistry-tool-win.zip`.
 
 ### macOS and Linux
 
@@ -104,8 +104,8 @@ bash tools/build_unix.sh --clean
 
 The OS suffix (`mac` or `linux`) is detected from `uname`, so the same script produces a `.app` bundle on macOS and an onedir folder on Linux. Outputs:
 
-- macOS: `dist/release/PeriodicTableApp-1.3.0-chemistry-tool-mac.zip` (contains `PeriodicTableApp.app`, unsigned)
-- Linux: `dist/release/PeriodicTableApp-1.3.0-chemistry-tool-linux.zip`
+- macOS: `dist/release/PeriodicTableApp-1.4.0-chemistry-tool-mac.zip` (contains `PeriodicTableApp.app`, unsigned)
+- Linux: `dist/release/PeriodicTableApp-1.4.0-chemistry-tool-linux.zip`
 
 On Linux, the smoke launch needs the same Qt offscreen system libraries used by CI: `libegl1 libxkbcommon0 libxcb-cursor0 libdbus-1-3`.
 
