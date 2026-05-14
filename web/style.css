@@ -228,6 +228,16 @@ input {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-info-card-inner-gap, 12px);
+    /* Container queries scope cell-size clamps to the table's actual width,
+     * not the viewport, so the side-panel (which takes width above 1100px)
+     * is correctly excluded from the available space.
+     */
+    container-type: inline-size;
+    container-name: table;
+    /* Safety net at extreme narrow widths (≲ 320px): the clamps below
+     * stop shrinking once the floor tokens are reached, and at that point
+     * a brief scrollbar is acceptable.
+     */
     overflow-x: auto;
 }
 
@@ -238,15 +248,15 @@ input {
  */
 .periodic-table {
     display: grid;
-    grid-template-columns: auto repeat(18, minmax(40px, 1fr));
-    grid-template-rows: auto repeat(7, minmax(48px, auto));
+    grid-template-columns: auto repeat(18, minmax(0, 1fr));
+    grid-template-rows: auto repeat(7, minmax(0, auto));
     gap: var(--spacing-info-grid-v-gap, 8px) var(--spacing-badge-gap, 6px);
 }
 
 .periodic-series {
     display: grid;
-    grid-template-columns: auto repeat(18, minmax(40px, 1fr));
-    grid-template-rows: repeat(2, minmax(48px, auto));
+    grid-template-columns: auto repeat(18, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, auto));
     gap: var(--spacing-info-grid-v-gap, 8px) var(--spacing-badge-gap, 6px);
 }
 
@@ -260,7 +270,11 @@ input {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--font-size-header-label, 11px);
+    font-size: clamp(
+        var(--font-size-element-number-min, 6px),
+        1.5cqi,
+        var(--font-size-header-label, 11px)
+    );
     font-weight: var(--font-weight-medium, 500);
     color: var(--color-text-muted, #bdbdbd);
     letter-spacing: var(--font-letter-spacing-info-section-title, 0.4px);
@@ -282,7 +296,11 @@ input {
     align-items: center;
     justify-content: center;
     color: var(--color-text-muted, #bdbdbd);
-    font-size: var(--font-size-transition-block, 14px);
+    font-size: clamp(
+        var(--font-size-transition-block-min, 9px),
+        1.8cqi,
+        var(--font-size-transition-block, 14px)
+    );
     font-weight: var(--font-weight-bold, 700);
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -294,33 +312,48 @@ input {
     color: var(--cell-text, var(--color-text-primary, #f2f2f2));
     border: var(--border-default-width, 1px) solid var(--color-border-button-default, #202020);
     border-radius: var(--radius-button, 8px);
-    padding: 4px 6px;
+    padding:
+        clamp(
+            var(--spacing-element-cell-padding-y-min, 2px),
+            0.7cqi,
+            var(--spacing-element-cell-padding-y, 4px)
+        )
+        clamp(
+            var(--spacing-element-cell-padding-x-min, 2px),
+            1cqi,
+            var(--spacing-element-cell-padding-x, 6px)
+        );
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     text-align: left;
-    min-height: 48px;
+    min-height: clamp(
+        var(--scale-element-cell-min-height-floor, 28px),
+        5cqi,
+        var(--scale-element-cell-min-height, 48px)
+    );
     font-family: inherit;
+    /* box-sizing: border-box (set globally) keeps the cell's outer
+     * dimensions constant when hover/selected rules below thicken
+     * the border, so neighbors do not shift on interaction.
+     */
     transition: transform 80ms ease, border-color 120ms ease;
 }
 
 .element-cell:hover {
     border-color: var(--color-border-button-default-hover, #FFFFFF);
     border-width: var(--border-hover-width, 2px);
-    padding: 3px 5px;
     transform: translateY(-1px);
 }
 
 .element-cell.is-search-match {
     border-color: var(--color-border-button-search-match, #FFD60A);
     border-width: var(--border-search-match-width, 3px);
-    padding: 2px 4px;
 }
 
 .element-cell.is-selected {
     border-color: var(--color-border-button-selected, #111111);
     border-width: var(--border-selected-width, 3px);
-    padding: 2px 4px;
     box-shadow: 0 0 0 var(--border-default-width, 1px)
         var(--color-accent, #FFD60A);
 }
@@ -331,13 +364,21 @@ input {
 }
 
 .element-cell .number {
-    font-size: var(--font-size-info-section-title, 11px);
+    font-size: clamp(
+        var(--font-size-element-number-min, 6px),
+        1.5cqi,
+        var(--font-size-info-section-title, 11px)
+    );
     font-weight: var(--font-weight-medium, 500);
     opacity: 0.85;
 }
 
 .element-cell .symbol {
-    font-size: var(--font-size-element-symbol, 14px);
+    font-size: clamp(
+        var(--font-size-element-symbol-min, 8px),
+        2cqi,
+        var(--font-size-element-symbol, 14px)
+    );
     font-weight: var(--font-weight-bold, 700);
     line-height: 1.05;
 }
