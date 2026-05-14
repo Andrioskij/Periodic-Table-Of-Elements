@@ -20,6 +20,7 @@ from src.domain.molar_mass import (
 )
 from src.domain.stoichiometry import (
     balance_equation,
+    compute_limiting_reagent,
     compute_stoichiometric_masses,
     parse_equation,
 )
@@ -104,3 +105,15 @@ def test_stoichiometric_masses_water_from_hydrogen():
     )
     h2o = next(row for row in rows if row["compound"] == "H2O")
     assert abs(h2o["mass"] - 18.015) < 0.5
+
+
+def test_compute_limiting_reagent_water_synthesis():
+    elements = _load_elements()
+    result = compute_limiting_reagent(
+        ["H2", "O2"], ["H2O"], [2, 1, 2], elements,
+        {"H2": 4.0, "O2": 16.0},
+    )
+    assert result["limiting"] == "O2"
+    h2o = result["yields"][0]
+    assert h2o["compound"] == "H2O"
+    assert abs(h2o["theoretical_mass_g"] - 18.015) < 0.1

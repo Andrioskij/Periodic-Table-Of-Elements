@@ -4,6 +4,7 @@ from src.domain.stoichiometry import (
     EquationError,
     balance_equation,
     balance_parsed,
+    compute_limiting_reagent,
     compute_stoichiometric_masses,
     format_balanced_equation,
     parse_equation,
@@ -193,6 +194,54 @@ def test_compute_stoichiometric_masses_skips_parse_when_molar_masses_provided(
         molar_masses=[55.85, 32.0, 159.7],
     )
     assert calls["n"] == 0
+
+
+def test_compute_limiting_reagent_h2_o2_water():
+    """4 g H2 + 16 g O2 → limiting = O2, yield ≈ 18.0 g H2O, excess ≈ 2.0 g H2."""
+    result = compute_limiting_reagent(
+        ["H2", "O2"], ["H2O"], [2, 1, 2], ELEMENTS,
+        {"H2": 4.0, "O2": 16.0},
+    )
+    assert result["limiting"] == "O2"
+    assert len(result["yields"]) == 1
+    assert result["yields"][0]["compound"] == "H2O"
+    assert abs(result["yields"][0]["theoretical_mass_g"] - 18.015) < 0.05
+    assert len(result["excess"]) == 1
+    assert result["excess"][0]["compound"] == "H2"
+    assert abs(result["excess"][0]["excess_g"] - 2.0) < 0.05
+
+
+def test_compute_limiting_reagent_propane_combustion():
+    """1.0 g C3H8 + 4.0 g O2 → ratio favors propane; limit on O2."""
+    result = compute_limiting_reagent(
+        ["C3H8", "O2"], ["CO2", "H2O"], [1, 5, 3, 4], ELEMENTS,
+        {"C3H8": 1.0, "O2": 4.0},
+    )
+    # Per coefficient: C3H8 extent = (1.0/44.097)/1 ≈ 0.02268;
+    #                  O2   extent = (4.0/31.998)/5 ≈ 0.02500.
+    # So C3H8 is limiting.
+    assert result["limiting"] == "C3H8"
+    yields_by_compound = {row["compound"]: row for row in result["yields"]}
+    assert yields_by_compound["CO2"]["theoretical_moles"] > 0
+    assert yields_by_compound["H2O"]["theoretical_moles"] > 0
+
+
+def test_compute_limiting_reagent_rejects_unknown_reactant_mass():
+    with unittest.TestCase().assertRaises(EquationError) as ctx:
+        compute_limiting_reagent(
+            ["H2", "O2"], ["H2O"], [2, 1, 2], ELEMENTS,
+            {"H2": 4.0, "O2": 16.0, "Cu": 5.0},
+        )
+    assert ctx.exception.code == "compound_not_found"
+
+
+def test_compute_limiting_reagent_requires_positive_masses():
+    with unittest.TestCase().assertRaises(EquationError) as ctx:
+        compute_limiting_reagent(
+            ["H2", "O2"], ["H2O"], [2, 1, 2], ELEMENTS,
+            {"H2": 0.0, "O2": 16.0},
+        )
+    assert ctx.exception.code == "invalid_mass"
 
 
 if __name__ == "__main__":

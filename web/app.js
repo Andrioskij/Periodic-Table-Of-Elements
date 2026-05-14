@@ -611,6 +611,26 @@ except stoichiometry.EquationError as exc:
     return JSON.parse(result);
 }
 
+async function computeLimitingReagent(reactants, products, coefficients, reactantMassesG) {
+    const pyodide = await ensurePyodide();
+    pyodide.globals.set("__r", JSON.stringify(reactants));
+    pyodide.globals.set("__p", JSON.stringify(products));
+    pyodide.globals.set("__c", JSON.stringify(coefficients));
+    pyodide.globals.set("__masses", JSON.stringify(reactantMassesG));
+    const result = pyodide.runPython(`
+import json
+try:
+    payload = stoichiometry.compute_limiting_reagent(
+        json.loads(__r), json.loads(__p), json.loads(__c),
+        ELEMENTS, json.loads(__masses),
+    )
+    json.dumps({"ok": True, "payload": payload})
+except stoichiometry.EquationError as exc:
+    json.dumps({"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)})
+`);
+    return JSON.parse(result);
+}
+
 async function computeMolarMass(formula) {
     const pyodide = await ensurePyodide();
     pyodide.globals.set("__formula", formula);
@@ -857,6 +877,129 @@ function setupStoichForm() {
     const calcButton = document.getElementById("stoich-calc");
     const massTable = document.getElementById("stoich-mass-table");
     const massTbody = document.getElementById("stoich-mass-tbody");
+    const multiToggle = document.getElementById("stoich-multi-toggle");
+    const multiSection = document.getElementById("stoich-multi-section");
+    const multiTbody = document.getElementById("stoich-multi-tbody");
+    const multiCalc = document.getElementById("stoich-multi-calc");
+    const limitingNode = document.getElementById("stoich-multi-limiting");
+    const yieldsTable = document.getElementById("stoich-yields-table");
+    const yieldsTbody = document.getElementById("stoich-yields-tbody");
+    const excessTable = document.getElementById("stoich-excess-table");
+    const excessTbody = document.getElementById("stoich-excess-tbody");
+
+    const resetMulti = () => {
+        multiSection.hidden = true;
+        multiToggle.hidden = true;
+        multiToggle.setAttribute("aria-expanded", "false");
+        multiToggle.textContent = tr(state.activeLanguage, "stoichiometry_multi_toggle");
+        multiTbody.replaceChildren();
+        limitingNode.hidden = true;
+        yieldsTable.hidden = true;
+        excessTable.hidden = true;
+    };
+
+    const renderMultiInputs = (reactants) => {
+        multiTbody.replaceChildren();
+        for (const reactant of reactants) {
+            const row = document.createElement("tr");
+            const tdName = document.createElement("td");
+            tdName.textContent = reactant;
+            const tdInput = document.createElement("td");
+            const input = document.createElement("input");
+            input.type = "number";
+            input.min = "0";
+            input.step = "any";
+            input.className = "molar-input";
+            input.dataset.reactant = reactant;
+            tdInput.appendChild(input);
+            row.append(tdName, tdInput);
+            multiTbody.appendChild(row);
+        }
+    };
+
+    multiToggle.addEventListener("click", () => {
+        const opening = multiSection.hidden;
+        multiSection.hidden = !opening;
+        multiToggle.setAttribute("aria-expanded", opening ? "true" : "false");
+    });
+
+    multiCalc.addEventListener("click", async () => {
+        if (!state.stoich) return;
+        const reactants = state.stoich.reactants;
+        const massesByReactant = {};
+        for (const reactant of reactants) {
+            const inputEl = multiTbody.querySelector(
+                `input[data-reactant="${CSS.escape(reactant)}"]`,
+            );
+            const value = inputEl ? Number(inputEl.value) : NaN;
+            if (!Number.isFinite(value) || value <= 0) {
+                status.classList.add("is-error");
+                status.textContent = tr(state.activeLanguage, "equation_error_invalid_mass");
+                return;
+            }
+            massesByReactant[reactant] = value;
+        }
+
+        status.classList.remove("is-error");
+        status.textContent = "…";
+        try {
+            const payload = await computeLimitingReagent(
+                state.stoich.reactants,
+                state.stoich.products,
+                state.stoich.coefficients,
+                massesByReactant,
+            );
+            if (!payload.ok) {
+                status.classList.add("is-error");
+                status.textContent = formatErrorMessage(payload, "equation_error");
+                return;
+            }
+            status.textContent = "";
+            const limitingLabel = tr(state.activeLanguage, "stoichiometry_limiting_label");
+            limitingNode.textContent = `${limitingLabel}: ${payload.payload.limiting}`;
+            limitingNode.hidden = false;
+            yieldsTbody.replaceChildren();
+            for (const row of payload.payload.yields) {
+                const tr = document.createElement("tr");
+                const cells = [
+                    row.compound,
+                    row.theoretical_moles.toFixed(4),
+                    row.theoretical_mass_g.toFixed(4),
+                ];
+                for (const value of cells) {
+                    const td = document.createElement("td");
+                    td.textContent = value;
+                    tr.appendChild(td);
+                }
+                yieldsTbody.appendChild(tr);
+            }
+            yieldsTable.hidden = false;
+
+            excessTbody.replaceChildren();
+            if (payload.payload.excess.length === 0) {
+                excessTable.hidden = true;
+            } else {
+                for (const row of payload.payload.excess) {
+                    const tr = document.createElement("tr");
+                    const cells = [
+                        row.compound,
+                        row.excess_moles.toFixed(4),
+                        row.excess_g.toFixed(4),
+                    ];
+                    for (const value of cells) {
+                        const td = document.createElement("td");
+                        td.textContent = value;
+                        tr.appendChild(td);
+                    }
+                    excessTbody.appendChild(tr);
+                }
+                excessTable.hidden = false;
+            }
+        } catch (err) {
+            status.classList.add("is-error");
+            status.textContent = err.message;
+        }
+    });
 
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -869,6 +1012,7 @@ function setupStoichForm() {
         balanced.textContent = "";
         massSection.hidden = true;
         massTable.hidden = true;
+        resetMulti();
 
         try {
             const payload = await balanceEquation(equation);
@@ -896,6 +1040,8 @@ function setupStoichForm() {
                 coefficients: payload.coefficients,
             };
             massSection.hidden = false;
+            renderMultiInputs(payload.reactants);
+            multiToggle.hidden = false;
         } catch (err) {
             status.classList.add("is-error");
             status.textContent = err.message;

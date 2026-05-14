@@ -308,7 +308,14 @@
     "ph_strong_polyprotic": "Polyprotic factor",
     "ph_calculate": "Calculate",
     "ph_error_invalid_input": "Please enter a positive number.",
-    "ph_error_multiple_inputs": "Fill exactly one field; the others are computed."
+    "ph_error_multiple_inputs": "Fill exactly one field; the others are computed.",
+    "stoichiometry_multi_toggle": "Show multi-reactant mode",
+    "stoichiometry_multi_section": "Enter mass for every reactant",
+    "stoichiometry_compute_limiting": "Compute limiting reagent",
+    "stoichiometry_limiting_label": "Limiting reagent",
+    "stoichiometry_yield_section": "Theoretical yields",
+    "stoichiometry_excess_section": "Excess reactants",
+    "equation_error_invalid_mass": "Enter a positive mass for every reactant."
   },
   "localized_category_texts": {
     "actinide": "Actinide",

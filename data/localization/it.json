@@ -308,7 +308,14 @@
     "ph_strong_polyprotic": "Fattore poliprotico",
     "ph_calculate": "Calcola",
     "ph_error_invalid_input": "Inserisci un numero positivo.",
-    "ph_error_multiple_inputs": "Riempi un solo campo; gli altri vengono calcolati."
+    "ph_error_multiple_inputs": "Riempi un solo campo; gli altri vengono calcolati.",
+    "stoichiometry_multi_toggle": "Mostra modalità multi-reagente",
+    "stoichiometry_multi_section": "Inserisci la massa per ogni reagente",
+    "stoichiometry_compute_limiting": "Calcola reagente limitante",
+    "stoichiometry_limiting_label": "Reagente limitante",
+    "stoichiometry_yield_section": "Resa teorica",
+    "stoichiometry_excess_section": "Reagenti in eccesso",
+    "equation_error_invalid_mass": "Inserisci una massa positiva per ogni reagente."
   },
   "localized_category_texts": {
     "actinide": "Attinide",

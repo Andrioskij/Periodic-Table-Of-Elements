@@ -225,6 +225,68 @@
                                 </thead>
                                 <tbody id="stoich-mass-tbody"></tbody>
                             </table>
+
+                            <button id="stoich-multi-toggle" class="control-button"
+                                    type="button" hidden
+                                    aria-expanded="false"
+                                    aria-controls="stoich-multi-section"
+                                    data-i18n="stoichiometry_multi_toggle">
+                                Show multi-reactant mode
+                            </button>
+
+                            <div id="stoich-multi-section" hidden>
+                                <h3 class="stoich-section-title"
+                                    data-i18n="stoichiometry_multi_section">
+                                    Enter mass for every reactant
+                                </h3>
+                                <table class="molar-table">
+                                    <thead>
+                                        <tr>
+                                            <th data-i18n="stoichiometry_compound">Compound</th>
+                                            <th data-i18n="stoichiometry_mass_grams">Mass (g)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stoich-multi-tbody"></tbody>
+                                </table>
+                                <button id="stoich-multi-calc" class="control-button"
+                                        type="button"
+                                        data-i18n="stoichiometry_compute_limiting">
+                                    Compute limiting reagent
+                                </button>
+
+                                <p id="stoich-multi-limiting" class="stoich-balanced"
+                                   hidden></p>
+
+                                <h3 class="stoich-section-title"
+                                    data-i18n="stoichiometry_yield_section">
+                                    Theoretical yields
+                                </h3>
+                                <table id="stoich-yields-table" class="molar-table" hidden>
+                                    <thead>
+                                        <tr>
+                                            <th data-i18n="stoichiometry_compound">Compound</th>
+                                            <th data-i18n="stoichiometry_moles">Moles</th>
+                                            <th data-i18n="stoichiometry_mass_grams">Mass (g)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stoich-yields-tbody"></tbody>
+                                </table>
+
+                                <h3 class="stoich-section-title"
+                                    data-i18n="stoichiometry_excess_section">
+                                    Excess reactants
+                                </h3>
+                                <table id="stoich-excess-table" class="molar-table" hidden>
+                                    <thead>
+                                        <tr>
+                                            <th data-i18n="stoichiometry_compound">Compound</th>
+                                            <th data-i18n="stoichiometry_moles">Moles</th>
+                                            <th data-i18n="stoichiometry_mass_grams">Mass (g)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stoich-excess-tbody"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </section>
 

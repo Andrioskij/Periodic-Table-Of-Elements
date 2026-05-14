@@ -308,7 +308,14 @@
     "ph_strong_polyprotic": "Polyprotonenfaktor",
     "ph_calculate": "Berechnen",
     "ph_error_invalid_input": "Bitte gib eine positive Zahl ein.",
-    "ph_error_multiple_inputs": "Genau ein Feld ausfüllen; die anderen werden berechnet."
+    "ph_error_multiple_inputs": "Genau ein Feld ausfüllen; die anderen werden berechnet.",
+    "stoichiometry_multi_toggle": "Mehr-Reaktanten-Modus anzeigen",
+    "stoichiometry_multi_section": "Gib für jeden Reaktanten eine Masse ein",
+    "stoichiometry_compute_limiting": "Begrenzendes Reagenz berechnen",
+    "stoichiometry_limiting_label": "Begrenzendes Reagenz",
+    "stoichiometry_yield_section": "Theoretische Ausbeuten",
+    "stoichiometry_excess_section": "Überschüssige Reaktanten",
+    "equation_error_invalid_mass": "Gib für jeden Reaktanten eine positive Masse ein."
   },
   "localized_category_texts": {
     "actinide": "Actinoid",
