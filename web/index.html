@@ -154,6 +154,10 @@
                             aria-selected="false" aria-controls="panel-gas-laws">
                         <span data-i18n="gas_laws_title">Gas laws</span>
                     </button>
+                    <button id="tab-ph" class="tab" role="tab"
+                            aria-selected="false" aria-controls="panel-ph">
+                        <span data-i18n="ph_title">pH calculator</span>
+                    </button>
                 </nav>
                 <div class="tools-modal-body">
                     <section id="panel-molar" class="panel" role="tabpanel"
@@ -519,6 +523,84 @@
                         <p id="gas-status" class="molar-status" aria-live="polite"></p>
                         <div id="gas-result" class="molar-result" hidden>
                             <dl id="gas-result-list" class="conc-result-list"></dl>
+                        </div>
+                    </section>
+
+                    <section id="panel-ph" class="panel" role="tabpanel"
+                             aria-labelledby="tab-ph" hidden>
+                        <p class="panel-prompt" data-i18n="ph_prompt">
+                            Interconvert pH / pOH / [H⁺] / [OH⁻], or get pH from a strong-acid concentration.
+                        </p>
+
+                        <label class="conc-mode-row">
+                            <span class="conc-mode-label" data-i18n="concentration_mode_label">Mode</span>
+                            <select id="ph-mode" class="control-input">
+                                <option value="interconvert" data-i18n="ph_mode_interconvert">
+                                    pH ↔ pOH ↔ [H⁺] ↔ [OH⁻]
+                                </option>
+                                <option value="strong" data-i18n="ph_mode_strong">
+                                    Strong acid / base
+                                </option>
+                            </select>
+                        </label>
+
+                        <form id="ph-interconvert-form" class="conc-form" autocomplete="off">
+                            <p class="gas-hint" data-i18n="ph_error_multiple_inputs">
+                                Fill exactly one field; the others are computed.
+                            </p>
+                            <div class="conc-grid">
+                                <label>
+                                    <span data-i18n="ph_value_ph">pH</span>
+                                    <input id="ph-input-ph" class="molar-input" type="number"
+                                           step="any" />
+                                </label>
+                                <label>
+                                    <span data-i18n="ph_value_poh">pOH</span>
+                                    <input id="ph-input-poh" class="molar-input" type="number"
+                                           step="any" />
+                                </label>
+                                <label>
+                                    <span data-i18n="ph_value_h_plus">[H⁺] (mol/L)</span>
+                                    <input id="ph-input-h" class="molar-input" type="number"
+                                           min="0" step="any" />
+                                </label>
+                                <label>
+                                    <span data-i18n="ph_value_oh_minus">[OH⁻] (mol/L)</span>
+                                    <input id="ph-input-oh" class="molar-input" type="number"
+                                           min="0" step="any" />
+                                </label>
+                            </div>
+                            <button class="control-button" type="submit"
+                                    data-i18n="ph_calculate">Calculate</button>
+                        </form>
+
+                        <form id="ph-strong-form" class="conc-form" autocomplete="off" hidden>
+                            <div class="conc-grid">
+                                <label>
+                                    <span data-i18n="ph_strong_kind">Type</span>
+                                    <select id="ph-strong-kind" class="control-input">
+                                        <option value="acid" data-i18n="ph_strong_acid">Strong acid</option>
+                                        <option value="base" data-i18n="ph_strong_base">Strong base</option>
+                                    </select>
+                                </label>
+                                <label>
+                                    <span data-i18n="ph_strong_concentration">Concentration (mol/L)</span>
+                                    <input id="ph-strong-conc" class="molar-input" type="number"
+                                           min="0" step="any" />
+                                </label>
+                                <label>
+                                    <span data-i18n="ph_strong_polyprotic">Polyprotic factor</span>
+                                    <input id="ph-strong-poly" class="molar-input" type="number"
+                                           min="1" step="1" value="1" />
+                                </label>
+                            </div>
+                            <button class="control-button" type="submit"
+                                    data-i18n="ph_calculate">Calculate</button>
+                        </form>
+
+                        <p id="ph-status" class="molar-status" aria-live="polite"></p>
+                        <div id="ph-result" class="molar-result" hidden>
+                            <dl id="ph-result-list" class="conc-result-list"></dl>
                         </div>
                     </section>
                 </div>
