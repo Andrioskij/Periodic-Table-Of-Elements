@@ -258,7 +258,15 @@ function renderInfoCard() {
 }
 
 const SIDE_TAB_IDS = ["info", "electron", "lewis"];
-const TOOL_TAB_IDS = ["molar", "stoichiometry", "concentration", "gas-laws", "ph", "empirical"];
+const TOOL_TAB_IDS = [
+    "molar",
+    "stoichiometry",
+    "concentration",
+    "gas-laws",
+    "ph",
+    "empirical",
+    "builder",
+];
 
 function _setActiveTabIn(ids, activeId) {
     for (const id of ids) {
@@ -527,6 +535,7 @@ async function ensurePyodide() {
             "stoichiometry.py",
             "lewis_diagram.py",
             "lewis_library.py",
+            "compound_builder.py",
             "src/__init__.py",
             "src/config/__init__.py",
             "src/config/static_data.py",
@@ -534,6 +543,7 @@ async function ensurePyodide() {
             "src/domain/molar_mass.py",
             "src/domain/lewis_diagram.py",
             "src/domain/lewis_library.py",
+            "src/domain/compound_builder.py",
         ];
         const sources = await Promise.all(
             PYTHON_FILES.map(async (relPath) => {
@@ -561,6 +571,7 @@ import electron_configuration
 import stoichiometry
 import lewis_diagram
 import lewis_library
+import compound_builder
 ELEMENTS = json.loads(__elements_json)
 `);
         state.pyodide = pyodide;
@@ -617,6 +628,25 @@ try:
     json.dumps({"ok": True, "rows": rows})
 except stoichiometry.EquationError as exc:
     json.dumps({"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)})
+`);
+    return JSON.parse(result);
+}
+
+async function buildBinaryFormula(aSymbol, aCharge, bSymbol, bCharge) {
+    const pyodide = await ensurePyodide();
+    pyodide.globals.set("__a_symbol", aSymbol);
+    pyodide.globals.set("__a_charge", aCharge);
+    pyodide.globals.set("__b_symbol", bSymbol);
+    pyodide.globals.set("__b_charge", bCharge);
+    const result = pyodide.runPython(`
+import json
+try:
+    formula = compound_builder.build_binary_formula(
+        __a_symbol, int(__a_charge), __b_symbol, int(__b_charge),
+    )
+    json.dumps({"ok": True, "formula": formula})
+except ValueError as exc:
+    json.dumps({"ok": False, "message": str(exc)})
 `);
     return JSON.parse(result);
 }
@@ -2092,6 +2122,128 @@ function setupLewisPanel() {
     });
 }
 
+function parseOxidationStatesJS(raw) {
+    if (raw === null || raw === undefined || raw === "") return [];
+    if (Array.isArray(raw)) {
+        return raw
+            .map((v) => Number(v))
+            .filter((v) => Number.isFinite(v) && v !== 0);
+    }
+    const text = String(raw);
+    const matches = text.match(/[+-]?\d+/g) || [];
+    const values = [];
+    for (const match of matches) {
+        const value = parseInt(match, 10);
+        if (Number.isFinite(value) && value !== 0 && !values.includes(value)) {
+            values.push(value);
+        }
+    }
+    const positives = values.filter((v) => v > 0).sort((a, b) => a - b);
+    const negatives = values
+        .filter((v) => v < 0)
+        .sort((a, b) => Math.abs(a) - Math.abs(b));
+    return [...positives, ...negatives];
+}
+
+function setupCompoundBuilderForm() {
+    const aSymbolInput = document.getElementById("builder-a-symbol");
+    const bSymbolInput = document.getElementById("builder-b-symbol");
+    const aOxSelect = document.getElementById("builder-a-oxidation");
+    const bOxSelect = document.getElementById("builder-b-oxidation");
+    const form = document.getElementById("builder-form");
+    const status = document.getElementById("builder-status");
+    const resultWrap = document.getElementById("builder-result");
+    const resultValue = document.getElementById("builder-result-value");
+
+    const populateOxSelect = (selectEl, states) => {
+        selectEl.replaceChildren();
+        if (states.length === 0) {
+            const opt = document.createElement("option");
+            opt.value = "";
+            opt.textContent = tr(state.activeLanguage, "traditional_na");
+            opt.disabled = true;
+            selectEl.appendChild(opt);
+            return;
+        }
+        for (const value of states) {
+            const opt = document.createElement("option");
+            opt.value = String(value);
+            opt.textContent = value > 0 ? `+${value}` : String(value);
+            selectEl.appendChild(opt);
+        }
+    };
+
+    const refreshOxStates = (symbolInput, selectEl) => {
+        const symbol = symbolInput.value.trim();
+        if (!symbol) {
+            populateOxSelect(selectEl, []);
+            return;
+        }
+        const element = state.elementsBySymbol.get(symbol)
+            ?? [...state.elementsBySymbol.values()].find(
+                (el) => el.symbol.toLowerCase() === symbol.toLowerCase(),
+            );
+        if (!element) {
+            populateOxSelect(selectEl, []);
+            return;
+        }
+        // Normalise the symbol casing to the canonical one so the lookup
+        // for the Python side stays consistent (`Na`, not `na`).
+        symbolInput.value = element.symbol;
+        const states = parseOxidationStatesJS(element.oxidation_states);
+        populateOxSelect(selectEl, states);
+    };
+
+    aSymbolInput.addEventListener("change", () => refreshOxStates(aSymbolInput, aOxSelect));
+    aSymbolInput.addEventListener("blur", () => refreshOxStates(aSymbolInput, aOxSelect));
+    bSymbolInput.addEventListener("change", () => refreshOxStates(bSymbolInput, bOxSelect));
+    bSymbolInput.addEventListener("blur", () => refreshOxStates(bSymbolInput, bOxSelect));
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        status.classList.remove("is-error");
+        status.textContent = "";
+        resultWrap.hidden = true;
+
+        const aSymbol = aSymbolInput.value.trim();
+        const bSymbol = bSymbolInput.value.trim();
+        const aRaw = aOxSelect.value;
+        const bRaw = bOxSelect.value;
+        if (!aSymbol || !bSymbol || !aRaw || !bRaw) {
+            status.classList.add("is-error");
+            status.textContent = tr(state.activeLanguage, "must_select_ab");
+            return;
+        }
+        const aCharge = Number(aRaw);
+        const bCharge = Number(bRaw);
+        if (Math.sign(aCharge) === Math.sign(bCharge)) {
+            status.classList.add("is-error");
+            status.textContent = tr(state.activeLanguage, "opposite_sign");
+            return;
+        }
+        // Order so cation (positive) comes first; this matches the convention
+        // ``build_binary_formula`` expects and is what students learn.
+        const cation = aCharge > 0 ? { sym: aSymbol, ch: aCharge } : { sym: bSymbol, ch: bCharge };
+        const anion = aCharge < 0 ? { sym: aSymbol, ch: aCharge } : { sym: bSymbol, ch: bCharge };
+
+        status.textContent = "…";
+        try {
+            const payload = await buildBinaryFormula(cation.sym, cation.ch, anion.sym, anion.ch);
+            if (!payload.ok) {
+                status.classList.add("is-error");
+                status.textContent = payload.message;
+                return;
+            }
+            status.textContent = "";
+            resultValue.textContent = payload.formula;
+            resultWrap.hidden = false;
+        } catch (err) {
+            status.classList.add("is-error");
+            status.textContent = err.message;
+        }
+    });
+}
+
 function setupEmpiricalForm() {
     const form = document.getElementById("emp-form");
     const rowsWrap = document.getElementById("emp-rows");
@@ -2223,6 +2375,7 @@ async function bootstrap() {
     setupGasLawsForm();
     setupPhForm();
     setupEmpiricalForm();
+    setupCompoundBuilderForm();
     setupLewisPanel();
     setupSearchForm();
     setupToolsModal();

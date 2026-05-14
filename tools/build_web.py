@@ -35,6 +35,7 @@ DOMAIN_MODULES = (
     "stoichiometry.py",
     "lewis_diagram.py",
     "lewis_library.py",
+    "compound_builder.py",
 )
 CONFIG_MODULES = ("static_data.py",)
 LOCALIZATION_FILES = (

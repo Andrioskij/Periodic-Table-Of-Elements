@@ -194,6 +194,10 @@
                             aria-selected="false" aria-controls="panel-empirical">
                         <span data-i18n="empirical_title">Empirical formula</span>
                     </button>
+                    <button id="tab-builder" class="tab" role="tab"
+                            aria-selected="false" aria-controls="panel-builder">
+                        <span data-i18n="builder_title">Simple compounds</span>
+                    </button>
                 </nav>
                 <div class="tools-modal-body">
                     <section id="panel-molar" class="panel" role="tabpanel"
@@ -699,6 +703,44 @@
                         <p id="ph-status" class="molar-status" aria-live="polite"></p>
                         <div id="ph-result" class="molar-result" hidden>
                             <dl id="ph-result-list" class="conc-result-list"></dl>
+                        </div>
+                    </section>
+
+                    <section id="panel-builder" class="panel" role="tabpanel"
+                             aria-labelledby="tab-builder" hidden>
+                        <p class="panel-prompt" data-i18n="compound_prompt">
+                            Choose one element at a time, send it to A or B, then choose the oxidation states and calculate one simple binary formula.
+                        </p>
+                        <p id="builder-scope" class="gas-hint" data-i18n="compound_scope_note">
+                            Scope: simple binary compounds only.
+                        </p>
+                        <form id="builder-form" class="conc-form" autocomplete="off">
+                            <div class="conc-grid">
+                                <label>
+                                    <span data-i18n="first_element">First element (e.g. H)</span>
+                                    <input id="builder-a-symbol" class="molar-input" type="text"
+                                           spellcheck="false" />
+                                </label>
+                                <label>
+                                    <span data-i18n="oxidation_first">Select oxidation number:</span>
+                                    <select id="builder-a-oxidation" class="control-input"></select>
+                                </label>
+                                <label>
+                                    <span data-i18n="second_element">Second element (e.g. O)</span>
+                                    <input id="builder-b-symbol" class="molar-input" type="text"
+                                           spellcheck="false" />
+                                </label>
+                                <label>
+                                    <span data-i18n="oxidation_second">Select oxidation number:</span>
+                                    <select id="builder-b-oxidation" class="control-input"></select>
+                                </label>
+                            </div>
+                            <button class="control-button" type="submit"
+                                    data-i18n="calculate_formula">Calculate formula</button>
+                        </form>
+                        <p id="builder-status" class="molar-status" aria-live="polite"></p>
+                        <div id="builder-result" class="molar-result" hidden>
+                            <p class="molar-total"><span id="builder-result-value"></span></p>
                         </div>
                     </section>
 
