@@ -150,6 +150,10 @@
                             aria-selected="false" aria-controls="panel-concentration">
                         <span data-i18n="concentration_title">Concentration calculator</span>
                     </button>
+                    <button id="tab-gas-laws" class="tab" role="tab"
+                            aria-selected="false" aria-controls="panel-gas-laws">
+                        <span data-i18n="gas_laws_title">Gas laws</span>
+                    </button>
                 </nav>
                 <div class="tools-modal-body">
                     <section id="panel-molar" class="panel" role="tabpanel"
@@ -329,6 +333,192 @@
                         <p id="conc-status" class="molar-status" aria-live="polite"></p>
                         <div id="conc-result" class="molar-result" hidden>
                             <dl id="conc-result-list" class="conc-result-list"></dl>
+                        </div>
+                    </section>
+
+                    <section id="panel-gas-laws" class="panel" role="tabpanel"
+                             aria-labelledby="tab-gas-laws" hidden>
+                        <p class="panel-prompt" data-i18n="gas_laws_prompt">
+                            Solve PV=nRT, the combined gas law, or partial pressures.
+                        </p>
+
+                        <label class="conc-mode-row">
+                            <span class="conc-mode-label" data-i18n="concentration_mode_label">Mode</span>
+                            <select id="gas-mode" class="control-input">
+                                <option value="ideal" data-i18n="gas_laws_mode_ideal">
+                                    Ideal gas (PV = nRT)
+                                </option>
+                                <option value="combined" data-i18n="gas_laws_mode_combined">
+                                    Combined gas law
+                                </option>
+                                <option value="dalton" data-i18n="gas_laws_mode_dalton">
+                                    Dalton (partial pressures)
+                                </option>
+                            </select>
+                        </label>
+
+                        <p class="gas-hint" data-i18n="gas_laws_solve_for">
+                            Leave blank to solve
+                        </p>
+
+                        <form id="gas-ideal-form" class="conc-form" autocomplete="off">
+                            <div class="conc-grid">
+                                <label class="conc-volume-cell">
+                                    <span data-i18n="gas_laws_pressure">Pressure</span>
+                                    <span class="conc-volume-row">
+                                        <input id="gas-ideal-p" class="molar-input" type="number"
+                                               min="0" step="any" />
+                                        <select id="gas-ideal-p-unit" class="control-input">
+                                            <option value="atm">atm</option>
+                                            <option value="kPa">kPa</option>
+                                            <option value="mmHg">mmHg</option>
+                                            <option value="Pa">Pa</option>
+                                        </select>
+                                    </span>
+                                </label>
+                                <label class="conc-volume-cell">
+                                    <span data-i18n="gas_laws_volume">Volume</span>
+                                    <span class="conc-volume-row">
+                                        <input id="gas-ideal-v" class="molar-input" type="number"
+                                               min="0" step="any" />
+                                        <select id="gas-ideal-v-unit" class="control-input">
+                                            <option value="L">L</option>
+                                            <option value="mL">mL</option>
+                                        </select>
+                                    </span>
+                                </label>
+                                <label>
+                                    <span data-i18n="gas_laws_moles">Moles</span>
+                                    <input id="gas-ideal-n" class="molar-input" type="number"
+                                           min="0" step="any" />
+                                </label>
+                                <label class="conc-volume-cell">
+                                    <span data-i18n="gas_laws_temperature">Temperature</span>
+                                    <span class="conc-volume-row">
+                                        <input id="gas-ideal-t" class="molar-input" type="number"
+                                               step="any" />
+                                        <select id="gas-ideal-t-unit" class="control-input">
+                                            <option value="K">K</option>
+                                            <option value="C">°C</option>
+                                        </select>
+                                    </span>
+                                </label>
+                            </div>
+                            <button class="control-button" type="submit"
+                                    data-i18n="gas_laws_calculate">Calculate</button>
+                        </form>
+
+                        <form id="gas-combined-form" class="conc-form" autocomplete="off" hidden>
+                            <h3 class="stoich-section-title"
+                                data-i18n="gas_laws_initial_state">Initial state</h3>
+                            <div class="conc-grid">
+                                <label class="conc-volume-cell">
+                                    <span data-i18n="gas_laws_pressure">Pressure</span>
+                                    <span class="conc-volume-row">
+                                        <input id="gas-comb-p1" class="molar-input" type="number"
+                                               min="0" step="any" />
+                                        <select id="gas-comb-p1-unit" class="control-input">
+                                            <option value="atm">atm</option>
+                                            <option value="kPa">kPa</option>
+                                            <option value="mmHg">mmHg</option>
+                                            <option value="Pa">Pa</option>
+                                        </select>
+                                    </span>
+                                </label>
+                                <label class="conc-volume-cell">
+                                    <span data-i18n="gas_laws_volume">Volume</span>
+                                    <span class="conc-volume-row">
+                                        <input id="gas-comb-v1" class="molar-input" type="number"
+                                               min="0" step="any" />
+                                        <select id="gas-comb-v1-unit" class="control-input">
+                                            <option value="L">L</option>
+                                            <option value="mL">mL</option>
+                                        </select>
+                                    </span>
+                                </label>
+                                <label class="conc-volume-cell">
+                                    <span data-i18n="gas_laws_temperature">Temperature</span>
+                                    <span class="conc-volume-row">
+                                        <input id="gas-comb-t1" class="molar-input" type="number"
+                                               step="any" />
+                                        <select id="gas-comb-t1-unit" class="control-input">
+                                            <option value="K">K</option>
+                                            <option value="C">°C</option>
+                                        </select>
+                                    </span>
+                                </label>
+                            </div>
+                            <h3 class="stoich-section-title"
+                                data-i18n="gas_laws_final_state">Final state</h3>
+                            <div class="conc-grid">
+                                <label class="conc-volume-cell">
+                                    <span data-i18n="gas_laws_pressure">Pressure</span>
+                                    <span class="conc-volume-row">
+                                        <input id="gas-comb-p2" class="molar-input" type="number"
+                                               min="0" step="any" />
+                                        <select id="gas-comb-p2-unit" class="control-input">
+                                            <option value="atm">atm</option>
+                                            <option value="kPa">kPa</option>
+                                            <option value="mmHg">mmHg</option>
+                                            <option value="Pa">Pa</option>
+                                        </select>
+                                    </span>
+                                </label>
+                                <label class="conc-volume-cell">
+                                    <span data-i18n="gas_laws_volume">Volume</span>
+                                    <span class="conc-volume-row">
+                                        <input id="gas-comb-v2" class="molar-input" type="number"
+                                               min="0" step="any" />
+                                        <select id="gas-comb-v2-unit" class="control-input">
+                                            <option value="L">L</option>
+                                            <option value="mL">mL</option>
+                                        </select>
+                                    </span>
+                                </label>
+                                <label class="conc-volume-cell">
+                                    <span data-i18n="gas_laws_temperature">Temperature</span>
+                                    <span class="conc-volume-row">
+                                        <input id="gas-comb-t2" class="molar-input" type="number"
+                                               step="any" />
+                                        <select id="gas-comb-t2-unit" class="control-input">
+                                            <option value="K">K</option>
+                                            <option value="C">°C</option>
+                                        </select>
+                                    </span>
+                                </label>
+                            </div>
+                            <button class="control-button" type="submit"
+                                    data-i18n="gas_laws_calculate">Calculate</button>
+                        </form>
+
+                        <form id="gas-dalton-form" class="conc-form" autocomplete="off" hidden>
+                            <div class="conc-grid">
+                                <label class="conc-volume-cell">
+                                    <span data-i18n="gas_laws_dalton_total_pressure">Total pressure</span>
+                                    <span class="conc-volume-row">
+                                        <input id="gas-dalton-total" class="molar-input" type="number"
+                                               min="0" step="any" />
+                                        <select id="gas-dalton-total-unit" class="control-input">
+                                            <option value="atm">atm</option>
+                                            <option value="kPa">kPa</option>
+                                            <option value="mmHg">mmHg</option>
+                                            <option value="Pa">Pa</option>
+                                        </select>
+                                    </span>
+                                </label>
+                            </div>
+                            <div id="gas-dalton-rows" class="gas-dalton-rows"></div>
+                            <div class="conc-mode-row">
+                                <button id="gas-dalton-add" class="control-button" type="button"
+                                        data-i18n="gas_laws_dalton_add_component">Add component</button>
+                                <button class="control-button" type="submit"
+                                        data-i18n="gas_laws_calculate">Calculate</button>
+                            </div>
+                        </form>
+
+                        <p id="gas-status" class="molar-status" aria-live="polite"></p>
+                        <div id="gas-result" class="molar-result" hidden>
+                            <dl id="gas-result-list" class="conc-result-list"></dl>
                         </div>
                     </section>
                 </div>

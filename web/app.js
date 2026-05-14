@@ -256,7 +256,7 @@ function renderInfoCard() {
 }
 
 const SIDE_TAB_IDS = ["info", "electron"];
-const TOOL_TAB_IDS = ["molar", "stoichiometry", "concentration"];
+const TOOL_TAB_IDS = ["molar", "stoichiometry", "concentration", "gas-laws"];
 
 function _setActiveTabIn(ids, activeId) {
     for (const id of ids) {
@@ -1157,6 +1157,298 @@ function setupConcentrationForm() {
     });
 }
 
+// Gas-law unit conversion factors → SI (Pa, m³, K, mol).
+// Internally we use the value of R that pairs with the units we keep:
+//   R = 0.0820573 L·atm·mol⁻¹·K⁻¹ when we keep pressure in atm and volume in L
+//   R = 8.314462618 J·mol⁻¹·K⁻¹  when we work in Pa + m³.
+// The conversions below normalise to atm + L + K + mol so the math reads
+// the same regardless of which unit the user typed.
+const PRESSURE_TO_ATM = {
+    atm: 1.0,
+    kPa: 1.0 / 101.325,
+    mmHg: 1.0 / 760.0,
+    Pa: 1.0 / 101325.0,
+};
+const PRESSURE_FROM_ATM = {
+    atm: 1.0,
+    kPa: 101.325,
+    mmHg: 760.0,
+    Pa: 101325.0,
+};
+const VOLUME_TO_L = { L: 1.0, mL: 0.001 };
+const VOLUME_FROM_L = { L: 1.0, mL: 1000.0 };
+const GAS_CONSTANT_L_ATM = 0.0820573660809596;
+
+function temperatureToKelvin(value, unit) {
+    return unit === "C" ? value + 273.15 : value;
+}
+
+function temperatureFromKelvin(kelvin, unit) {
+    return unit === "C" ? kelvin - 273.15 : kelvin;
+}
+
+function readGasField(inputId, unitId, options = {}) {
+    const inputEl = document.getElementById(inputId);
+    const raw = inputEl.value.trim();
+    const unit = unitId ? document.getElementById(unitId).value : null;
+    if (raw === "") return { value: null, unit, blank: true };
+    const num = Number(raw);
+    if (!Number.isFinite(num)) return { value: null, unit, blank: false, invalid: true };
+    if (options.allowNegative !== true && num < 0) {
+        return { value: null, unit, blank: false, invalid: true };
+    }
+    return { value: num, unit, blank: false };
+}
+
+function setupGasLawsForm() {
+    const modeSelect = document.getElementById("gas-mode");
+    const idealForm = document.getElementById("gas-ideal-form");
+    const combinedForm = document.getElementById("gas-combined-form");
+    const daltonForm = document.getElementById("gas-dalton-form");
+    const status = document.getElementById("gas-status");
+    const resultWrap = document.getElementById("gas-result");
+    const resultList = document.getElementById("gas-result-list");
+    const daltonRows = document.getElementById("gas-dalton-rows");
+    const daltonAddBtn = document.getElementById("gas-dalton-add");
+
+    const showError = (key) => {
+        status.classList.add("is-error");
+        status.textContent = tr(state.activeLanguage, key);
+        resultWrap.hidden = true;
+    };
+    const clearStatus = () => {
+        status.classList.remove("is-error");
+        status.textContent = "";
+    };
+    const renderResult = (rows) => {
+        resultList.replaceChildren();
+        for (const { label, value } of rows) {
+            const dt = document.createElement("dt");
+            dt.textContent = label;
+            const dd = document.createElement("dd");
+            dd.textContent = value;
+            resultList.append(dt, dd);
+        }
+        resultWrap.hidden = false;
+    };
+
+    modeSelect.addEventListener("change", () => {
+        clearStatus();
+        resultWrap.hidden = true;
+        idealForm.hidden = modeSelect.value !== "ideal";
+        combinedForm.hidden = modeSelect.value !== "combined";
+        daltonForm.hidden = modeSelect.value !== "dalton";
+    });
+
+    idealForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        clearStatus();
+        const fields = {
+            P: readGasField("gas-ideal-p", "gas-ideal-p-unit"),
+            V: readGasField("gas-ideal-v", "gas-ideal-v-unit"),
+            n: readGasField("gas-ideal-n", null),
+            T: readGasField("gas-ideal-t", "gas-ideal-t-unit", { allowNegative: true }),
+        };
+        for (const f of Object.values(fields)) {
+            if (f.invalid) {
+                showError("gas_laws_error_two_blanks");
+                return;
+            }
+        }
+        const blanks = Object.entries(fields).filter(([, f]) => f.blank).map(([k]) => k);
+        if (blanks.length !== 1) {
+            showError("gas_laws_error_two_blanks");
+            return;
+        }
+        const P_atm = fields.P.blank ? null : fields.P.value * PRESSURE_TO_ATM[fields.P.unit];
+        const V_L = fields.V.blank ? null : fields.V.value * VOLUME_TO_L[fields.V.unit];
+        const n_mol = fields.n.blank ? null : fields.n.value;
+        const T_K = fields.T.blank ? null : temperatureToKelvin(fields.T.value, fields.T.unit);
+
+        const target = blanks[0];
+        let resultLabel;
+        let resultValue;
+        switch (target) {
+            case "P": {
+                const Patm = (n_mol * GAS_CONSTANT_L_ATM * T_K) / V_L;
+                resultLabel = tr(state.activeLanguage, "gas_laws_pressure");
+                resultValue =
+                    `${formatNumberSmart(Patm * PRESSURE_FROM_ATM[fields.P.unit])} ${fields.P.unit}`;
+                break;
+            }
+            case "V": {
+                const VL = (n_mol * GAS_CONSTANT_L_ATM * T_K) / P_atm;
+                resultLabel = tr(state.activeLanguage, "gas_laws_volume");
+                resultValue =
+                    `${formatNumberSmart(VL * VOLUME_FROM_L[fields.V.unit])} ${fields.V.unit}`;
+                break;
+            }
+            case "n": {
+                const n = (P_atm * V_L) / (GAS_CONSTANT_L_ATM * T_K);
+                resultLabel = tr(state.activeLanguage, "gas_laws_moles");
+                resultValue = `${formatNumberSmart(n)} mol`;
+                break;
+            }
+            case "T": {
+                const TK = (P_atm * V_L) / (n_mol * GAS_CONSTANT_L_ATM);
+                const out = temperatureFromKelvin(TK, fields.T.unit);
+                resultLabel = tr(state.activeLanguage, "gas_laws_temperature");
+                resultValue = `${formatNumberSmart(out)} ${fields.T.unit === "C" ? "°C" : "K"}`;
+                break;
+            }
+            default:
+                return;
+        }
+        renderResult([{ label: resultLabel, value: resultValue }]);
+    });
+
+    combinedForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        clearStatus();
+        const fields = {
+            P1: readGasField("gas-comb-p1", "gas-comb-p1-unit"),
+            V1: readGasField("gas-comb-v1", "gas-comb-v1-unit"),
+            T1: readGasField("gas-comb-t1", "gas-comb-t1-unit", { allowNegative: true }),
+            P2: readGasField("gas-comb-p2", "gas-comb-p2-unit"),
+            V2: readGasField("gas-comb-v2", "gas-comb-v2-unit"),
+            T2: readGasField("gas-comb-t2", "gas-comb-t2-unit", { allowNegative: true }),
+        };
+        for (const f of Object.values(fields)) {
+            if (f.invalid) {
+                showError("gas_laws_error_two_blanks");
+                return;
+            }
+        }
+        const blanks = Object.entries(fields).filter(([, f]) => f.blank).map(([k]) => k);
+        if (blanks.length !== 1) {
+            showError("gas_laws_error_two_blanks");
+            return;
+        }
+        const norm = {
+            P1: fields.P1.blank ? null : fields.P1.value * PRESSURE_TO_ATM[fields.P1.unit],
+            V1: fields.V1.blank ? null : fields.V1.value * VOLUME_TO_L[fields.V1.unit],
+            T1: fields.T1.blank ? null : temperatureToKelvin(fields.T1.value, fields.T1.unit),
+            P2: fields.P2.blank ? null : fields.P2.value * PRESSURE_TO_ATM[fields.P2.unit],
+            V2: fields.V2.blank ? null : fields.V2.value * VOLUME_TO_L[fields.V2.unit],
+            T2: fields.T2.blank ? null : temperatureToKelvin(fields.T2.value, fields.T2.unit),
+        };
+
+        const target = blanks[0];
+        // P1·V1 / T1 = P2·V2 / T2 → solve for the missing variable in SI.
+        let resultSI;
+        switch (target) {
+            case "P1":
+                resultSI = (norm.P2 * norm.V2 * norm.T1) / (norm.T2 * norm.V1);
+                break;
+            case "V1":
+                resultSI = (norm.P2 * norm.V2 * norm.T1) / (norm.T2 * norm.P1);
+                break;
+            case "T1":
+                resultSI = (norm.P1 * norm.V1 * norm.T2) / (norm.P2 * norm.V2);
+                break;
+            case "P2":
+                resultSI = (norm.P1 * norm.V1 * norm.T2) / (norm.T1 * norm.V2);
+                break;
+            case "V2":
+                resultSI = (norm.P1 * norm.V1 * norm.T2) / (norm.T1 * norm.P2);
+                break;
+            case "T2":
+                resultSI = (norm.P2 * norm.V2 * norm.T1) / (norm.P1 * norm.V1);
+                break;
+            default:
+                return;
+        }
+
+        const f = fields[target];
+        let label;
+        let value;
+        if (target.startsWith("P")) {
+            label = tr(state.activeLanguage, "gas_laws_pressure");
+            value = `${formatNumberSmart(resultSI * PRESSURE_FROM_ATM[f.unit])} ${f.unit}`;
+        } else if (target.startsWith("V")) {
+            label = tr(state.activeLanguage, "gas_laws_volume");
+            value = `${formatNumberSmart(resultSI * VOLUME_FROM_L[f.unit])} ${f.unit}`;
+        } else {
+            label = tr(state.activeLanguage, "gas_laws_temperature");
+            const out = temperatureFromKelvin(resultSI, f.unit);
+            value = `${formatNumberSmart(out)} ${f.unit === "C" ? "°C" : "K"}`;
+        }
+        renderResult([{ label: `${target}: ${label}`, value }]);
+    });
+
+    const makeDaltonRow = (index) => {
+        const row = document.createElement("div");
+        row.className = "gas-dalton-row";
+        row.dataset.index = String(index);
+
+        const labelInput = document.createElement("input");
+        labelInput.type = "text";
+        labelInput.className = "molar-input";
+        labelInput.placeholder = tr(state.activeLanguage, "gas_laws_dalton_component_label");
+        labelInput.dataset.role = "label";
+
+        const fractionInput = document.createElement("input");
+        fractionInput.type = "number";
+        fractionInput.className = "molar-input";
+        fractionInput.min = "0";
+        fractionInput.step = "any";
+        fractionInput.placeholder = tr(state.activeLanguage, "gas_laws_dalton_mole_fraction");
+        fractionInput.dataset.role = "fraction";
+
+        const removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.className = "control-button";
+        removeBtn.textContent = tr(state.activeLanguage, "gas_laws_remove");
+        removeBtn.addEventListener("click", () => row.remove());
+
+        row.append(labelInput, fractionInput, removeBtn);
+        return row;
+    };
+
+    daltonAddBtn.addEventListener("click", () => {
+        daltonRows.appendChild(makeDaltonRow(daltonRows.children.length));
+    });
+    // Seed two empty rows so the user has something to fill in by default.
+    daltonRows.appendChild(makeDaltonRow(0));
+    daltonRows.appendChild(makeDaltonRow(1));
+
+    daltonForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        clearStatus();
+        const totalField = readGasField("gas-dalton-total", "gas-dalton-total-unit");
+        if (totalField.blank || totalField.invalid || totalField.value <= 0) {
+            showError("concentration_error_missing_inputs");
+            return;
+        }
+        const rowsEls = Array.from(daltonRows.querySelectorAll(".gas-dalton-row"));
+        const entries = [];
+        for (const r of rowsEls) {
+            const labelInput = r.querySelector("input[data-role='label']");
+            const fractionInput = r.querySelector("input[data-role='fraction']");
+            const raw = fractionInput.value.trim();
+            if (raw === "") continue;
+            const fraction = Number(raw);
+            if (!Number.isFinite(fraction) || fraction <= 0) {
+                showError("gas_laws_error_invalid_fraction");
+                return;
+            }
+            entries.push({ label: labelInput.value.trim() || `${entries.length + 1}`, fraction });
+        }
+        if (entries.length === 0) {
+            showError("concentration_error_missing_inputs");
+            return;
+        }
+        const totalAtm = totalField.value * PRESSURE_TO_ATM[totalField.unit];
+        const partialUnit = totalField.unit;
+        renderResult(entries.map((e) => ({
+            label: `${tr(state.activeLanguage, "gas_laws_dalton_partial_pressure")} — ${e.label}`,
+            value: `${formatNumberSmart(
+                e.fraction * totalAtm * PRESSURE_FROM_ATM[partialUnit],
+            )} ${partialUnit}`,
+        })));
+    });
+}
+
 async function bootstrap() {
     const loader = document.getElementById("loader");
     const loaderMessage = document.getElementById("loader-message");
@@ -1183,6 +1475,7 @@ async function bootstrap() {
     setupMolarForm();
     setupStoichForm();
     setupConcentrationForm();
+    setupGasLawsForm();
     setupSearchForm();
     setupToolsModal();
     applyStaticTranslations();

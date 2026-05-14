@@ -723,6 +723,26 @@ input {
     font-weight: var(--font-weight-bold, 700);
 }
 
+.gas-hint {
+    margin: 0;
+    color: var(--color-text-muted, #bdbdbd);
+    font-size: var(--font-size-info-field-label, 11px);
+    font-style: italic;
+}
+
+.gas-dalton-rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-badge-gap, 6px);
+}
+
+.gas-dalton-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: var(--spacing-badge-gap, 6px);
+    align-items: center;
+}
+
 /* Orbital diagram: SVG mirroring the desktop QPainter layout. The painter_*
  * tokens are shared with the desktop's electron-config panel so the visual
  * identity stays in lockstep without duplicate values.
