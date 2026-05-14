@@ -11,6 +11,10 @@ import json
 from pathlib import Path
 
 from src.config.static_data import ORBITAL_BOX_COUNTS, VALID_SUBSHELLS
+from src.domain.compound_builder import (
+    build_binary_formula,
+    parse_oxidation_states,
+)
 from src.domain.electron_configuration import configuration_to_map, fill_boxes
 from src.domain.lewis_diagram import (
     distribute_dots,
@@ -153,6 +157,12 @@ def test_lewis_lookup_water_molecule():
 def test_lewis_lookup_is_case_insensitive():
     assert lookup_molecule("h2o") is not None
     assert lookup_molecule("XXNotAMolecule") is None
+
+
+def test_compound_builder_smoke():
+    assert parse_oxidation_states("+1, -1") == [1, -1]
+    assert build_binary_formula("Na", 1, "Cl", -1) == "NaCl"
+    assert build_binary_formula("Al", 3, "O", -2) == "Al2O3"
 
 
 def test_empirical_formula_glucose_smoke():
