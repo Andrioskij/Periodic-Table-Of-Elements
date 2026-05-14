@@ -117,6 +117,9 @@ function applyDesignTokens(tokens, themeName) {
     for (const [key, value] of Object.entries(tokens.scale)) {
         setCssProperty(`--scale-${kebab(key)}`, `${value}px`);
     }
+    for (const [key, value] of Object.entries(tokens.opacity ?? {})) {
+        setCssProperty(`--opacity-${kebab(key)}`, value);
+    }
 
     root.dataset.theme = themeName;
     state.activeTheme = themeName;
