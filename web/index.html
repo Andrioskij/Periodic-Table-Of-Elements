@@ -88,6 +88,10 @@
                             aria-selected="false" aria-controls="panel-electron">
                         <span data-i18n="right_diagram">Electron config.</span>
                     </button>
+                    <button id="tab-lewis" class="tab" role="tab"
+                            aria-selected="false" aria-controls="panel-lewis">
+                        <span data-i18n="right_lewis">Lewis</span>
+                    </button>
                 </nav>
 
                 <section id="panel-info" class="panel" role="tabpanel"
@@ -118,6 +122,34 @@
                     </p>
                     <p id="electron-status" class="molar-status" aria-live="polite"></p>
                     <div id="electron-diagram-wrap" class="orbital-diagram-wrap" hidden></div>
+                </section>
+
+                <section id="panel-lewis" class="panel" role="tabpanel"
+                         aria-labelledby="tab-lewis" hidden>
+                    <h2 id="lewis-title" class="panel-title"
+                        data-i18n="lewis_title">Lewis diagram</h2>
+                    <label class="conc-mode-row">
+                        <span class="conc-mode-label"
+                              data-i18n="concentration_mode_label">Mode</span>
+                        <select id="lewis-mode" class="control-input">
+                            <option value="atom">Atom</option>
+                            <option value="molecule">Molecule</option>
+                        </select>
+                    </label>
+                    <p id="lewis-prompt" class="panel-prompt"
+                       data-i18n="lewis_prompt">
+                        Select an element to view its Lewis dot diagram.
+                    </p>
+                    <form id="lewis-molecule-form" class="molar-form"
+                          autocomplete="off" hidden>
+                        <input id="lewis-molecule-input" class="molar-input"
+                               type="text" spellcheck="false"
+                               data-i18n-placeholder="lewis_input_placeholder" />
+                        <button class="control-button" type="submit"
+                                data-i18n="lewis_show_button">Show</button>
+                    </form>
+                    <p id="lewis-status" class="molar-status" aria-live="polite"></p>
+                    <div id="lewis-diagram-wrap" class="orbital-diagram-wrap" hidden></div>
                 </section>
 
             </aside>

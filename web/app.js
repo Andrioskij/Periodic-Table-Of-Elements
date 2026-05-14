@@ -210,6 +210,8 @@ function selectElement(symbol) {
     document.getElementById("info-card").hidden = false;
     if (state.activeTab === "electron") {
         renderElectronPanel();
+    } else if (state.activeTab === "lewis") {
+        renderLewisPanel();
     }
 }
 
@@ -255,7 +257,7 @@ function renderInfoCard() {
     }
 }
 
-const SIDE_TAB_IDS = ["info", "electron"];
+const SIDE_TAB_IDS = ["info", "electron", "lewis"];
 const TOOL_TAB_IDS = ["molar", "stoichiometry", "concentration", "gas-laws", "ph", "empirical"];
 
 function _setActiveTabIn(ids, activeId) {
@@ -275,6 +277,8 @@ function setActiveTab(tabId) {
     _setActiveTabIn(SIDE_TAB_IDS, tabId);
     if (tabId === "electron") {
         renderElectronPanel();
+    } else if (tabId === "lewis") {
+        renderLewisPanel();
     }
 }
 
@@ -521,11 +525,15 @@ async function ensurePyodide() {
             "molar_mass.py",
             "electron_configuration.py",
             "stoichiometry.py",
+            "lewis_diagram.py",
+            "lewis_library.py",
             "src/__init__.py",
             "src/config/__init__.py",
             "src/config/static_data.py",
             "src/domain/__init__.py",
             "src/domain/molar_mass.py",
+            "src/domain/lewis_diagram.py",
+            "src/domain/lewis_library.py",
         ];
         const sources = await Promise.all(
             PYTHON_FILES.map(async (relPath) => {
@@ -551,6 +559,8 @@ if '/python' not in sys.path:
 import molar_mass
 import electron_configuration
 import stoichiometry
+import lewis_diagram
+import lewis_library
 ELEMENTS = json.loads(__elements_json)
 `);
         state.pyodide = pyodide;
@@ -607,6 +617,65 @@ try:
     json.dumps({"ok": True, "rows": rows})
 except stoichiometry.EquationError as exc:
     json.dumps({"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)})
+`);
+    return JSON.parse(result);
+}
+
+async function getLewisAtomData(symbol) {
+    const pyodide = await ensurePyodide();
+    pyodide.globals.set("__symbol", symbol);
+    const result = pyodide.runPython(`
+import json
+element = next((el for el in ELEMENTS if el.get("symbol") == __symbol), None)
+if element is None:
+    payload = {"ok": False, "code": "unknown_symbol", "params": {"symbol": __symbol}}
+else:
+    valence = lewis_diagram.get_valence_electrons(element)
+    if valence is None:
+        payload = {"ok": True, "supported": False}
+    else:
+        payload = {
+            "ok": True,
+            "supported": True,
+            "valence": valence,
+            "dots": lewis_diagram.distribute_dots(valence),
+        }
+json.dumps(payload)
+`);
+    return JSON.parse(result);
+}
+
+async function getLewisMoleculeData(formula) {
+    const pyodide = await ensurePyodide();
+    pyodide.globals.set("__formula", formula);
+    const result = pyodide.runPython(`
+import json
+diagram = lewis_diagram.lookup_molecule(__formula)
+if diagram is None:
+    payload = {"ok": True, "found": False}
+else:
+    payload = {
+        "ok": True,
+        "found": True,
+        "formula": diagram.formula,
+        "name": diagram.name,
+        "charge": diagram.charge,
+        "atoms": [
+            {
+                "symbol": atom.symbol,
+                "x": atom.x,
+                "y": atom.y,
+                "lone_pairs": atom.lone_pairs,
+                "formal_charge": atom.formal_charge,
+            }
+            for atom in diagram.atoms
+        ],
+        "bonds": [
+            {"atom1": bond.atom1, "atom2": bond.atom2, "order": bond.order}
+            for bond in diagram.bonds
+        ],
+    }
+json.dumps(payload)
 `);
     return JSON.parse(result);
 }
@@ -1764,6 +1833,265 @@ function setupPhForm() {
     });
 }
 
+const LEWIS_SVG_NS = "http://www.w3.org/2000/svg";
+
+function renderLewisAtom(symbol, dots, valence) {
+    const wrap = document.getElementById("lewis-diagram-wrap");
+    const W = 200;
+    const H = 200;
+    const cx = W / 2;
+    const cy = H / 2;
+    const radius = 36;
+    const dotRadius = 3;
+    const dotOffset = 5;
+
+    const svg = document.createElementNS(LEWIS_SVG_NS, "svg");
+    svg.setAttribute("class", "orbital-diagram");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+    const text = document.createElementNS(LEWIS_SVG_NS, "text");
+    text.setAttribute("class", "symbol-label");
+    text.setAttribute("x", String(cx));
+    text.setAttribute("y", String(cy + 6));
+    text.setAttribute("text-anchor", "middle");
+    text.setAttribute("font-size", "22");
+    text.textContent = symbol;
+    svg.appendChild(text);
+
+    const valenceText = document.createElementNS(LEWIS_SVG_NS, "text");
+    valenceText.setAttribute("class", "subshell-label");
+    valenceText.setAttribute("x", String(cx));
+    valenceText.setAttribute("y", String(H - 10));
+    valenceText.setAttribute("text-anchor", "middle");
+    valenceText.textContent = tr(state.activeLanguage, "lewis_valence_electrons", {
+        count: valence,
+    });
+    svg.appendChild(valenceText);
+
+    const slotCenters = {
+        top: { x: cx, y: cy - radius },
+        right: { x: cx + radius, y: cy },
+        bottom: { x: cx, y: cy + radius },
+        left: { x: cx - radius, y: cy },
+    };
+    const slotOffsets = {
+        top: { dx: dotOffset, dy: 0 },
+        right: { dx: 0, dy: dotOffset },
+        bottom: { dx: dotOffset, dy: 0 },
+        left: { dx: 0, dy: dotOffset },
+    };
+    for (const slot of ["top", "right", "bottom", "left"]) {
+        const count = dots[slot] || 0;
+        if (count === 0) continue;
+        const { x, y } = slotCenters[slot];
+        const { dx, dy } = slotOffsets[slot];
+        const positions = count === 1
+            ? [{ x, y }]
+            : [{ x: x - dx, y: y - dy }, { x: x + dx, y: y + dy }];
+        for (const p of positions) {
+            const dot = document.createElementNS(LEWIS_SVG_NS, "circle");
+            dot.setAttribute("class", "lewis-dot");
+            dot.setAttribute("cx", String(p.x));
+            dot.setAttribute("cy", String(p.y));
+            dot.setAttribute("r", String(dotRadius));
+            svg.appendChild(dot);
+        }
+    }
+    wrap.replaceChildren(svg);
+    wrap.hidden = false;
+}
+
+function renderLewisMolecule(payload) {
+    const wrap = document.getElementById("lewis-diagram-wrap");
+    const atoms = payload.atoms;
+    const bonds = payload.bonds;
+    const W = 320;
+    const H = 240;
+    const margin = 32;
+    // The molecule library uses x, y in [-1, 1]; map to SVG coords with Y
+    // flipped so the chemistry convention (Y up) survives.
+    const project = (x, y) => ({
+        x: margin + ((x + 1) / 2) * (W - 2 * margin),
+        y: margin + ((1 - y) / 2) * (H - 2 * margin),
+    });
+
+    const svg = document.createElementNS(LEWIS_SVG_NS, "svg");
+    svg.setAttribute("class", "orbital-diagram");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+    const atomRadius = 14;
+    for (const bond of bonds) {
+        const a = project(atoms[bond.atom1].x, atoms[bond.atom1].y);
+        const b = project(atoms[bond.atom2].x, atoms[bond.atom2].y);
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const len = Math.sqrt(dx * dx + dy * dy);
+        const ux = dx / len;
+        const uy = dy / len;
+        // Pull each end back by the atom radius so the line stops at the
+        // edge of the symbol rather than running through it.
+        const ax = a.x + ux * atomRadius;
+        const ay = a.y + uy * atomRadius;
+        const bx = b.x - ux * atomRadius;
+        const by = b.y - uy * atomRadius;
+        // Perpendicular for multiple bonds
+        const px = -uy;
+        const py = ux;
+        const offsets = bond.order === 1 ? [0] : bond.order === 2 ? [-3, 3] : [-5, 0, 5];
+        for (const off of offsets) {
+            const line = document.createElementNS(LEWIS_SVG_NS, "line");
+            line.setAttribute("class", "lewis-bond");
+            line.setAttribute("x1", String(ax + px * off));
+            line.setAttribute("y1", String(ay + py * off));
+            line.setAttribute("x2", String(bx + px * off));
+            line.setAttribute("y2", String(by + py * off));
+            svg.appendChild(line);
+        }
+    }
+
+    for (const atom of atoms) {
+        const p = project(atom.x, atom.y);
+        const text = document.createElementNS(LEWIS_SVG_NS, "text");
+        text.setAttribute("class", "symbol-label");
+        text.setAttribute("x", String(p.x));
+        text.setAttribute("y", String(p.y + 5));
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("font-size", "16");
+        text.textContent = atom.symbol + (
+            atom.formal_charge === 0
+                ? ""
+                : atom.formal_charge > 0 ? `${"+".repeat(atom.formal_charge)}` : `${"−".repeat(-atom.formal_charge)}`
+        );
+        svg.appendChild(text);
+
+        // Lone pairs around the atom — render `lone_pairs` pairs of dots
+        // along the perpendicular to the atom's offset from origin.
+        if (atom.lone_pairs > 0) {
+            const cx = p.x;
+            const cy = p.y;
+            const offsets = atom.lone_pairs === 1
+                ? [{ x: 0, y: -18 }]
+                : atom.lone_pairs === 2
+                    ? [{ x: 0, y: -18 }, { x: 0, y: 18 }]
+                    : [{ x: 0, y: -18 }, { x: 18, y: 0 }, { x: -18, y: 0 }];
+            for (const off of offsets) {
+                for (const sign of [-1, 1]) {
+                    const dx = off.x === 0 ? 4 * sign : 0;
+                    const dy = off.y === 0 ? 4 * sign : 0;
+                    const dot = document.createElementNS(LEWIS_SVG_NS, "circle");
+                    dot.setAttribute("class", "lewis-dot");
+                    dot.setAttribute("cx", String(cx + off.x + dx));
+                    dot.setAttribute("cy", String(cy + off.y + dy));
+                    dot.setAttribute("r", "2.5");
+                    svg.appendChild(dot);
+                }
+            }
+        }
+    }
+
+    wrap.replaceChildren(svg);
+    wrap.hidden = false;
+}
+
+async function renderLewisPanel() {
+    const mode = document.getElementById("lewis-mode").value;
+    const prompt = document.getElementById("lewis-prompt");
+    const status = document.getElementById("lewis-status");
+    const wrap = document.getElementById("lewis-diagram-wrap");
+    status.classList.remove("is-error");
+    status.textContent = "";
+
+    if (mode === "molecule") {
+        prompt.hidden = true;
+        // wrap stays as-is — the form submit fills it
+        return;
+    }
+
+    const symbol = state.selectedSymbol;
+    if (!symbol) {
+        prompt.hidden = false;
+        prompt.textContent = tr(state.activeLanguage, "lewis_prompt");
+        wrap.hidden = true;
+        wrap.replaceChildren();
+        return;
+    }
+    prompt.hidden = true;
+    status.textContent = state.pyodide ? "" : "Loading Pyodide…";
+    try {
+        const payload = await getLewisAtomData(symbol);
+        status.textContent = "";
+        if (!payload.ok) {
+            status.classList.add("is-error");
+            status.textContent = payload.params?.symbol
+                ? tr(state.activeLanguage, "formula_error_unknown_symbol", payload.params)
+                : payload.message || "Error";
+            wrap.hidden = true;
+            wrap.replaceChildren();
+            return;
+        }
+        if (!payload.supported) {
+            wrap.hidden = true;
+            wrap.replaceChildren();
+            status.classList.add("is-error");
+            status.textContent = tr(state.activeLanguage, "lewis_not_applicable");
+            return;
+        }
+        renderLewisAtom(symbol, payload.dots, payload.valence);
+    } catch (err) {
+        status.classList.add("is-error");
+        status.textContent = err.message;
+        wrap.hidden = true;
+        wrap.replaceChildren();
+    }
+}
+
+function setupLewisPanel() {
+    const modeSelect = document.getElementById("lewis-mode");
+    const moleculeForm = document.getElementById("lewis-molecule-form");
+    const moleculeInput = document.getElementById("lewis-molecule-input");
+    const status = document.getElementById("lewis-status");
+    const wrap = document.getElementById("lewis-diagram-wrap");
+
+    modeSelect.addEventListener("change", () => {
+        const mode = modeSelect.value;
+        if (mode === "molecule") {
+            moleculeForm.hidden = false;
+            wrap.replaceChildren();
+            wrap.hidden = true;
+            status.classList.remove("is-error");
+            status.textContent = "";
+        } else {
+            moleculeForm.hidden = true;
+            renderLewisPanel();
+        }
+    });
+
+    moleculeForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const formula = moleculeInput.value.trim();
+        if (!formula) return;
+        status.classList.remove("is-error");
+        status.textContent = state.pyodide ? "…" : "Loading Pyodide…";
+        wrap.hidden = true;
+        wrap.replaceChildren();
+        try {
+            const payload = await getLewisMoleculeData(formula);
+            status.textContent = "";
+            if (!payload.found) {
+                status.classList.add("is-error");
+                status.textContent = tr(state.activeLanguage, "lewis_not_in_library");
+                return;
+            }
+            renderLewisMolecule(payload);
+        } catch (err) {
+            status.classList.add("is-error");
+            status.textContent = err.message;
+        }
+    });
+}
+
 function setupEmpiricalForm() {
     const form = document.getElementById("emp-form");
     const rowsWrap = document.getElementById("emp-rows");
@@ -1895,6 +2223,7 @@ async function bootstrap() {
     setupGasLawsForm();
     setupPhForm();
     setupEmpiricalForm();
+    setupLewisPanel();
     setupSearchForm();
     setupToolsModal();
     applyStaticTranslations();

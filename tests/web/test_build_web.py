@@ -74,6 +74,19 @@ def test_build_web_bundled_static_data_matches_source(tmp_path):
     )
 
 
+def test_build_web_bundles_lewis_modules(tmp_path):
+    dest = tmp_path / "web_out"
+    build_web(dest)
+
+    assert (dest / "python" / "lewis_diagram.py").is_file()
+    assert (dest / "python" / "lewis_library.py").is_file()
+    # Both modules also live under the nested src.domain mirror so the
+    # cross-module import from src.domain.lewis_library inside
+    # lewis_diagram resolves the same way as on the desktop.
+    assert (dest / "python" / "src" / "domain" / "lewis_diagram.py").is_file()
+    assert (dest / "python" / "src" / "domain" / "lewis_library.py").is_file()
+
+
 def test_build_web_bundled_stoichiometry_matches_source(tmp_path):
     dest = tmp_path / "web_out"
     build_web(dest)

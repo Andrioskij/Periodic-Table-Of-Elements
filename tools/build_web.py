@@ -29,7 +29,13 @@ if str(REPO_ROOT) not in sys.path:
 
 from tools.export_design_tokens import export_tokens  # noqa: E402
 
-DOMAIN_MODULES = ("molar_mass.py", "electron_configuration.py", "stoichiometry.py")
+DOMAIN_MODULES = (
+    "molar_mass.py",
+    "electron_configuration.py",
+    "stoichiometry.py",
+    "lewis_diagram.py",
+    "lewis_library.py",
+)
 CONFIG_MODULES = ("static_data.py",)
 LOCALIZATION_FILES = (
     "en.json",
