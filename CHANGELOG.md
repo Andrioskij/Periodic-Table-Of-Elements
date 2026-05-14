@@ -7,9 +7,29 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ### Added
-- Web companion frontend served from `web/` and deployed to GitHub Pages. The browser UI re-uses the desktop's Python molar-mass logic via Pyodide and consumes the canonical design tokens for visual parity. V1 scope: periodic table grid, element info card, molar mass calculator, light/dark theme switcher, 7-language picker.
+- Web companion frontend served from `web/` and deployed to GitHub Pages. The browser UI re-uses the desktop's Python logic via Pyodide and consumes the canonical design tokens for visual parity.
+- Web Calculators modal grouping all chemistry tools behind a single launcher: molar mass, stoichiometry (with limiting-reagent + theoretical yield), concentration/dilution, gas laws, pH/pOH, and empirical/molecular formula.
+- Web Lewis structures tab (multi-atom diagrams for ~22 common molecules via formula input).
+- Web compound builder tab (binary ionic compounds with Stock nomenclature).
+- Web solubility checker tab.
+- Web electron-configuration tab with an SVG orbital diagram.
+- Web search box (name / symbol / atomic number) over the periodic table.
+- Web trend overlays on the periodic table (atomic radius, ionization energy, electronegativity, etc.).
+- Limiting-reagent + theoretical yield support in `src.domain.stoichiometry` (also surfaced in the desktop stoichiometry panel).
 - `tools/export_design_tokens.py` and `tools/build_web.py` to assemble the web bundle on every deploy from `src/` as the single source of truth.
 - `.github/workflows/deploy-web.yml` Pages deploy workflow.
+
+### Changed
+- Design tokens extracted to a shared config module so desktop and web read the same palette/spacing source.
+- Web periodic table auto-fits the viewport width and the layout chrome matches the desktop app.
+- Stoichiometry domain no longer depends on `sympy`; the balancer uses an internal rational solver, shrinking the Pyodide bundle and the desktop install footprint.
+
+### Fixed
+- Web: `[hidden]` attribute now wins against author display rules, so hidden tabs stay hidden.
+
+### Quality
+- Test suite: 498 tests, ruff clean.
+- Three trailing magic numbers in the web layout tokenised against the shared design tokens.
 
 ## [1.3.0] - 2026-05-07
 
