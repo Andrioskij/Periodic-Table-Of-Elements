@@ -1,5 +1,23 @@
 # Release notes
 
+## 1.4.0 "Chemistry Tool"
+
+Highlights
+- Web companion now exposes the full chemistry toolkit in the browser: a single Calculators modal groups molar mass, stoichiometry (with limiting-reagent + theoretical yield), concentration/dilution, gas laws, pH/pOH, and empirical/molecular formula.
+- Dedicated web tabs for Lewis structures (multi-atom diagrams for ~22 molecules), compound builder (binary ionic with Stock nomenclature), solubility checker, electron configuration (with SVG orbital diagram), and periodic-table trend overlays (atomic radius, ionization energy, electronegativity, …).
+- Search box over the periodic table (name / symbol / atomic number).
+- Limiting-reagent + theoretical yield support in the desktop stoichiometry panel.
+
+Changed
+- Design tokens extracted to a shared config module: desktop and web read the same palette/spacing source, with web auto-fitting the viewport and matching the desktop chrome.
+- `src.domain.stoichiometry` no longer depends on `sympy`; the balancer uses an internal rational solver, shrinking the Pyodide bundle and the desktop install footprint.
+
+Fixed
+- Web: `[hidden]` attribute now wins against author display rules, so hidden tabs stay hidden.
+
+Quality
+- Test suite: 498 tests, ruff clean.
+
 ## 1.3.0 "Chemistry Tool"
 
 Highlights
