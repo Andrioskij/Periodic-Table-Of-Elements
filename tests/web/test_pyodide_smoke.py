@@ -12,6 +12,11 @@ from pathlib import Path
 
 from src.config.static_data import ORBITAL_BOX_COUNTS, VALID_SUBSHELLS
 from src.domain.electron_configuration import configuration_to_map, fill_boxes
+from src.domain.lewis_diagram import (
+    distribute_dots,
+    get_valence_electrons,
+    lookup_molecule,
+)
 from src.domain.molar_mass import (
     FormulaError,
     compute_molar_mass,
@@ -118,6 +123,36 @@ def test_compute_limiting_reagent_water_synthesis():
     h2o = result["yields"][0]
     assert h2o["compound"] == "H2O"
     assert abs(h2o["theoretical_mass_g"] - 18.015) < 0.1
+
+
+def test_lewis_valence_electrons_oxygen():
+    elements = _load_elements()
+    oxygen = next(el for el in elements if el["symbol"] == "O")
+    assert get_valence_electrons(oxygen) == 6
+
+
+def test_lewis_distribute_dots_oxygen():
+    # Oxygen: first pass fills top, right, bottom, left with 1 electron each
+    # (that's the 4 unpaired); then the remaining 2 valence electrons pair the
+    # top and right positions, leaving bottom + left as singletons.
+    placements = distribute_dots(6)
+    assert placements["top"] == 2
+    assert placements["right"] == 2
+    assert placements["bottom"] == 1
+    assert placements["left"] == 1
+
+
+def test_lewis_lookup_water_molecule():
+    diagram = lookup_molecule("H2O")
+    assert diagram is not None
+    assert diagram.formula == "H2O"
+    assert len(diagram.atoms) == 3
+    assert any(bond.order == 1 for bond in diagram.bonds)
+
+
+def test_lewis_lookup_is_case_insensitive():
+    assert lookup_molecule("h2o") is not None
+    assert lookup_molecule("XXNotAMolecule") is None
 
 
 def test_empirical_formula_glucose_smoke():

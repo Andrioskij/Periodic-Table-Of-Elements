@@ -801,6 +801,16 @@ input {
     font-family: var(--font-family-sans);
 }
 
+.orbital-diagram .lewis-dot {
+    fill: var(--color-painter-dot, var(--color-painter-text, #eef3f8));
+}
+
+.orbital-diagram .lewis-bond {
+    stroke: var(--color-painter-label, #d5dde8);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+}
+
 /* Footer */
 .appbar {
     padding: var(--spacing-info-section-padding, 12px) var(--spacing-info-card-padding, 12px);
