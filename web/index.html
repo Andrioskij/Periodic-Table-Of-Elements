@@ -198,6 +198,10 @@
                             aria-selected="false" aria-controls="panel-builder">
                         <span data-i18n="builder_title">Simple compounds</span>
                     </button>
+                    <button id="tab-solubility" class="tab" role="tab"
+                            aria-selected="false" aria-controls="panel-solubility">
+                        <span data-i18n="solubility_title">Solubility table</span>
+                    </button>
                 </nav>
                 <div class="tools-modal-body">
                     <section id="panel-molar" class="panel" role="tabpanel"
@@ -742,6 +746,36 @@
                         <div id="builder-result" class="molar-result" hidden>
                             <p class="molar-total"><span id="builder-result-value"></span></p>
                         </div>
+                    </section>
+
+                    <section id="panel-solubility" class="panel" role="tabpanel"
+                             aria-labelledby="tab-solubility" hidden>
+                        <p class="panel-prompt" data-i18n="solubility_prompt">
+                            Select a cation and anion, then click Check.
+                        </p>
+                        <form id="solubility-form" class="conc-form" autocomplete="off">
+                            <div class="conc-grid">
+                                <label>
+                                    <span data-i18n="solubility_cation_label">Cation</span>
+                                    <select id="solubility-cation" class="control-input"></select>
+                                </label>
+                                <label>
+                                    <span data-i18n="solubility_anion_label">Anion</span>
+                                    <select id="solubility-anion" class="control-input"></select>
+                                </label>
+                            </div>
+                            <button class="control-button" type="submit"
+                                    data-i18n="solubility_check">Check</button>
+                        </form>
+                        <p id="solubility-status" class="molar-status" aria-live="polite"></p>
+                        <div id="solubility-result" class="molar-result" hidden>
+                            <p id="solubility-verdict" class="solubility-verdict"></p>
+                            <p id="solubility-rule" class="solubility-rule"></p>
+                            <p id="solubility-exceptions" class="solubility-exceptions"></p>
+                        </div>
+                        <h3 class="stoich-section-title"
+                            data-i18n="solubility_legend_title">Legend</h3>
+                        <table id="solubility-matrix" class="solubility-matrix"></table>
                     </section>
 
                     <section id="panel-empirical" class="panel" role="tabpanel"
