@@ -811,6 +811,45 @@ input {
     stroke-linecap: round;
 }
 
+/* Solubility tab */
+.solubility-verdict {
+    margin: 0;
+    padding: var(--spacing-info-section-padding, 12px);
+    border-radius: var(--radius-info-section, 12px);
+    font-weight: var(--font-weight-bold, 700);
+    text-align: center;
+}
+
+.solubility-rule,
+.solubility-exceptions {
+    margin: 0;
+    color: var(--color-text-muted, #bdbdbd);
+    font-size: var(--font-size-info-field-label, 11px);
+}
+
+.solubility-matrix {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: var(--font-size-info-field-label, 11px);
+}
+
+.solubility-matrix th,
+.solubility-matrix td {
+    padding: var(--spacing-info-metric-gap, 4px) var(--spacing-badge-padding-x, 10px);
+    border: var(--border-default-width, 1px) solid var(--color-border-subtle, #44515b);
+    text-align: center;
+}
+
+.solubility-matrix thead th {
+    background: var(--color-bg-card-alt, #252526);
+    color: var(--color-text-muted, #bdbdbd);
+}
+
+.solubility-cell {
+    font-weight: var(--font-weight-bold, 700);
+    min-width: 30px;
+}
+
 /* Footer */
 .appbar {
     padding: var(--spacing-info-section-padding, 12px) var(--spacing-info-card-padding, 12px);

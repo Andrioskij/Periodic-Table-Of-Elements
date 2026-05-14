@@ -266,6 +266,7 @@ const TOOL_TAB_IDS = [
     "ph",
     "empirical",
     "builder",
+    "solubility",
 ];
 
 function _setActiveTabIn(ids, activeId) {
@@ -536,6 +537,7 @@ async function ensurePyodide() {
             "lewis_diagram.py",
             "lewis_library.py",
             "compound_builder.py",
+            "solubility.py",
             "src/__init__.py",
             "src/config/__init__.py",
             "src/config/static_data.py",
@@ -544,6 +546,7 @@ async function ensurePyodide() {
             "src/domain/lewis_diagram.py",
             "src/domain/lewis_library.py",
             "src/domain/compound_builder.py",
+            "src/domain/solubility.py",
         ];
         const sources = await Promise.all(
             PYTHON_FILES.map(async (relPath) => {
@@ -572,6 +575,7 @@ import stoichiometry
 import lewis_diagram
 import lewis_library
 import compound_builder
+import solubility
 ELEMENTS = json.loads(__elements_json)
 `);
         state.pyodide = pyodide;
@@ -628,6 +632,39 @@ try:
     json.dumps({"ok": True, "rows": rows})
 except stoichiometry.EquationError as exc:
     json.dumps({"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)})
+`);
+    return JSON.parse(result);
+}
+
+async function getSolubilityData() {
+    const pyodide = await ensurePyodide();
+    const result = pyodide.runPython(`
+import json
+matrix = solubility.get_solubility_matrix()
+payload = {
+    "cations": list(solubility.CATIONS),
+    "anions": list(solubility.ANIONS),
+    "matrix": matrix,
+}
+json.dumps(payload)
+`);
+    return JSON.parse(result);
+}
+
+async function getSolubilityVerdict(cation, anion) {
+    const pyodide = await ensurePyodide();
+    pyodide.globals.set("__cation", cation);
+    pyodide.globals.set("__anion", anion);
+    const result = pyodide.runPython(`
+import json
+verdict = solubility.get_solubility(__cation, __anion)
+rule = solubility.get_solubility_rule(__cation, __anion)
+payload = {
+    "verdict": verdict,
+    "rule_id": rule["id"] if rule else None,
+    "exceptions": {k: v for k, v in (rule["exceptions"].items() if rule else [])} if rule else {},
+}
+json.dumps(payload)
 `);
     return JSON.parse(result);
 }
@@ -2122,6 +2159,157 @@ function setupLewisPanel() {
     });
 }
 
+const SOLUBILITY_RULE_KEY = {
+    alkali_ammonium: "solubility_rule_alkali",
+    nitrate_acetate: "solubility_rule_nitrate_acetate",
+    halides: "solubility_rule_halide",
+    sulfates: "solubility_rule_sulfate",
+    hydroxides: "solubility_rule_hydroxide",
+    carbonate_phosphate_sulfide: "solubility_rule_carbonate_phosphate_sulfide",
+};
+
+const SOLUBILITY_VERDICT_KEY = {
+    soluble: "solubility_soluble",
+    insoluble: "solubility_insoluble",
+    slightly_soluble: "solubility_slightly_soluble",
+};
+
+const SOLUBILITY_VERDICT_TOKEN = {
+    soluble: "--color-solubility-soluble",
+    insoluble: "--color-solubility-insoluble",
+    slightly_soluble: "--color-solubility-slightly",
+};
+
+function setupSolubilityForm() {
+    const form = document.getElementById("solubility-form");
+    const cationSelect = document.getElementById("solubility-cation");
+    const anionSelect = document.getElementById("solubility-anion");
+    const status = document.getElementById("solubility-status");
+    const resultWrap = document.getElementById("solubility-result");
+    const verdictNode = document.getElementById("solubility-verdict");
+    const ruleNode = document.getElementById("solubility-rule");
+    const exceptionsNode = document.getElementById("solubility-exceptions");
+    const matrixTable = document.getElementById("solubility-matrix");
+    const tab = document.getElementById("tab-solubility");
+
+    let loaded = false;
+    let lastPayload = null;
+
+    const populateSelect = (selectEl, values) => {
+        selectEl.replaceChildren();
+        for (const value of values) {
+            const opt = document.createElement("option");
+            opt.value = value;
+            opt.textContent = value;
+            selectEl.appendChild(opt);
+        }
+    };
+
+    const renderMatrix = (payload) => {
+        matrixTable.replaceChildren();
+        const thead = document.createElement("thead");
+        const headRow = document.createElement("tr");
+        headRow.appendChild(document.createElement("th"));
+        for (const anion of payload.anions) {
+            const th = document.createElement("th");
+            th.textContent = anion;
+            headRow.appendChild(th);
+        }
+        thead.appendChild(headRow);
+        matrixTable.appendChild(thead);
+        const tbody = document.createElement("tbody");
+        for (let i = 0; i < payload.cations.length; i++) {
+            const row = document.createElement("tr");
+            const th = document.createElement("th");
+            th.textContent = payload.cations[i];
+            row.appendChild(th);
+            for (let j = 0; j < payload.anions.length; j++) {
+                const td = document.createElement("td");
+                const verdict = payload.matrix[i][j];
+                td.classList.add("solubility-cell");
+                td.style.background = `var(${SOLUBILITY_VERDICT_TOKEN[verdict]})`;
+                td.style.color = "var(--color-text-on-color-light, #ffffff)";
+                td.title = tr(state.activeLanguage, SOLUBILITY_VERDICT_KEY[verdict]);
+                td.textContent =
+                    verdict === "soluble" ? "S" : verdict === "insoluble" ? "I" : "ss";
+                row.appendChild(td);
+            }
+            tbody.appendChild(row);
+        }
+        matrixTable.appendChild(tbody);
+    };
+
+    const ensureLoaded = async () => {
+        if (loaded) return;
+        status.classList.remove("is-error");
+        status.textContent = "…";
+        try {
+            const payload = await getSolubilityData();
+            populateSelect(cationSelect, payload.cations);
+            populateSelect(anionSelect, payload.anions);
+            renderMatrix(payload);
+            lastPayload = payload;
+            loaded = true;
+            status.textContent = "";
+        } catch (err) {
+            status.classList.add("is-error");
+            status.textContent = err.message;
+        }
+    };
+
+    tab.addEventListener("click", ensureLoaded);
+    // Also load when the tab is the initial selection on first open via
+    // setActiveToolTab (e.g. if a deep link puts it active). Idempotent.
+    document.getElementById("tools-open").addEventListener("click", () => {
+        if (state.activeToolTab === "solubility") ensureLoaded();
+    });
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        status.classList.remove("is-error");
+        status.textContent = "";
+        resultWrap.hidden = true;
+        const cation = cationSelect.value;
+        const anion = anionSelect.value;
+        if (!cation || !anion) return;
+        try {
+            const payload = await getSolubilityVerdict(cation, anion);
+            const verdictText = tr(state.activeLanguage, SOLUBILITY_VERDICT_KEY[payload.verdict]);
+            verdictNode.textContent = `${cation} + ${anion} → ${verdictText}`;
+            verdictNode.style.background = `var(${SOLUBILITY_VERDICT_TOKEN[payload.verdict]})`;
+            verdictNode.style.color = "var(--color-text-on-color-light, #ffffff)";
+            if (payload.rule_id) {
+                const key = SOLUBILITY_RULE_KEY[payload.rule_id];
+                ruleNode.textContent = `${tr(state.activeLanguage, "solubility_rule_label")} ${
+                    key ? tr(state.activeLanguage, key) : payload.rule_id
+                }`;
+            } else {
+                ruleNode.textContent = `${tr(state.activeLanguage, "solubility_rule_label")} ${
+                    tr(state.activeLanguage, "solubility_rule_default")
+                }`;
+            }
+            const exceptionEntries = Object.entries(payload.exceptions);
+            if (exceptionEntries.length === 0) {
+                exceptionsNode.textContent = "";
+                exceptionsNode.hidden = true;
+            } else {
+                const formatted = exceptionEntries
+                    .map(([ion, result]) =>
+                        `${ion}: ${tr(state.activeLanguage, SOLUBILITY_VERDICT_KEY[result])}`,
+                    )
+                    .join(", ");
+                exceptionsNode.hidden = false;
+                exceptionsNode.textContent =
+                    `${tr(state.activeLanguage, "solubility_exceptions_label")} ${formatted}`;
+            }
+            resultWrap.hidden = false;
+        } catch (err) {
+            status.classList.add("is-error");
+            status.textContent = err.message;
+        }
+    });
+}
+
 function parseOxidationStatesJS(raw) {
     if (raw === null || raw === undefined || raw === "") return [];
     if (Array.isArray(raw)) {
@@ -2376,6 +2564,7 @@ async function bootstrap() {
     setupPhForm();
     setupEmpiricalForm();
     setupCompoundBuilderForm();
+    setupSolubilityForm();
     setupLewisPanel();
     setupSearchForm();
     setupToolsModal();

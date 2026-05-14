@@ -103,6 +103,22 @@ def test_build_web_bundled_compound_builder_matches_source(tmp_path):
     assert nested == source
 
 
+def test_build_web_bundled_solubility_matches_source(tmp_path):
+    dest = tmp_path / "web_out"
+    build_web(dest)
+    from pathlib import Path
+
+    source = (
+        Path(__file__).resolve().parents[2] / "src" / "domain" / "solubility.py"
+    ).read_text(encoding="utf-8")
+    flat = (dest / "python" / "solubility.py").read_text(encoding="utf-8")
+    nested = (dest / "python" / "src" / "domain" / "solubility.py").read_text(
+        encoding="utf-8",
+    )
+    assert flat == source
+    assert nested == source
+
+
 def test_build_web_bundled_stoichiometry_matches_source(tmp_path):
     dest = tmp_path / "web_out"
     build_web(dest)

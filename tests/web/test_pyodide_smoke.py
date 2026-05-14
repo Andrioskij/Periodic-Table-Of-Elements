@@ -28,6 +28,10 @@ from src.domain.molar_mass import (
     empirical_formula_from_composition,
     parse_formula,
 )
+from src.domain.solubility import (
+    get_solubility,
+    get_solubility_rule,
+)
 from src.domain.stoichiometry import (
     balance_equation,
     compute_limiting_reagent,
@@ -157,6 +161,14 @@ def test_lewis_lookup_water_molecule():
 def test_lewis_lookup_is_case_insensitive():
     assert lookup_molecule("h2o") is not None
     assert lookup_molecule("XXNotAMolecule") is None
+
+
+def test_solubility_smoke():
+    assert get_solubility("Na⁺", "Cl⁻") == "soluble"
+    assert get_solubility("Ag⁺", "Cl⁻") == "insoluble"
+    rule = get_solubility_rule("Ag⁺", "Cl⁻")
+    assert rule is not None
+    assert rule["id"] == "halides"
 
 
 def test_compound_builder_smoke():

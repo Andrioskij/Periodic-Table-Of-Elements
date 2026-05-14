@@ -36,6 +36,7 @@ DOMAIN_MODULES = (
     "lewis_diagram.py",
     "lewis_library.py",
     "compound_builder.py",
+    "solubility.py",
 )
 CONFIG_MODULES = ("static_data.py",)
 LOCALIZATION_FILES = (
