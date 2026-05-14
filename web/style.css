@@ -225,6 +225,32 @@ input {
     }
 }
 
+.trend-controls {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-badge-gap, 6px);
+    padding: var(--spacing-info-card-padding, 12px);
+    background: var(--color-bg-card, #23272f);
+    border: var(--border-default-width, 1px) solid var(--color-border-strong, #404854);
+    border-radius: var(--radius-info-card, 14px);
+}
+
+.trend-button {
+    flex: 0 0 auto;
+    font-size: var(--font-size-button-default, 12px);
+}
+
+.trend-button.is-active {
+    background: var(--color-accent, #FFD60A);
+    color: var(--color-text-on-accent, #111111);
+    border-color: var(--color-accent, #FFD60A);
+}
+
+.element-cell.is-trend-na {
+    opacity: 0.55;
+}
+
 .table-wrapper {
     display: flex;
     flex-direction: column;
