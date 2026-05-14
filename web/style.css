@@ -248,7 +248,7 @@ input {
 }
 
 .element-cell.is-trend-na {
-    opacity: 0.55;
+    opacity: var(--opacity-trend-na-cell, 0.55);
 }
 
 .table-wrapper {
@@ -833,7 +833,7 @@ input {
 
 .orbital-diagram .lewis-bond {
     stroke: var(--color-painter-label, #d5dde8);
-    stroke-width: 1.5;
+    stroke-width: var(--border-lewis-bond-width, 1.5);
     stroke-linecap: round;
 }
 
@@ -873,7 +873,7 @@ input {
 
 .solubility-cell {
     font-weight: var(--font-weight-bold, 700);
-    min-width: 30px;
+    min-width: var(--scale-solubility-cell-min-width, 30px);
 }
 
 /* Footer */

@@ -325,6 +325,7 @@ _RAW = {
         "hero_accent_bar_width": 6,
         "metric_progress_height": 8,
         "accent_bar_radius": 3,
+        "lewis_bond_width": 1.5,
     },
     "scale": {
         "metric_normalized": 1000,
@@ -336,6 +337,10 @@ _RAW = {
         "element_cell_min_width_floor": 18,
         "element_cell_min_height": 48,
         "element_cell_min_height_floor": 28,
+        "solubility_cell_min_width": 30,
+    },
+    "opacity": {
+        "trend_na_cell": 0.55,
     },
     "alpha": {
         "metric_track": 24,

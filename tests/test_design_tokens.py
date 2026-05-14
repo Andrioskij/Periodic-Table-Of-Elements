@@ -25,6 +25,7 @@ class TestTokenSchema(unittest.TestCase):
         "radius",
         "border",
         "scale",
+        "opacity",
         "alpha",
         "interpolation",
         "luminance",
