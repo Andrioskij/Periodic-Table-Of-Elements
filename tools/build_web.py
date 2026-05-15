@@ -1,12 +1,14 @@
 """Assemble the static ``web/`` artifact for the Pyodide-based frontend.
 
 The ``web/`` directory holds tracked sources (``index.html``, ``style.css``,
-``app.js``, ``i18n.js``) plus three generated trees regenerated on every
+``app.js``, ``i18n.js``) plus four generated artifacts regenerated on every
 deploy from the desktop sources of truth:
 
-- ``web/python/``           — Python modules loaded by Pyodide.
-- ``web/data/``             — element dataset and localization snapshots.
+- ``web/python/``            — Python modules loaded by Pyodide.
+- ``web/data/``              — element dataset and localization snapshots.
 - ``web/design_tokens.json`` — JSON projection of ``TOKENS``.
+- ``web/version.js``         — ES module re-exporting ``APP_VERSION`` from
+  ``src.app_metadata`` so the browser header label tracks the desktop tag.
 
 Keeping these copies generated (and gitignored) prevents drift between the
 desktop and web payloads. The deploy workflow runs this script before
@@ -27,6 +29,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from src.app_metadata import APP_VERSION  # noqa: E402
 from tools.export_design_tokens import export_tokens  # noqa: E402
 
 DOMAIN_MODULES = (
@@ -132,6 +135,22 @@ def _copy_data(dest_data: Path) -> list[Path]:
     return written
 
 
+def _write_version(dest_root: Path) -> Path:
+    """Generate ``version.js`` re-exporting the desktop ``APP_VERSION``.
+
+    ``web/app.js`` imports ``APP_VERSION`` from this module so the version
+    label in the browser header automatically tracks
+    ``src.app_metadata.APP_VERSION``. Regenerating it on every deploy keeps
+    the Pages site in sync with whatever tag the release workflow shipped.
+    """
+    target = dest_root / "version.js"
+    target.write_text(
+        f'export const APP_VERSION = "{APP_VERSION}";\n',
+        encoding="utf-8",
+    )
+    return target
+
+
 def build_web(dest_root: Path) -> dict[str, list[Path]]:
     """Populate ``dest_root`` with the generated portions of the web bundle.
 
@@ -145,11 +164,13 @@ def build_web(dest_root: Path) -> dict[str, list[Path]]:
     python_paths = _copy_python_modules(dest_root / "python")
     data_paths = _copy_data(dest_root / "data")
     tokens_path = export_tokens(dest_root / "design_tokens.json")
+    version_path = _write_version(dest_root)
 
     return {
         "python": python_paths,
         "data": data_paths,
         "tokens": [tokens_path],
+        "version": [version_path],
     }
 
 

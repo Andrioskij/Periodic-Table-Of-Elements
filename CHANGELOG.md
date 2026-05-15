@@ -6,6 +6,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-05-15
+
+### Fixed
+- Web companion header now displays the correct app version. `web/app.js` had its own hardcoded `APP_VERSION` constant and silently stayed at `1.3.0` through the `1.4.0` release; the value is now generated into `web/version.js` by `tools/build_web.py` from `src.app_metadata.APP_VERSION`, so future tags propagate automatically.
+
 ## [1.4.0] - 2026-05-15
 
 ### Added
@@ -95,7 +100,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ruff lint baseline reduced to zero findings and enforced by Windows CI.
 - Project configuration consolidated into pyproject.toml.
 
-[Unreleased]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.1...HEAD
+[1.4.1]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.1.0...v1.2.0

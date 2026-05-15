@@ -15,8 +15,7 @@ import {
     getCategoryText,
     getStandardStateText,
 } from "./i18n.js";
-
-const APP_VERSION = "1.3.0";
+import { APP_VERSION } from "./version.js";
 
 const state = {
     tokens: null,

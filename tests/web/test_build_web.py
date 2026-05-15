@@ -205,3 +205,38 @@ def test_web_app_js_includes_search_match_scorer():
         "web/app.js must keep the search scorer; if you renamed it, update "
         "this drift test to match."
     )
+
+
+def test_build_web_emits_version_module_matching_app_metadata(tmp_path):
+    from src.app_metadata import APP_VERSION
+
+    dest = tmp_path / "web_out"
+    written = build_web(dest)
+
+    version_path = dest / "version.js"
+    assert version_path.is_file()
+    assert version_path in written["version"]
+    assert version_path.read_text(encoding="utf-8") == (
+        f'export const APP_VERSION = "{APP_VERSION}";\n'
+    )
+
+
+def test_web_app_js_imports_version_from_generated_module():
+    """Pin the import contract: app.js must take APP_VERSION from version.js.
+
+    If this drifts (someone re-declares the constant inline), the deploy
+    will silently ship a stale label again — same bug v1.4.1 was cut to
+    fix.
+    """
+    from pathlib import Path
+
+    app_js = (
+        Path(__file__).resolve().parents[2] / "web" / "app.js"
+    ).read_text(encoding="utf-8")
+    assert 'from "./version.js"' in app_js, (
+        "web/app.js must import APP_VERSION from the generated version.js "
+        "so the Pages bundle tracks src.app_metadata.APP_VERSION."
+    )
+    assert "const APP_VERSION =" not in app_js, (
+        "web/app.js must not redeclare APP_VERSION; it comes from version.js."
+    )
