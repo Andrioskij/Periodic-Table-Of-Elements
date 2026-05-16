@@ -31,6 +31,17 @@ body {
     line-height: 1.45;
 }
 
+/* Safety net against horizontal overflow at the document level:
+ * iOS Safari treats any element wider than the visual viewport as a
+ * cue to expand the viewport (defeating `width=device-width`).
+ * Clipping at the body keeps the viewport pinned to device-width even
+ * if a descendant escapes its container — internal scroll regions
+ * (e.g. `.table-wrapper`) still scroll normally.
+ */
+body {
+    overflow-x: hidden;
+}
+
 button {
     font-family: inherit;
     font-size: inherit;
@@ -994,5 +1005,41 @@ body.is-modal-open {
         max-height: 100%;
         border-radius: 0;
         border: none;
+    }
+    /* 8 tabs with `flex: 1 1 0` collapse below their min-content width
+     * on a narrow viewport; let the row scroll horizontally instead so
+     * every calculator stays reachable.
+     */
+    .tools-modal-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+    .tools-modal-tabs .tab {
+        flex: 0 0 auto;
+    }
+}
+
+/* Sub-mobile tweaks: tighten the topbar title, trend buttons, and the
+ * "TRANSITION METALS" band so the page stays usable at iPhone SE widths
+ * (~320px) without contributing to viewport overflow.
+ */
+@media (max-width: 480px) {
+    .app-title {
+        font-size: var(--font-size-search-title, 16px);
+    }
+    .trend-button {
+        font-size: var(--font-size-info-field-label, 11px);
+        padding: var(--spacing-badge-padding-y, 4px)
+            var(--spacing-badge-padding-x, 10px);
+    }
+    .transition-band {
+        font-size: var(--font-size-transition-block-min, 9px);
+        letter-spacing: 0.04em;
+    }
+    .layout,
+    .search-card,
+    .trend-controls {
+        padding: var(--spacing-badge-padding-x, 10px);
     }
 }

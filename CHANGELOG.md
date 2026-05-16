@@ -6,6 +6,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+- Web companion now lays out correctly on smartphone browsers. Adds a defensive `body { overflow-x: hidden }` so iOS Safari can't expand the visual viewport past `device-width` if a descendant overflows, lets the Calculators modal tabs scroll horizontally on `≤720px` instead of collapsing, and adds a `≤480px` breakpoint that tightens the topbar title, trend buttons, and the "TRANSITION METALS" band so the page stays usable down to iPhone SE widths.
+
 ## [1.4.2] - 2026-05-16
 
 ### Added
