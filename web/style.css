@@ -1042,4 +1042,23 @@ body.is-modal-open {
     .trend-controls {
         padding: var(--spacing-badge-padding-x, 10px);
     }
+    /* Force a readable minimum width per element column. Below 480px
+     * the container-query font clamps would otherwise collapse the
+     * symbol/number to their 8px/6px floors and overlap into neighbour
+     * cells. Bumping the grid track minimum makes the table wider than
+     * the viewport instead, so `.table-wrapper { overflow-x: auto }`
+     * exposes horizontal scroll while cells stay legible.
+     */
+    .periodic-table,
+    .periodic-series {
+        grid-template-columns:
+            auto
+            repeat(18, minmax(var(--scale-element-cell-min-width-mobile, 30px), 1fr));
+    }
+    .element-cell .symbol {
+        font-size: var(--font-size-button-default, 12px);
+    }
+    .element-cell .number {
+        font-size: var(--font-size-transition-block-min, 9px);
+    }
 }
