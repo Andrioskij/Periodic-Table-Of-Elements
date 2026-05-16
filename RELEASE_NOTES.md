@@ -1,5 +1,11 @@
 # Release notes
 
+## 1.4.3 "Chemistry Tool"
+
+Fixes
+- Web companion now lays out correctly on smartphone browsers: defensive `body { overflow-x: hidden }` against iOS Safari viewport expansion, scrollable Calculators modal tabs on `≤720px`, and a `≤480px` breakpoint that tightens the topbar title, trend buttons, and the "TRANSITION METALS" band.
+- Periodic table portrait view now renders as a compact grid of square symbol-only cells: hidden period/series labels, group headers, transition-band overlay and per-cell atomic number; gap and padding shrink to new mobile tokens; cells gain `aspect-ratio: 1/1` so the previous pill shape is gone; symbol pins to a 12px floor and centres. All 18 columns still fit at 390px portrait with no horizontal scroll.
+
 ## 1.4.2 "Chemistry Tool"
 
 Added
