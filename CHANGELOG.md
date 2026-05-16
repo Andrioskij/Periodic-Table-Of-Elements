@@ -6,6 +6,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.4.2] - 2026-05-16
+
 ### Added
 - New "Metalloid" trend overlay button (desktop + web) that emphasises only the metalloid band (B, Si, Ge, As, Sb, Te, Po) and dims the rest of the table to the UI fallback. Adds the `trend_button_metalloid`, `metalloid_arrow`, and `current_view_metalloid` keys across all 7 UI languages.
 
@@ -109,7 +111,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ruff lint baseline reduced to zero findings and enforced by Windows CI.
 - Project configuration consolidated into pyproject.toml.
 
-[Unreleased]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.1...HEAD
+[Unreleased]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.2...HEAD
+[1.4.2]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.2.0...v1.3.0

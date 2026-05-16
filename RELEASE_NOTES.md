@@ -1,5 +1,16 @@
 # Release notes
 
+## 1.4.2 "Chemistry Tool"
+
+Added
+- New "Metalloid" trend overlay button (desktop + web) emphasising only the metalloid band (B, Si, Ge, As, Sb, Te, Po). Localised in all 7 UI languages.
+
+Changed
+- "Metallic" / "Nonmetallic" / "Metalloid" trend overlays are now mutually exclusive: each mode keeps the categorical palette only for elements in its own macro-class and dims the rest. Previously toggling between Metallic and Nonmetallic changed only the arrow/label.
+
+Removed
+- "Affinity" trend overlay button. Electron affinity is still shown in the info panel; only the redundant band-style visualisation was retired.
+
 ## 1.4.1 "Chemistry Tool"
 
 Fixes
