@@ -1042,4 +1042,49 @@ body.is-modal-open {
     .trend-controls {
         padding: var(--spacing-badge-padding-x, 10px);
     }
+
+    /* Hide accessory metadata that becomes illegible at the floor font
+     * sizes or wastes space in a portrait viewport. The grid alone still
+     * conveys the table; recognition happens by symbol, not by number.
+     */
+    .period-label,
+    .series-label,
+    .group-header,
+    .transition-band,
+    .element-cell .number {
+        display: none;
+    }
+
+    /* Drop the leading label column and shrink gaps so 18 element columns
+     * fit at iPhone widths without horizontal scroll.
+     */
+    .periodic-table,
+    .periodic-series {
+        grid-template-columns: repeat(18, minmax(0, 1fr));
+        gap: var(--spacing-grid-gap-mobile, 1px);
+    }
+
+    /* Square cells with the symbol pinned dead-centre. aspect-ratio
+     * overrides the min-height clamp so the previous 2:1 pill shape
+     * (28px tall on a 16-20px base) becomes a tidy square that follows
+     * the grid's column width.
+     */
+    .element-cell {
+        aspect-ratio: 1 / 1;
+        min-height: 0;
+        padding: var(--spacing-cell-padding-mobile, 1px);
+        border-radius: var(--radius-cell-mobile, 3px);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .element-cell .symbol {
+        font-size: clamp(
+            var(--font-size-element-symbol-mobile-floor, 12px),
+            3cqi,
+            var(--font-size-element-symbol, 14px)
+        );
+        text-align: center;
+        line-height: 1;
+    }
 }
