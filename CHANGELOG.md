@@ -8,7 +8,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 - Web companion now lays out correctly on smartphone browsers. Adds a defensive `body { overflow-x: hidden }` so iOS Safari can't expand the visual viewport past `device-width` if a descendant overflows, lets the Calculators modal tabs scroll horizontally on `≤720px` instead of collapsing, and adds a `≤480px` breakpoint that tightens the topbar title, trend buttons, and the "TRANSITION METALS" band.
-- Periodic table cells now stay legible on smartphone portrait viewports. Below 480px the grid track minimum widens to a new `scale.element_cell_min_width_mobile = 30` token and the symbol/number fonts are pinned to readable sizes (12px / 9px), so the table overflows its container and the existing `.table-wrapper { overflow-x: auto }` exposes horizontal scroll instead of collapsing the per-cell font to the 8px floor.
 
 ## [1.4.2] - 2026-05-16
 

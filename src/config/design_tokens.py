@@ -338,7 +338,6 @@ _RAW = {
         "element_cell_min_width_floor": 18,
         "element_cell_min_height": 48,
         "element_cell_min_height_floor": 28,
-        "element_cell_min_width_mobile": 30,
         "solubility_cell_min_width": 30,
     },
     "opacity": {
