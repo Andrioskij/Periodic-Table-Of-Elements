@@ -6,6 +6,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.4.3] - 2026-05-16
+
 ### Fixed
 - Web companion now lays out correctly on smartphone browsers. Adds a defensive `body { overflow-x: hidden }` so iOS Safari can't expand the visual viewport past `device-width` if a descendant overflows, lets the Calculators modal tabs scroll horizontally on `≤720px` instead of collapsing, and adds a `≤480px` breakpoint that tightens the topbar title, trend buttons, and the "TRANSITION METALS" band.
 - Periodic table in smartphone portrait now renders as a compact grid of square symbol-only cells. Below 480px, period/series labels, group headers (IA…VIIIA), the "TRANSITION METALS" overlay, and the per-cell atomic number are hidden; the column gap drops to a new `spacing.grid_gap_mobile = 1` token and cell padding/radius shrink to matching mobile tokens; cells gain `aspect-ratio: 1 / 1` so the previous 2:1 pill effect is gone; the symbol pins to a new `font.size.element_symbol_mobile_floor = 12` and centres in the cell. All 18 columns still fit without horizontal scroll.
@@ -115,7 +117,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ruff lint baseline reduced to zero findings and enforced by Windows CI.
 - Project configuration consolidated into pyproject.toml.
 
-[Unreleased]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.2...HEAD
+[Unreleased]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.3...HEAD
+[1.4.3]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.3.0...v1.4.0
