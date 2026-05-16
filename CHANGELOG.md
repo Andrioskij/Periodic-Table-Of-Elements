@@ -6,6 +6,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+- Trend overlay "Metallic" and "Nonmetallic" modes now render visually distinct tables: each mode keeps the categorical palette for the emphasised half (metals + metalloids under Metallic; nonmetals + metalloids under Nonmetallic) and dims the other half to the UI fallback. Previously both modes produced the same palette as "Normal" on desktop and a symmetric 2-color lerp on web, so toggling between them changed only the arrow/label. Affects both `src/ui/styles.py` and `web/app.js`.
+
 ## [1.4.1] - 2026-05-15
 
 ### Fixed

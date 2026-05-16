@@ -234,27 +234,18 @@ function getTrendCellColor(element, trend) {
         const cls = getMacroClass(element.category);
         return { bg: getMacroClassColor(cls), na: cls === "fallback" };
     }
-    const directional = state.tokens?.color?.trend?.directional ?? {};
     if (trend === "metallic" || trend === "nonmetallic") {
-        const value = element.electronegativity;
-        if (typeof value !== "number" || !Number.isFinite(value)) {
-            return { bg: fallback, na: true };
+        // Keep the categorical palette for the emphasised half of the
+        // table and dim the rest to the UI fallback. Metalloids stay
+        // coloured under both modes because they carry both characters.
+        const cls = getMacroClass(element.category);
+        const emphasised = trend === "metallic"
+            ? cls === "Metal" || cls === "Metalloid"
+            : cls === "Nonmetal" || cls === "Metalloid";
+        if (emphasised) {
+            return { bg: getCategoryColor(element.category), na: false };
         }
-        const range = state.numericTrendRanges?.electronegativity;
-        if (!range || range.max === range.min) return { bg: fallback, na: true };
-        const t = (value - range.min) / (range.max - range.min);
-        // Metallic mode: low electronegativity = "more metallic" → metallic end.
-        // Nonmetallic mode: high electronegativity = "more nonmetallic" → nonmetallic end.
-        if (trend === "metallic") {
-            return {
-                bg: lerpColor(directional.metallic ?? "#56CCF2", directional.nonmetallic ?? "#FFD60A", t),
-                na: false,
-            };
-        }
-        return {
-            bg: lerpColor(directional.nonmetallic ?? "#FFD60A", directional.metallic ?? "#56CCF2", 1 - t),
-            na: false,
-        };
+        return { bg: fallback, na: true };
     }
     const numeric = state.tokens?.color?.trend?.numeric_gradient ?? {};
     const field = NUMERIC_TREND_FIELD[trend];

@@ -202,13 +202,34 @@ def get_current_button_colors(
     """Compute the (background, text) color pair for an element button.
 
     Selects the coloring strategy based on the active trend mode:
-    category colors for 'normal', macro-class colors for 'macroclass',
+    category colors for 'normal'; category colors restricted to the
+    relevant macro-class (with the rest dimmed to the UI fallback) for
+    'metallic' and 'nonmetallic'; macro-class colors for 'macroclass';
     or a gradient-interpolated color for numeric trend properties.
+    Metalloids stay coloured under both directional modes because they
+    carry both metallic and nonmetallic character.
+
     The ``theme`` parameter selects the category palette tuned for
     either the dark or the light UI mode.
     """
-    if trend_mode == "normal" or trend_mode in {"metallic", "nonmetallic"}:
-        background_color = get_category_color(element.get("category"), theme=theme)
+    category = element.get("category")
+
+    if trend_mode == "normal":
+        background_color = get_category_color(category, theme=theme)
+        return background_color, get_text_color(background_color)
+
+    if trend_mode in {"metallic", "nonmetallic"}:
+        macro_class = get_macro_class(category)
+        emphasised = (
+            macro_class in {"Metal", "Metalloid"}
+            if trend_mode == "metallic"
+            else macro_class in {"Nonmetal", "Metalloid"}
+        )
+        background_color = (
+            get_category_color(category, theme=theme)
+            if emphasised
+            else DEFAULT_UI_COLOR
+        )
         return background_color, get_text_color(background_color)
 
     if trend_mode == "macroclass":
