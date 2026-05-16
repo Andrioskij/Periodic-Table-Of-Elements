@@ -166,8 +166,13 @@ const NONMETAL_CATEGORIES = new Set(["nonmetal", "halogen", "noble gas"]);
 const NUMERIC_TREND_FIELD = {
     radius: "atomic_radius",
     ionization: "ionization_energy",
-    affinity: "electron_affinity",
     electronegativity: "electronegativity",
+};
+
+const DIRECTIONAL_MODE_TO_MACRO_CLASS = {
+    metallic: "Metal",
+    nonmetallic: "Nonmetal",
+    metalloid: "Metalloid",
 };
 
 function getMacroClass(category) {
@@ -234,15 +239,13 @@ function getTrendCellColor(element, trend) {
         const cls = getMacroClass(element.category);
         return { bg: getMacroClassColor(cls), na: cls === "fallback" };
     }
-    if (trend === "metallic" || trend === "nonmetallic") {
-        // Keep the categorical palette for the emphasised half of the
-        // table and dim the rest to the UI fallback. Metalloids stay
-        // coloured under both modes because they carry both characters.
+    if (trend in DIRECTIONAL_MODE_TO_MACRO_CLASS) {
+        // Exclusive band emphasis: keep the categorical palette only for
+        // elements in the matching macro-class and dim the rest. The
+        // three modes (metallic / nonmetallic / metalloid) thus produce
+        // three visibly distinct tables.
         const cls = getMacroClass(element.category);
-        const emphasised = trend === "metallic"
-            ? cls === "Metal" || cls === "Metalloid"
-            : cls === "Nonmetal" || cls === "Metalloid";
-        if (emphasised) {
+        if (cls === DIRECTIONAL_MODE_TO_MACRO_CLASS[trend]) {
             return { bg: getCategoryColor(element.category), na: false };
         }
         return { bg: fallback, na: true };

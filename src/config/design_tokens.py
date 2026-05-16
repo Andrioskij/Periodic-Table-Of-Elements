@@ -162,6 +162,7 @@ _RAW = {
             "directional": {
                 "metallic": "#56CCF2",
                 "nonmetallic": "#FFD60A",
+                "metalloid": "#B07AA1",
             },
             "label_background_rgba": [20, 20, 20, 180],
         },

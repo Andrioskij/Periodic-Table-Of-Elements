@@ -6,8 +6,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- New "Metalloid" trend overlay button (desktop + web) that emphasises only the metalloid band (B, Si, Ge, As, Sb, Te, Po) and dims the rest of the table to the UI fallback. Adds the `trend_button_metalloid`, `metalloid_arrow`, and `current_view_metalloid` keys across all 7 UI languages.
+
 ### Changed
-- Trend overlay "Metallic" and "Nonmetallic" modes now render visually distinct tables: each mode keeps the categorical palette for the emphasised half (metals + metalloids under Metallic; nonmetals + metalloids under Nonmetallic) and dims the other half to the UI fallback. Previously both modes produced the same palette as "Normal" on desktop and a symmetric 2-color lerp on web, so toggling between them changed only the arrow/label. Affects both `src/ui/styles.py` and `web/app.js`.
+- "Metallic" / "Nonmetallic" / "Metalloid" trend overlays are now mutually exclusive bands: each mode keeps the categorical palette only for elements in its own macro-class and dims the rest. Previously both directional modes produced the same palette as "Normal" on desktop and a symmetric 2-color lerp on web, so toggling between them changed only the arrow/label. Affects `src/ui/styles.py`, `src/ui/widgets/trends_overlay.py`, and `web/app.js`.
+
+### Removed
+- "Affinity" trend overlay button (desktop + web). Electron affinity is still shown in the info panel; only the redundant trend visualisation was retired to make room for the new exclusive band buttons.
 
 ## [1.4.1] - 2026-05-15
 

@@ -93,6 +93,11 @@ TREND_OVERLAY_COLORS = dict(TOKENS["color"]["trend"]["directional"])
 TREND_OVERLAY_LABEL_BACKGROUND_RGBA = tuple(
     TOKENS["color"]["trend"]["label_background_rgba"]
 )
+_DIRECTIONAL_MODE_TO_MACRO_CLASS = {
+    "metallic": "Metal",
+    "nonmetallic": "Nonmetal",
+    "metalloid": "Metalloid",
+}
 
 _CATEGORY_TOKEN_TO_PUBLIC_KEYS = {
     "alkali_metal": ("alkali metal",),
@@ -203,11 +208,10 @@ def get_current_button_colors(
 
     Selects the coloring strategy based on the active trend mode:
     category colors for 'normal'; category colors restricted to the
-    relevant macro-class (with the rest dimmed to the UI fallback) for
-    'metallic' and 'nonmetallic'; macro-class colors for 'macroclass';
-    or a gradient-interpolated color for numeric trend properties.
-    Metalloids stay coloured under both directional modes because they
-    carry both metallic and nonmetallic character.
+    matching macro-class (rest dimmed to the UI fallback) for the
+    three exclusive band modes 'metallic', 'nonmetallic', and
+    'metalloid'; macro-class colors for 'macroclass'; or a
+    gradient-interpolated color for numeric trend properties.
 
     The ``theme`` parameter selects the category palette tuned for
     either the dark or the light UI mode.
@@ -218,16 +222,11 @@ def get_current_button_colors(
         background_color = get_category_color(category, theme=theme)
         return background_color, get_text_color(background_color)
 
-    if trend_mode in {"metallic", "nonmetallic"}:
+    if trend_mode in _DIRECTIONAL_MODE_TO_MACRO_CLASS:
         macro_class = get_macro_class(category)
-        emphasised = (
-            macro_class in {"Metal", "Metalloid"}
-            if trend_mode == "metallic"
-            else macro_class in {"Nonmetal", "Metalloid"}
-        )
         background_color = (
             get_category_color(category, theme=theme)
-            if emphasised
+            if macro_class == _DIRECTIONAL_MODE_TO_MACRO_CLASS[trend_mode]
             else DEFAULT_UI_COLOR
         )
         return background_color, get_text_color(background_color)

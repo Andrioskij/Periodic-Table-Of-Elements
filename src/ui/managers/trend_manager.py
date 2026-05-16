@@ -19,10 +19,10 @@ class TrendMode(StrEnum):
     MACROCLASS = "macroclass"
     RADIUS = "atomic_radius"
     IONIZATION = "ionization_energy"
-    AFFINITY = "electron_affinity"
     ELECTRONEGATIVITY = "electronegativity"
     METALLIC = "metallic"
     NONMETALLIC = "nonmetallic"
+    METALLOID = "metalloid"
 
 
 @dataclass
@@ -51,7 +51,7 @@ class TrendManager:
         """
         # Validate mode exists
         valid_modes = list(NUMERIC_TREND_PROPERTIES.keys()) + [
-            "normal", "macroclass", "metallic", "nonmetallic"
+            "normal", "macroclass", "metallic", "nonmetallic", "metalloid"
         ]
         if mode in valid_modes:
             self._current_mode = mode
