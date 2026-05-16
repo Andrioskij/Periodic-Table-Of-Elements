@@ -93,6 +93,11 @@ TREND_OVERLAY_COLORS = dict(TOKENS["color"]["trend"]["directional"])
 TREND_OVERLAY_LABEL_BACKGROUND_RGBA = tuple(
     TOKENS["color"]["trend"]["label_background_rgba"]
 )
+_DIRECTIONAL_MODE_TO_MACRO_CLASS = {
+    "metallic": "Metal",
+    "nonmetallic": "Nonmetal",
+    "metalloid": "Metalloid",
+}
 
 _CATEGORY_TOKEN_TO_PUBLIC_KEYS = {
     "alkali_metal": ("alkali metal",),
@@ -202,13 +207,28 @@ def get_current_button_colors(
     """Compute the (background, text) color pair for an element button.
 
     Selects the coloring strategy based on the active trend mode:
-    category colors for 'normal', macro-class colors for 'macroclass',
-    or a gradient-interpolated color for numeric trend properties.
+    category colors for 'normal'; category colors restricted to the
+    matching macro-class (rest dimmed to the UI fallback) for the
+    three exclusive band modes 'metallic', 'nonmetallic', and
+    'metalloid'; macro-class colors for 'macroclass'; or a
+    gradient-interpolated color for numeric trend properties.
+
     The ``theme`` parameter selects the category palette tuned for
     either the dark or the light UI mode.
     """
-    if trend_mode == "normal" or trend_mode in {"metallic", "nonmetallic"}:
-        background_color = get_category_color(element.get("category"), theme=theme)
+    category = element.get("category")
+
+    if trend_mode == "normal":
+        background_color = get_category_color(category, theme=theme)
+        return background_color, get_text_color(background_color)
+
+    if trend_mode in _DIRECTIONAL_MODE_TO_MACRO_CLASS:
+        macro_class = get_macro_class(category)
+        background_color = (
+            get_category_color(category, theme=theme)
+            if macro_class == _DIRECTIONAL_MODE_TO_MACRO_CLASS[trend_mode]
+            else DEFAULT_UI_COLOR
+        )
         return background_color, get_text_color(background_color)
 
     if trend_mode == "macroclass":

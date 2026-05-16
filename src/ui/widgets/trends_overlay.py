@@ -8,10 +8,12 @@ from src.ui.styles import TREND_OVERLAY_LABEL_BACKGROUND_RGBA, get_trend_overlay
 
 
 class TrendsOverlay(QWidget):
-    """Transparent overlay that draws directional trend arrows on the periodic table.
+    """Transparent overlay that annotates the active band-trend mode.
 
-    Paints a diagonal arrow with a label box indicating the direction
-    of metallic or nonmetallic character increase across the table.
+    Paints a diagonal arrow with a label box for the directional
+    ``metallic`` and ``nonmetallic`` modes. For ``metalloid`` the band
+    is a diagonal staircase rather than a directional gradient, so the
+    overlay shows only a colored label without an arrow.
     """
 
     def __init__(self):
@@ -24,6 +26,7 @@ class TrendsOverlay(QWidget):
         self.mode = None
         self.metallic_text = "Metallic character \u2199"
         self.nonmetallic_text = "Nonmetallic character \u2197"
+        self.metalloid_text = "Metalloid band"
         self._apply_accessibility_metadata()
 
     def set_mode(self, mode):
@@ -31,9 +34,10 @@ class TrendsOverlay(QWidget):
         self._apply_accessibility_metadata()
         self.update()
 
-    def set_texts(self, metallic_text, nonmetallic_text):
+    def set_texts(self, metallic_text, nonmetallic_text, metalloid_text):
         self.metallic_text = metallic_text
         self.nonmetallic_text = nonmetallic_text
+        self.metalloid_text = metalloid_text
         self._apply_accessibility_metadata()
         self.update()
 
@@ -44,6 +48,9 @@ class TrendsOverlay(QWidget):
         elif self.mode == "nonmetallic":
             self.setObjectName("trendsOverlay_nonmetallic")
             self.setAccessibleDescription(f"Trend overlay active: {self.nonmetallic_text}")
+        elif self.mode == "metalloid":
+            self.setObjectName("trendsOverlay_metalloid")
+            self.setAccessibleDescription(f"Trend overlay active: {self.metalloid_text}")
         else:
             self.setObjectName("trendsOverlay_inactive")
             self.setAccessibleDescription("Trend overlay hidden.")
@@ -108,3 +115,9 @@ class TrendsOverlay(QWidget):
             self.draw_arrow(painter, start, end, color)
             rect = QRectF(width * 0.60, height * 0.04, width * 0.34, height * 0.10)
             self.draw_label_box(painter, rect, [self.nonmetallic_text], color)
+        elif self.mode == "metalloid":
+            # No arrow: the metalloid band is a diagonal staircase, not a
+            # directional gradient. The label alone names the active view.
+            color = QColor(get_trend_overlay_color("metalloid"))
+            rect = QRectF(width * 0.34, height * 0.04, width * 0.30, height * 0.10)
+            self.draw_label_box(painter, rect, [self.metalloid_text], color)

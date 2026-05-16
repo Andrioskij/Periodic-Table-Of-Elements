@@ -111,12 +111,20 @@ class PeriodicTableWidget(QWidget):
         self.name_provider = name_provider
         self.refresh_selected_element_name()
 
-    def set_language_texts(self, *, selected_none_text, transition_text, metallic_text, nonmetallic_text):
+    def set_language_texts(
+        self,
+        *,
+        selected_none_text,
+        transition_text,
+        metallic_text,
+        nonmetallic_text,
+        metalloid_text,
+    ):
         self.selected_none_text = selected_none_text
         self.transition_text = transition_text
         if self.transition_label is not None:
             self.transition_label.setText(transition_text)
-        self.trends_overlay.set_texts(metallic_text, nonmetallic_text)
+        self.trends_overlay.set_texts(metallic_text, nonmetallic_text, metalloid_text)
         self.refresh_selected_element_name()
 
     def refresh_selected_element_name(self):
@@ -137,12 +145,14 @@ class PeriodicTableWidget(QWidget):
     def set_trend_mode(self, mode):
         """Switch the color scheme to the given trend visualization mode.
 
-        For directional trends (metallic/nonmetallic), shows the arrow
-        overlay. For all modes, repaints every element button with the
-        appropriate color mapping.
+        For the band modes (metallic/nonmetallic/metalloid), shows the
+        annotation overlay; metallic/nonmetallic draw a directional
+        arrow, metalloid shows only a label since its band is a
+        diagonal staircase. For all modes, repaints every element
+        button with the appropriate color mapping.
         """
         self.active_trend_mode = mode
-        if mode in {"metallic", "nonmetallic"}:
+        if mode in {"metallic", "nonmetallic", "metalloid"}:
             self.trends_overlay.set_mode(mode)
             self.trends_overlay.show()
         else:

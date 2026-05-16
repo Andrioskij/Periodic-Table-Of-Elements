@@ -137,15 +137,14 @@ TREND_BUTTON_SPECS = (
     ("macroclass", "trend_button_macroclass"),
     ("radius", "trend_button_radius"),
     ("ionization", "trend_button_ionization"),
-    ("affinity", "trend_button_affinity"),
     ("electronegativity", "trend_button_electronegativity"),
     ("metallic", "trend_button_metallic"),
+    ("metalloid", "trend_button_metalloid"),
     ("nonmetallic", "trend_button_nonmetallic"),
 )
 NUMERIC_TREND_LABEL_KEYS = {
     "radius": "atomic_radius",
     "ionization": "ionization_energy",
-    "affinity": "electron_affinity",
     "electronegativity": "electronegativity",
 }
 
@@ -731,6 +730,7 @@ class MainWindow(QWidget):
             transition_text=texts["transition_metals"],
             metallic_text=texts["metallic_arrow"],
             nonmetallic_text=texts["nonmetallic_arrow"],
+            metalloid_text=texts["metalloid_arrow"],
         )
 
         for mode, text in texts["trend_buttons"].items():
@@ -769,6 +769,8 @@ class MainWindow(QWidget):
             self.trend_status_label.setText(self.tr("current_view_metallic"))
         elif mode == "nonmetallic":
             self.trend_status_label.setText(self.tr("current_view_nonmetallic"))
+        elif mode == "metalloid":
+            self.trend_status_label.setText(self.tr("current_view_metalloid"))
         else:
             trend_title = self.tr(NUMERIC_TREND_LABEL_KEYS.get(mode, NUMERIC_TREND_PROPERTIES[mode][1]))
             self.trend_status_label.setText(self.tr("current_view_metric", name=trend_title))

@@ -46,6 +46,7 @@ def build_main_window_texts(translate, trend_button_specs):
         "transition_metals": translate("transition_metals"),
         "metallic_arrow": translate("metallic_arrow"),
         "nonmetallic_arrow": translate("nonmetallic_arrow"),
+        "metalloid_arrow": translate("metalloid_arrow"),
         "trend_buttons": {
             mode: translate(label_key)
             for mode, label_key in trend_button_specs
