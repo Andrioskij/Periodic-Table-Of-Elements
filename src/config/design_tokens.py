@@ -234,6 +234,7 @@ _RAW = {
             "transition_block_min": 9,
             "element_symbol": 14,
             "element_symbol_min": 8,
+            "element_symbol_mobile_floor": 12,
             "element_number_min": 6,
             "side_label": 11,
             "series_label": 10,
@@ -294,6 +295,8 @@ _RAW = {
         "title_padding_top": 2,
         "isotopes_layout_gap": 8,
         "uses_layout_gap": 8,
+        "grid_gap_mobile": 1,
+        "cell_padding_mobile": 1,
     },
     "radius": {
         "info_card": 14,
@@ -314,6 +317,7 @@ _RAW = {
         "accent_bar": 3,
         "cell_min": 4,
         "cell_ratio": 0.16,
+        "cell_mobile": 3,
     },
     "border": {
         "default_width": 1,
