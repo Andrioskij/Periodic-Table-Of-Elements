@@ -7,6 +7,7 @@ on:
       - "web/**"
       - "tools/build_web.py"
       - "tools/export_design_tokens.py"
+      - "src/app_metadata.py"
       - "src/config/design_tokens.py"
       - "src/domain/molar_mass.py"
       - "data/raw/elements.json"
