@@ -1085,11 +1085,15 @@ body.is-modal-open {
     /* Square cells with the symbol pinned dead-centre. aspect-ratio
      * overrides the min-height clamp so the previous 2:1 pill shape
      * (28px tall on a 16-20px base) becomes a tidy square that follows
-     * the grid's column width.
+     * the grid's column width. min-width: 0 cancels the 18px floor set
+     * on the base .element-cell rule, which would otherwise force
+     * 18 * 18 = 324px and exceed the wrapper at iPhone SE (320px)
+     * widths, triggering ~24px of horizontal scroll.
      */
     .element-cell {
         aspect-ratio: 1 / 1;
         min-height: 0;
+        min-width: 0;
         padding: var(--spacing-cell-padding-mobile, 1px);
         border-radius: var(--radius-cell-mobile, 3px);
         justify-content: center;
