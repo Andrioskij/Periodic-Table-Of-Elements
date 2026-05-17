@@ -6,6 +6,20 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.4.4] - 2026-05-18
+
+### Added
+- `spacing.grid_gap_desktop = 4` design token, shared between desktop and web, so the periodic table grid gap is tunable from one place.
+
+### Changed
+- Web companion periodic table cells now mirror the desktop PySide6 look: 1:1 aspect ratio with the atomic number and symbol centered and tightly stacked, uniform padding, bold non-faded number, 4px grid gap, and no hover elevation.
+
+### Fixed
+- iOS Safari / Chrome Android no longer auto-zoom the web companion when a form control receives focus. `input`, `select`, `textarea`, `.molar-input`, and `.control-input` are pinned to `16px` inside the `≤480px` breakpoint, defeating the sub-16px zoom heuristic without resorting to `user-scalable=no`.
+- Calculators modal on phones now lays out its tabs as a visible 2-column grid (previously a horizontally-scrolling row hid 5 of 8 calculators), the modal title shrinks from 24px to 16px, and `.molar-form` stacks vertically so the input gets full width when the soft keyboard appears.
+- Periodic table portrait view no longer scrolls horizontally at iPhone SE (320px) widths: the `min-width: clamp(18px, 5cqi, 40px)` floor introduced for the desktop cell-parity look is now cancelled inside the mobile `@media (max-width: 480px)` block, so the `grid-template-columns: repeat(18, minmax(0, 1fr))` shrink behaviour the portrait layout relies on is preserved.
+- `deploy-web.yml` now triggers on changes to `src/app_metadata.py`, so a version-only bump commit (touching only `app_metadata.py` / `pyproject.toml` / `CHANGELOG.md` / `README.md` / docs txt) automatically redeploys the web bundle instead of leaving the Pages header stale until a manual `workflow_dispatch`.
+
 ## [1.4.3] - 2026-05-16
 
 ### Fixed
@@ -117,7 +131,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ruff lint baseline reduced to zero findings and enforced by Windows CI.
 - Project configuration consolidated into pyproject.toml.
 
-[Unreleased]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.3...HEAD
+[Unreleased]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.4...HEAD
+[1.4.4]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.3...v1.4.4
 [1.4.3]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.0...v1.4.1

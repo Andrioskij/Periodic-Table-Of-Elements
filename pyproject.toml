@@ -1,6 +1,6 @@
 [project]
 name = "periodic-table-of-elements"
-version = "1.4.3"
+version = "1.4.4"
 description = "Desktop periodic table explorer"
 requires-python = ">=3.14"
 
