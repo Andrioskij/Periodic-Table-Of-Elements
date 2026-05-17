@@ -1021,6 +1021,28 @@ body.is-modal-open {
  * (~320px) without contributing to viewport overflow.
  */
 @media (max-width: 480px) {
+    /* iOS Safari (and, more selectively, Chrome Android) auto-zooms the
+     * page when a form control receives focus and its computed font-size
+     * is below 16px. The viewport stays scaled afterwards, the layout
+     * gets distorted and the on-screen keyboard appearance amplifies the
+     * effect. Forcing 16px on every interactive control under the mobile
+     * breakpoint disables that heuristic without resorting to
+     * `user-scalable=no` (which breaks accessibility). The class
+     * selectors must be listed explicitly: the desktop rules for
+     * `.molar-input` (13px) and `.control-input` (12px) have higher
+     * specificity than a bare `input`/`select` element selector and
+     * would otherwise win the cascade even inside this media query.
+     * 16px is a browser threshold, not a design value, so it is
+     * intentionally hard-coded.
+     */
+    input,
+    select,
+    textarea,
+    .molar-input,
+    .control-input {
+        font-size: 16px;
+    }
+
     .app-title {
         font-size: var(--font-size-search-title, 16px);
     }
@@ -1082,5 +1104,31 @@ body.is-modal-open {
         );
         text-align: center;
         line-height: 1;
+    }
+
+    /* Calculators modal: on phones the desktop layout (24px title,
+     * horizontally-scrolling tab row, side-by-side form controls) wastes
+     * vertical space and hides 5 of the 8 calculator tabs behind a
+     * scroll the user can't easily discover. Shrink the title, lay the
+     * tabs out as a visible 2-column grid so all 8 fit on screen, and
+     * stack `.molar-form` input + button vertically so the input gets
+     * full width when the soft keyboard appears.
+     */
+    .tools-modal-title {
+        font-size: var(--font-size-search-title, 16px);
+    }
+
+    .tools-modal-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        overflow: visible;
+    }
+
+    .tools-modal-tabs .tab {
+        flex: initial;
+    }
+
+    .molar-form {
+        flex-direction: column;
     }
 }
