@@ -296,6 +296,7 @@ _RAW = {
         "isotopes_layout_gap": 8,
         "uses_layout_gap": 8,
         "grid_gap_mobile": 1,
+        "grid_gap_desktop": 4,
         "cell_padding_mobile": 1,
     },
     "radius": {

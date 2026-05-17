@@ -288,18 +288,18 @@ input {
     display: grid;
     grid-template-columns: auto repeat(18, minmax(0, 1fr));
     grid-template-rows: auto repeat(7, minmax(0, auto));
-    gap: var(--spacing-info-grid-v-gap, 8px) var(--spacing-badge-gap, 6px);
+    gap: var(--spacing-grid-gap-desktop, 4px);
 }
 
 .periodic-series {
     display: grid;
     grid-template-columns: auto repeat(18, minmax(0, 1fr));
     grid-template-rows: repeat(2, minmax(0, auto));
-    gap: var(--spacing-info-grid-v-gap, 8px) var(--spacing-badge-gap, 6px);
+    gap: var(--spacing-grid-gap-desktop, 4px);
 }
 
 .series-spacer {
-    height: var(--spacing-info-grid-v-gap, 8px);
+    height: var(--spacing-grid-gap-desktop, 4px);
 }
 
 .group-header,
@@ -325,8 +325,8 @@ input {
 
 .period-label,
 .series-label {
-    padding-right: var(--spacing-badge-gap, 6px);
-    min-width: 24px;
+    padding-right: var(--spacing-grid-gap-desktop, 4px);
+    min-width: 18px;
 }
 
 .transition-band {
@@ -350,38 +350,34 @@ input {
     color: var(--cell-text, var(--color-text-primary, #f2f2f2));
     border: var(--border-default-width, 1px) solid var(--color-border-button-default, #202020);
     border-radius: var(--radius-button, 8px);
-    padding:
-        clamp(
-            var(--spacing-element-cell-padding-y-min, 2px),
-            0.7cqi,
-            var(--spacing-element-cell-padding-y, 4px)
-        )
-        clamp(
-            var(--spacing-element-cell-padding-x-min, 2px),
-            1cqi,
-            var(--spacing-element-cell-padding-x, 6px)
-        );
+    padding: clamp(
+        var(--spacing-element-cell-padding-y-min, 2px),
+        0.5cqi,
+        var(--spacing-element-cell-padding-y, 4px)
+    );
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    text-align: left;
-    min-height: clamp(
-        var(--scale-element-cell-min-height-floor, 28px),
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0px, 0.2cqi, 2px);
+    text-align: center;
+    aspect-ratio: 1 / 1;
+    min-width: clamp(
+        var(--scale-element-cell-min-width-floor, 18px),
         5cqi,
-        var(--scale-element-cell-min-height, 48px)
+        var(--scale-element-cell-min-width, 40px)
     );
     font-family: inherit;
     /* box-sizing: border-box (set globally) keeps the cell's outer
      * dimensions constant when hover/selected rules below thicken
      * the border, so neighbors do not shift on interaction.
      */
-    transition: transform 80ms ease, border-color 120ms ease;
+    transition: border-color 120ms ease;
 }
 
 .element-cell:hover {
     border-color: var(--color-border-button-default-hover, #FFFFFF);
     border-width: var(--border-hover-width, 2px);
-    transform: translateY(-1px);
 }
 
 .element-cell.is-search-match {
@@ -404,11 +400,11 @@ input {
 .element-cell .number {
     font-size: clamp(
         var(--font-size-element-number-min, 6px),
-        1.5cqi,
-        var(--font-size-info-section-title, 11px)
+        1.4cqi,
+        var(--font-size-element-symbol, 14px)
     );
-    font-weight: var(--font-weight-medium, 500);
-    opacity: 0.85;
+    font-weight: var(--font-weight-bold, 700);
+    line-height: 1;
 }
 
 .element-cell .symbol {
@@ -418,7 +414,7 @@ input {
         var(--font-size-element-symbol, 14px)
     );
     font-weight: var(--font-weight-bold, 700);
-    line-height: 1.05;
+    line-height: 1;
 }
 
 /* Side panel */
@@ -1025,6 +1021,28 @@ body.is-modal-open {
  * (~320px) without contributing to viewport overflow.
  */
 @media (max-width: 480px) {
+    /* iOS Safari (and, more selectively, Chrome Android) auto-zooms the
+     * page when a form control receives focus and its computed font-size
+     * is below 16px. The viewport stays scaled afterwards, the layout
+     * gets distorted and the on-screen keyboard appearance amplifies the
+     * effect. Forcing 16px on every interactive control under the mobile
+     * breakpoint disables that heuristic without resorting to
+     * `user-scalable=no` (which breaks accessibility). The class
+     * selectors must be listed explicitly: the desktop rules for
+     * `.molar-input` (13px) and `.control-input` (12px) have higher
+     * specificity than a bare `input`/`select` element selector and
+     * would otherwise win the cascade even inside this media query.
+     * 16px is a browser threshold, not a design value, so it is
+     * intentionally hard-coded.
+     */
+    input,
+    select,
+    textarea,
+    .molar-input,
+    .control-input {
+        font-size: 16px;
+    }
+
     .app-title {
         font-size: var(--font-size-search-title, 16px);
     }
@@ -1086,5 +1104,31 @@ body.is-modal-open {
         );
         text-align: center;
         line-height: 1;
+    }
+
+    /* Calculators modal: on phones the desktop layout (24px title,
+     * horizontally-scrolling tab row, side-by-side form controls) wastes
+     * vertical space and hides 5 of the 8 calculator tabs behind a
+     * scroll the user can't easily discover. Shrink the title, lay the
+     * tabs out as a visible 2-column grid so all 8 fit on screen, and
+     * stack `.molar-form` input + button vertically so the input gets
+     * full width when the soft keyboard appears.
+     */
+    .tools-modal-title {
+        font-size: var(--font-size-search-title, 16px);
+    }
+
+    .tools-modal-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        overflow: visible;
+    }
+
+    .tools-modal-tabs .tab {
+        flex: initial;
+    }
+
+    .molar-form {
+        flex-direction: column;
     }
 }
