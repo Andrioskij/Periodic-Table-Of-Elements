@@ -1,5 +1,5 @@
 Periodic Table Of Elements
-Version 1.4.3 "Chemistry Tool"
+Version 1.4.4 "Chemistry Tool"
 
 A desktop periodic table explorer: element details, quick property
 trends, electron configuration views, and a simple binary compound

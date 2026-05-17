@@ -1,5 +1,16 @@
 # Release notes
 
+## 1.4.4 "Chemistry Tool"
+
+Fixes
+- iOS Safari / Chrome Android no longer auto-zoom the web companion when a form control receives focus; inputs and selects pin to 16px under the mobile breakpoint.
+- Calculators modal on phones lays out its 8 tabs as a visible 2-column grid (was a horizontally-scrolling row that hid 5 of them), with a compact title and a vertically stacked molar-mass form.
+- Periodic table portrait view no longer scrolls horizontally at iPhone SE (320px) widths; the desktop cell `min-width` floor is now cancelled inside the mobile breakpoint.
+- Pages workflow now triggers on `src/app_metadata.py` changes so a version-only bump redeploys the web bundle automatically.
+
+Changed
+- Web companion periodic table cells mirror the desktop PySide6 look: 1:1 aspect ratio, centered atomic number + symbol tightly stacked, uniform padding, no hover elevation. New shared `spacing.grid_gap_desktop = 4` design token.
+
 ## 1.4.3 "Chemistry Tool"
 
 Fixes
