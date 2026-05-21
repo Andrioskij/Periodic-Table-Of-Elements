@@ -52,7 +52,7 @@ CI uses pytest with `QT_QPA_PLATFORM=offscreen`; do the same locally.
 ## Versioning
 - The canonical version lives at `src/app_metadata.APP_VERSION`.
 - When bumping, also update: `README.md` ("Release target" line), `CHANGELOG.md`, `RELEASE_NOTES.md`, `docs/README_release_*.txt`.
-- `pyproject.toml` currently lags — opening a PR that fixes it (dynamic version) is welcome but out of scope for routine work.
+- `pyproject.toml` reads the version dynamically from `src.app_metadata.APP_VERSION` via setuptools, so no manual bump there.
 - Tag format: `v<major>.<minor>.<patch>` (e.g. `v1.2.0`). The release workflow rejects mismatches.
 
 ## Don'ts

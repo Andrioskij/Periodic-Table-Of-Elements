@@ -1,8 +1,18 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "periodic-table-of-elements"
-version = "1.4.5"
+dynamic = ["version"]
 description = "Desktop periodic table explorer"
 requires-python = ">=3.14"
+
+[tool.setuptools]
+packages = []
+
+[tool.setuptools.dynamic]
+version = {attr = "src.app_metadata.APP_VERSION"}
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

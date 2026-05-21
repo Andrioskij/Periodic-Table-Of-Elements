@@ -14,7 +14,8 @@ The user will give you a target version like `1.3.0` (no `v` prefix).
 3. `CHANGELOG.md`: open a new section `## [<new>] - YYYY-MM-DD` above `## [Unreleased]` and move the unreleased entries down.
 4. `RELEASE_NOTES.md`: prepend a new `## <new> "Chemistry Tool"` section with one-line highlights.
 5. `docs/README_release_windows.txt`, `docs/README_release_mac.txt`, `docs/README_release_linux.txt`: update the `Version <new> "Chemistry Tool"` line.
-6. (Optional but recommended) `pyproject.toml`: update `version = "<new>"` so the wheel metadata matches.
+
+`pyproject.toml` does **not** need a manual bump — its version is dynamic and reads `src.app_metadata.APP_VERSION` automatically. A test in `tests/test_app_metadata.py` guards this contract; if it ever fails, restore the dynamic config instead of re-introducing a literal.
 
 ## Verification
 - Run `QT_QPA_PLATFORM=offscreen python -m pytest tests/ -q`. The test in `tests/test_app_metadata.py` is the safety net.

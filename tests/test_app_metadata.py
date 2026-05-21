@@ -1,4 +1,6 @@
+import tomllib
 import unittest
+from pathlib import Path
 
 from src.app_metadata import (
     APP_VERSION,
@@ -50,6 +52,32 @@ class TestAppMetadata(unittest.TestCase):
         meta = get_build_metadata()
         expected_keys = {"app_id", "display_name", "executable_name", "version", "vendor"}
         self.assertTrue(expected_keys.issubset(meta.keys()))
+
+    def test_pyproject_declares_dynamic_version_from_app_metadata(self):
+        """pyproject.toml must source its version from src.app_metadata.APP_VERSION.
+
+        Guards against accidentally re-introducing a hardcoded literal in
+        [project].version — the whole point of the dynamic setup is that
+        a single bump of APP_VERSION updates the wheel metadata too.
+        """
+        pyproject_path = Path(__file__).resolve().parents[1] / "pyproject.toml"
+        pyproject = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))
+
+        self.assertNotIn(
+            "version",
+            pyproject["project"],
+            "pyproject.toml [project].version must NOT be a literal — use dynamic",
+        )
+        self.assertIn(
+            "version",
+            pyproject["project"].get("dynamic", []),
+            "pyproject.toml [project].dynamic must include 'version'",
+        )
+        self.assertEqual(
+            pyproject["tool"]["setuptools"]["dynamic"]["version"]["attr"],
+            "src.app_metadata.APP_VERSION",
+            "Dynamic version source must point at src.app_metadata.APP_VERSION",
+        )
 
 
 if __name__ == "__main__":
