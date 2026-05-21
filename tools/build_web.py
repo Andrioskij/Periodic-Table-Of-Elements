@@ -1,7 +1,7 @@
 """Assemble the static ``web/`` artifact for the Pyodide-based frontend.
 
 The ``web/`` directory holds tracked sources (``index.html``, ``style.css``,
-``app.js``, ``i18n.js``) plus four generated artifacts regenerated on every
+``app.js``, ``i18n.js``) plus five generated artifacts regenerated on every
 deploy from the desktop sources of truth:
 
 - ``web/python/``            — Python modules loaded by Pyodide.
@@ -9,6 +9,9 @@ deploy from the desktop sources of truth:
 - ``web/design_tokens.json`` — JSON projection of ``TOKENS``.
 - ``web/version.js``         — ES module re-exporting ``APP_VERSION`` from
   ``src.app_metadata`` so the browser header label tracks the desktop tag.
+- ``web/icons/``             — favicon / apple-touch-icon copies of the
+  desktop ``assets/app*.png`` and ``assets/app.ico`` so the browser tab and
+  iOS home screen render the same icon the ``.exe`` ships with.
 
 Keeping these copies generated (and gitignored) prevents drift between the
 desktop and web payloads. The deploy workflow runs this script before
@@ -51,6 +54,14 @@ LOCALIZATION_FILES = (
     "de.json",
     "zh.json",
     "ru.json",
+)
+ICON_FILES = (
+    "app.ico",
+    "app_16.png",
+    "app_32.png",
+    "app_48.png",
+    "app_128.png",
+    "app_256.png",
 )
 
 
@@ -135,6 +146,27 @@ def _copy_data(dest_data: Path) -> list[Path]:
     return written
 
 
+def _copy_icons(dest_icons: Path) -> list[Path]:
+    """Copy the desktop favicon assets into ``dest_icons`` for the web bundle.
+
+    The desktop ``.exe`` and the GitHub Pages tab should show the same
+    icon. The sources of truth are the multi-resolution ``assets/app.ico``
+    and the matching ``assets/app_<size>.png`` files; we copy a subset
+    (16/32/48/128/256 + ico) which covers favicons, apple-touch-icon, and
+    Android home-screen install prompts without bloating the deploy.
+    """
+    dest_icons.mkdir(parents=True, exist_ok=True)
+    written = []
+    for name in ICON_FILES:
+        src = REPO_ROOT / "assets" / name
+        if not src.exists():
+            raise FileNotFoundError(f"Expected icon asset not found: {src}")
+        target = dest_icons / name
+        shutil.copyfile(src, target)
+        written.append(target)
+    return written
+
+
 def _write_version(dest_root: Path) -> Path:
     """Generate ``version.js`` re-exporting the desktop ``APP_VERSION``.
 
@@ -165,12 +197,14 @@ def build_web(dest_root: Path) -> dict[str, list[Path]]:
     data_paths = _copy_data(dest_root / "data")
     tokens_path = export_tokens(dest_root / "design_tokens.json")
     version_path = _write_version(dest_root)
+    icon_paths = _copy_icons(dest_root / "icons")
 
     return {
         "python": python_paths,
         "data": data_paths,
         "tokens": [tokens_path],
         "version": [version_path],
+        "icons": icon_paths,
     }
 
 

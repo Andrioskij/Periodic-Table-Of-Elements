@@ -12,6 +12,8 @@ on:
       - "src/domain/molar_mass.py"
       - "data/raw/elements.json"
       - "data/localization/**"
+      - "assets/app.ico"
+      - "assets/app_*.png"
       - ".github/workflows/deploy-web.yml"
   workflow_dispatch:
 

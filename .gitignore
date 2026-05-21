@@ -20,6 +20,7 @@ __pycache__/
 /web/data/
 /web/design_tokens.json
 /web/version.js
+/web/icons/
 /web/.venv/
 
 # Build and release outputs

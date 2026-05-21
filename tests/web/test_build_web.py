@@ -10,7 +10,7 @@ root with a schema mirroring src.config.design_tokens).
 import json
 
 from tools import build_web as build_web_module
-from tools.build_web import LOCALIZATION_FILES, build_web
+from tools.build_web import ICON_FILES, LOCALIZATION_FILES, build_web
 
 
 def test_build_web_populates_python_data_and_tokens(tmp_path):
@@ -205,6 +205,50 @@ def test_web_app_js_includes_search_match_scorer():
         "web/app.js must keep the search scorer; if you renamed it, update "
         "this drift test to match."
     )
+
+
+def test_build_web_copies_favicon_assets(tmp_path):
+    """Every desktop icon listed in ICON_FILES must land in web/icons/ byte-identical.
+
+    The Pages tab and iOS home-screen install must show the same icon
+    the .exe ships with; the canonical sources live under assets/ and
+    the web bundle is a projection, not a fork.
+    """
+    from pathlib import Path
+
+    dest = tmp_path / "web_out"
+    written = build_web(dest)
+
+    icons_dir = dest / "icons"
+    assert icons_dir.is_dir()
+    assets_dir = Path(__file__).resolve().parents[2] / "assets"
+
+    for name in ICON_FILES:
+        copied = icons_dir / name
+        assert copied.is_file(), f"missing icon in web bundle: {name}"
+        assert copied.read_bytes() == (assets_dir / name).read_bytes(), (
+            f"web/icons/{name} must be byte-identical to assets/{name}"
+        )
+        assert copied in written["icons"]
+
+
+def test_web_index_html_references_generated_icons():
+    """index.html must link the favicon set that build_web.py emits.
+
+    Pins the contract between the static HTML and the generated icons/
+    directory so a future ICON_FILES tweak that misses the HTML side
+    (or vice versa) fails CI instead of silently shipping a broken
+    favicon.
+    """
+    from pathlib import Path
+
+    index_html = (
+        Path(__file__).resolve().parents[2] / "web" / "index.html"
+    ).read_text(encoding="utf-8")
+    assert './icons/app.ico"' in index_html
+    assert './icons/app_32.png"' in index_html
+    assert './icons/app_16.png"' in index_html
+    assert './icons/app_256.png"' in index_html
 
 
 def test_build_web_emits_version_module_matching_app_metadata(tmp_path):
