@@ -6,6 +6,16 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.4.5] - 2026-05-21
+
+### Added
+- Browser tab favicon for the GitHub Pages web companion. `tools/build_web.py` now copies `assets/app.ico` and the matching PNG set (16/32/48/128/256) into a gitignored `web/icons/` directory at deploy time, and `web/index.html` references them via `<link rel="icon">` and `<link rel="apple-touch-icon">`. The Pages tab and the iOS home-screen install prompt now show the same icon the desktop `.exe` ships with instead of the default browser globe. `deploy-web.yml` triggers expanded to `assets/app*` so a future icon swap auto-redeploys.
+- `border.selected_glow_blur = 8` design token, projected to `web/design_tokens.json` by the existing exporter for future cross-platform use.
+
+### Changed
+- Desktop periodic table now sources its grid spacing, cell padding, and element-button font size from `TOKENS` (`spacing.grid_gap_desktop`, `spacing.element_cell_padding_y_min`, `font.size.button_default`) instead of hardcoded literals in `MainWindow`, `PeriodicTableWidget`, and `styles.py`. Tuning a token now updates desktop and web simultaneously, closing the last three drift surfaces left after the v1.4.4 web-side parity pass.
+- Selected periodic-table cell on desktop now shows a theme-aware accent halo (yellow `#FFD60A` on dark, blue `#1565c0` on light) via `QGraphicsDropShadowEffect`, mirroring the web `.element-cell.is-selected { box-shadow: 0 0 0 1px var(--color-accent) }` rule. The halo color tracks the active theme automatically on toggle.
+
 ## [1.4.4] - 2026-05-18
 
 ### Added
@@ -131,7 +141,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ruff lint baseline reduced to zero findings and enforced by Windows CI.
 - Project configuration consolidated into pyproject.toml.
 
-[Unreleased]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.4...HEAD
+[Unreleased]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.5...HEAD
+[1.4.5]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.4...v1.4.5
 [1.4.4]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.3...v1.4.4
 [1.4.3]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/Andrioskij/Periodic-Table-Of-Elements/compare/v1.4.1...v1.4.2

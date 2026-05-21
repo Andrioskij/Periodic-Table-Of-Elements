@@ -1,5 +1,14 @@
 # Release notes
 
+## 1.4.5 "Chemistry Tool"
+
+Added
+- Browser tab favicon for the Pages web companion: the desktop `.exe` icon now appears in the browser tab and on the iOS home-screen install prompt instead of the default globe. Generated into `web/icons/` at deploy time from the canonical `assets/app*` set.
+
+Changed
+- Desktop periodic table now reads its grid gap, cell padding, and element-button font size from the shared design tokens instead of hardcoded literals, so tuning one token updates both desktop and web in lockstep.
+- Selected periodic-table cell on desktop gains a theme-aware accent halo (yellow on dark, blue on light) mirroring the web `box-shadow` selection ring.
+
 ## 1.4.4 "Chemistry Tool"
 
 Fixes
