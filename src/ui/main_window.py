@@ -8,6 +8,7 @@ from PySide6.QtWidgets import (
 )
 
 from src.app_metadata import build_window_title
+from src.config.design_tokens import TOKENS
 from src.config.static_data import NUMERIC_TREND_PROPERTIES
 from src.domain.compound_builder import (
     build_binary_formula,
@@ -186,9 +187,9 @@ class MainWindow(QWidget):
         self.cell_size = 50
         self.header_height = 24
         self.side_width = 48
-        self.grid_h_spacing = 4
-        self.grid_v_spacing = 4
-        self.element_font_size = 12
+        self.grid_h_spacing = TOKENS["spacing"]["grid_gap_desktop"]
+        self.grid_v_spacing = TOKENS["spacing"]["grid_gap_desktop"]
+        self.element_font_size = TOKENS["font"]["size"]["button_default"]
 
         self.numeric_ranges = self.compute_numeric_ranges()
 
@@ -296,6 +297,7 @@ class MainWindow(QWidget):
             get_display_category=self.get_display_category,
             get_display_macro_class=self.get_display_macro_class,
             get_button_colors=self.get_current_button_colors,
+            get_accent_color=self._get_current_accent_color,
             name_provider=self.get_localized_element_name,
             on_element_selected=self._handle_table_selection,
         )
@@ -1048,6 +1050,10 @@ class MainWindow(QWidget):
             get_macro_class_color=self.get_macro_class_color,
             theme=self.current_theme,
         )
+
+    def _get_current_accent_color(self):
+        """Return the accent hex for the active theme (used by the selected-cell halo)."""
+        return TOKENS["color"]["theme"][self.current_theme]["accent"]
 
     def get_text_color(self, hex_color):
         """Return a contrasting text color (black or white) for a given hex background."""

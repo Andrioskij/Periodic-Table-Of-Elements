@@ -331,6 +331,7 @@ def build_periodic_table_widget(
     get_button_colors,
     name_provider,
     on_element_selected,
+    get_accent_color=None,
 ):
     """Instantiate and wire the PeriodicTableWidget."""
     periodic_table_widget = PeriodicTableWidget(
@@ -341,6 +342,7 @@ def build_periodic_table_widget(
         get_display_category=get_display_category,
         get_display_macro_class=get_display_macro_class,
         get_button_colors=get_button_colors,
+        get_accent_color=get_accent_color,
     )
     periodic_table_widget.set_name_provider(name_provider)
     periodic_table_widget.element_selected.connect(on_element_selected)

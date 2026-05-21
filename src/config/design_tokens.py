@@ -325,6 +325,7 @@ _RAW = {
         "input_focused_width": 2,
         "search_match_width": 3,
         "selected_width": 3,
+        "selected_glow_blur": 8,
         "focused_width": 3,
         "hover_width": 2,
         "pressed_width": 2,

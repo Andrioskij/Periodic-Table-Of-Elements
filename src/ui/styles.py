@@ -277,7 +277,7 @@ def build_periodic_button_stylesheet(
                 color: {text_color};
                 border: {normal_border_width}px solid {normal_border_color};
                 border-radius: {max(TOKENS["radius"]["cell_min"], int(cell_size * TOKENS["radius"]["cell_ratio"]))}px;
-                padding: 2px;
+                padding: {TOKENS["spacing"]["element_cell_padding_y_min"]}px;
                 font-size: {element_font_size}px;
                 font-weight: bold;
             }}

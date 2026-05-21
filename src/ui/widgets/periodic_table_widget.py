@@ -1,5 +1,7 @@
 from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
+    QGraphicsDropShadowEffect,
     QGridLayout,
     QLabel,
     QPushButton,
@@ -9,6 +11,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from src.config.design_tokens import TOKENS
 from src.ui.styles import build_periodic_button_stylesheet
 from src.ui.styles import get_text_color as get_ui_text_color
 
@@ -35,6 +38,7 @@ class PeriodicTableWidget(QWidget):
         get_display_category,
         get_display_macro_class,
         get_button_colors,
+        get_accent_color=None,
     ):
         super().__init__()
         self.setObjectName("periodicTableWidget")
@@ -46,6 +50,7 @@ class PeriodicTableWidget(QWidget):
         self.get_display_category = get_display_category
         self.get_display_macro_class = get_display_macro_class
         self.get_button_colors = get_button_colors
+        self.get_accent_color = get_accent_color or (lambda: TOKENS["color"]["theme"]["dark"]["accent"])
 
         self.element_buttons = {}
         self.group_header_labels = {}
@@ -62,9 +67,9 @@ class PeriodicTableWidget(QWidget):
         self.cell_size = 50
         self.header_height = 24
         self.side_width = 48
-        self.grid_h_spacing = 4
-        self.grid_v_spacing = 4
-        self.element_font_size = 12
+        self.grid_h_spacing = TOKENS["spacing"]["grid_gap_desktop"]
+        self.grid_v_spacing = TOKENS["spacing"]["grid_gap_desktop"]
+        self.element_font_size = TOKENS["font"]["size"]["button_default"]
 
         self.selected_none_text = "No element selected"
         self.transition_text = "TRANSITION METALS"
@@ -279,11 +284,30 @@ class PeriodicTableWidget(QWidget):
                 search_match=search_match,
             )
         )
+        self._apply_selected_glow(button, is_selected=(button is self.selected_button))
         self._apply_button_metadata(
             button,
             element,
             search_match=search_match,
         )
+
+    def _apply_selected_glow(self, button, *, is_selected):
+        """Attach an accent-colored halo to the selected button (matches web box-shadow).
+
+        Mirrors the web `.element-cell.is-selected { box-shadow: 0 0 0 1px
+        var(--color-accent) }` rule. Qt has no QSS box-shadow, so a
+        QGraphicsDropShadowEffect with zero blur/offset is the closest
+        equivalent for the soft accent halo around the 3px selected
+        border. The effect color tracks the active theme's accent token.
+        """
+        if is_selected:
+            effect = QGraphicsDropShadowEffect(button)
+            effect.setBlurRadius(TOKENS["border"]["selected_glow_blur"])
+            effect.setOffset(0, 0)
+            effect.setColor(QColor(self.get_accent_color()))
+            button.setGraphicsEffect(effect)
+        else:
+            button.setGraphicsEffect(None)
 
     def _apply_button_metadata(self, button, element, *, search_match):
         is_selected = button is self.selected_button
