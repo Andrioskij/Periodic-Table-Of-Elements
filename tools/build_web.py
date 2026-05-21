@@ -63,6 +63,19 @@ ICON_FILES = (
     "app_128.png",
     "app_256.png",
 )
+# Subset of ICON_FILES that web/index.html `<link rel="icon">` tags reference.
+# The remaining ICON_FILES (48, 128) are bundled for future PWA manifest use
+# but are not directly linked from the HTML.
+HTML_LINKED_ICONS = (
+    "app.ico",
+    "app_16.png",
+    "app_32.png",
+    "app_256.png",
+)
+assert set(HTML_LINKED_ICONS) <= set(ICON_FILES), (
+    "HTML_LINKED_ICONS must be a subset of ICON_FILES so the HTML never links "
+    "an icon the build does not emit."
+)
 
 
 def _copy_python_modules(dest_python: Path) -> list[Path]:

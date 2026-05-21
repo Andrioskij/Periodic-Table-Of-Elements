@@ -292,21 +292,20 @@ class PeriodicTableWidget(QWidget):
         )
 
     def _apply_selected_glow(self, button, *, is_selected):
-        """Attach an accent-colored halo to the selected button (matches web box-shadow).
-
-        Mirrors the web `.element-cell.is-selected { box-shadow: 0 0 0 1px
-        var(--color-accent) }` rule. Qt has no QSS box-shadow, so a
-        QGraphicsDropShadowEffect with zero blur/offset is the closest
-        equivalent for the soft accent halo around the 3px selected
-        border. The effect color tracks the active theme's accent token.
-        """
+        """Qt has no QSS box-shadow, so we use a zero-offset
+        QGraphicsDropShadowEffect to mirror the web `.is-selected` ring."""
+        current_effect = button.graphicsEffect()
         if is_selected:
-            effect = QGraphicsDropShadowEffect(button)
-            effect.setBlurRadius(TOKENS["border"]["selected_glow_blur"])
-            effect.setOffset(0, 0)
-            effect.setColor(QColor(self.get_accent_color()))
-            button.setGraphicsEffect(effect)
-        else:
+            accent = QColor(self.get_accent_color())
+            if current_effect is None:
+                effect = QGraphicsDropShadowEffect(button)
+                effect.setBlurRadius(TOKENS["border"]["selected_glow_blur"])
+                effect.setOffset(0, 0)
+                effect.setColor(accent)
+                button.setGraphicsEffect(effect)
+            elif current_effect.color() != accent:
+                current_effect.setColor(accent)
+        elif current_effect is not None:
             button.setGraphicsEffect(None)
 
     def _apply_button_metadata(self, button, element, *, search_match):

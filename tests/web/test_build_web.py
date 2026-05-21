@@ -10,7 +10,7 @@ root with a schema mirroring src.config.design_tokens).
 import json
 
 from tools import build_web as build_web_module
-from tools.build_web import ICON_FILES, LOCALIZATION_FILES, build_web
+from tools.build_web import HTML_LINKED_ICONS, ICON_FILES, LOCALIZATION_FILES, build_web
 
 
 def test_build_web_populates_python_data_and_tokens(tmp_path):
@@ -233,22 +233,23 @@ def test_build_web_copies_favicon_assets(tmp_path):
 
 
 def test_web_index_html_references_generated_icons():
-    """index.html must link the favicon set that build_web.py emits.
+    """Every icon in HTML_LINKED_ICONS must appear as a `<link>` href in index.html.
 
-    Pins the contract between the static HTML and the generated icons/
-    directory so a future ICON_FILES tweak that misses the HTML side
-    (or vice versa) fails CI instead of silently shipping a broken
-    favicon.
+    Iterates the constant instead of hardcoding strings: dropping or
+    renaming an entry in HTML_LINKED_ICONS without updating the HTML
+    (or vice versa) now fails CI. The subset-of-ICON_FILES invariant
+    asserted in build_web.py guarantees we never link an icon the
+    build step doesn't emit.
     """
     from pathlib import Path
 
     index_html = (
         Path(__file__).resolve().parents[2] / "web" / "index.html"
     ).read_text(encoding="utf-8")
-    assert './icons/app.ico"' in index_html
-    assert './icons/app_32.png"' in index_html
-    assert './icons/app_16.png"' in index_html
-    assert './icons/app_256.png"' in index_html
+    for name in HTML_LINKED_ICONS:
+        assert f'./icons/{name}"' in index_html, (
+            f"web/index.html is missing a <link> href for {name}"
+        )
 
 
 def test_build_web_emits_version_module_matching_app_metadata(tmp_path):
