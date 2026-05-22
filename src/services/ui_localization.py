@@ -6,6 +6,8 @@ and macro classes. Provides fallback-aware retrieval from pre-loaded localizatio
 data dictionaries.
 """
 
+import functools
+
 __all__ = [
     "get_localized_category_text",
     "get_localized_standard_state_text",
@@ -42,6 +44,18 @@ def _get_localized_lookup_text(lookup, key, language_code, traditional_na="n/a")
     return en_map.get(key, key)
 
 
+# The three public lookups are decorated with @functools.cache: the same
+# (key, language_code, traditional_na) tuple is queried hundreds of times
+# per UI refresh (once per element × per panel), but the underlying
+# localization dicts are populated once per language and never mutated
+# afterwards, so memoizing is safe. The first call still triggers
+# `_ensure_language_loaded(code)` via the internal helper, so lazy loading
+# is preserved. Tests that reset the global dicts via `importlib.reload`
+# must also reload this module so the cached function object is rebuilt
+# (see `tests/test_lazy_loading.py::_reload_localization_service`).
+
+
+@functools.cache
 def get_localized_category_text(category, language_code, traditional_na="n/a"):
     """
     Get localized text for element category.
@@ -64,6 +78,7 @@ def get_localized_category_text(category, language_code, traditional_na="n/a"):
     )
 
 
+@functools.cache
 def get_localized_standard_state_text(standard_state, language_code, traditional_na="n/a"):
     """
     Get localized text for standard state.
@@ -86,6 +101,7 @@ def get_localized_standard_state_text(standard_state, language_code, traditional
     )
 
 
+@functools.cache
 def get_localized_macro_class_text(macro_class, language_code, traditional_na="n/a"):
     """
     Get localized text for macro class.
