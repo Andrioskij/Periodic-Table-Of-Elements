@@ -1,7 +1,12 @@
-"""Unit tests for the _IsotopesSection widget in info_panel.
+"""Unit tests for InfoPanel and its _IsotopesSection subwidget.
 
-Covers rendering of empty/valid/malformed isotope data and the translate fallback.
-A module-level QApplication singleton is required to instantiate QWidget subclasses.
+`TestIsotopesSection` covers rendering of empty/valid/malformed isotope
+data and the translate fallback. `TestInfoPanel` adds smoke coverage
+for the top-level panel (init, set_prompt, set_numeric_ranges) that
+previously had no direct tests.
+
+A module-level QApplication singleton is required to instantiate
+QWidget subclasses.
 """
 
 import sys
@@ -9,7 +14,7 @@ import unittest
 
 from PySide6.QtWidgets import QApplication, QLabel
 
-from src.ui.panels.info_panel import _IsotopesSection
+from src.ui.panels.info_panel import InfoPanel, _IsotopesSection
 
 _app = QApplication.instance() or QApplication(sys.argv)
 
@@ -60,6 +65,52 @@ class TestIsotopesSection(unittest.TestCase):
     def test_section_has_accessible_name_and_description(self):
         self.assertEqual(self.section.accessibleName(), "Isotopes Section")
         self.assertIn("isotopes", self.section.accessibleDescription().lower())
+
+
+class TestInfoPanel(unittest.TestCase):
+    """Smoke coverage for the top-level InfoPanel widget.
+
+    The detailed behavior of nested sections (isotopes, industrial uses,
+    metric visuals) is covered by dedicated tests; this class only
+    verifies that the panel instantiates with a usable shell and that
+    the public mutation methods do not crash.
+    """
+
+    def setUp(self):
+        self.panel = InfoPanel("Select an element to see details.")
+
+    def test_instantiation_sets_initial_prompt_text(self):
+        self.assertEqual(
+            self.panel.prompt_label.text(),
+            "Select an element to see details.",
+        )
+        self.assertEqual(
+            self.panel.info_label.text(),
+            "Select an element to see details.",
+        )
+
+    def test_instantiation_has_accessible_name(self):
+        self.assertEqual(self.panel.accessibleName(), "Info Panel")
+
+    def test_set_prompt_updates_prompt_label(self):
+        self.panel.set_prompt("fallback prompt", prompt_text="Seleziona un elemento")
+        self.assertEqual(self.panel.prompt_label.text(), "Seleziona un elemento")
+
+    def test_set_prompt_uses_first_arg_when_explicit_text_missing(self):
+        self.panel.set_prompt("solo fallback")
+        self.assertEqual(self.panel.prompt_label.text(), "solo fallback")
+
+    def test_set_numeric_ranges_does_not_crash_with_empty_dict(self):
+        # Just verifying the setter accepts the contract; metric rendering
+        # is exercised in other tests when a real element is bound.
+        self.panel.set_numeric_ranges({})
+        self.assertEqual(self.panel.numeric_ranges, {})
+
+    def test_set_numeric_ranges_overwrites_previous_values(self):
+        self.panel.set_numeric_ranges({"electronegativity": (0.7, 4.0)})
+        self.assertEqual(self.panel.numeric_ranges, {"electronegativity": (0.7, 4.0)})
+        self.panel.set_numeric_ranges({"radius": (10.0, 300.0)})
+        self.assertEqual(self.panel.numeric_ranges, {"radius": (10.0, 300.0)})
 
 
 if __name__ == "__main__":
