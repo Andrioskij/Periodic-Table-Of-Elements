@@ -2,7 +2,6 @@ from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QKeySequence, QShortcut
 from PySide6.QtWidgets import (
     QApplication,
-    QBoxLayout,
     QListWidgetItem,
     QWidget,
 )
@@ -77,14 +76,9 @@ from src.ui.compound_text import (
     get_localized_common_compound_name as get_localized_common_name,
 )
 from src.ui.context import AppContext
+from src.ui.controllers.responsive_layout_controller import ResponsiveLayoutController
 from src.ui.controllers.theme_controller import ThemeController
 from src.ui.formatters import format_info_value, format_value
-from src.ui.layout_policy import (
-    HORIZONTAL,
-    UNBOUNDED_MAX_WIDTH,
-    VERTICAL,
-    compute_responsive_layout,
-)
 from src.ui.main_window_builder import (
     build_builder_widget,
     build_content_layout,
@@ -198,6 +192,8 @@ class MainWindow(QWidget):
         self._assemble_layout()
         self._configure_focus_and_shortcuts()
         self._finalize_layout()
+
+        self.layout_controller = ResponsiveLayoutController(self)
 
         self.populate_oxidation_combo(self.a_oxidation_combo, None)
         self.populate_oxidation_combo(self.b_oxidation_combo, None)
@@ -1481,98 +1477,7 @@ class MainWindow(QWidget):
 
     def update_responsive_layout(self):
         """Recompute and apply the responsive layout policy based on the current window width."""
-        policy = compute_responsive_layout(self.width())
-        direction_map = {
-            HORIZONTAL: QBoxLayout.LeftToRight,
-            VERTICAL: QBoxLayout.TopToBottom,
-        }
-
-        self.top_controls_layout.setDirection(direction_map[policy.top_controls_direction])
-        self.content_layout.setDirection(direction_map[policy.content_direction])
-        self.top_controls_layout.setAlignment(
-            Qt.AlignLeft | Qt.AlignTop
-            if policy.top_controls_direction == HORIZONTAL
-            else Qt.AlignTop
-        )
-        viewport_width = max(self.width(), self.main_scroll_area.viewport().width())
-        available_top_width = max(
-            0,
-            viewport_width
-            - self.main_layout.contentsMargins().left()
-            - self.main_layout.contentsMargins().right(),
-        )
-        top_spacing = self.top_controls_layout.spacing()
-        if policy.top_controls_direction == HORIZONTAL:
-            horizontal_top_width = max(0, available_top_width - top_spacing)
-            search_width = min(
-                policy.search_max_width,
-                max(430, int(horizontal_top_width * 0.34)),
-            )
-            self.search_widget.setMinimumWidth(search_width)
-            self.search_widget.setMaximumWidth(search_width)
-        else:
-            self.search_widget.setMinimumWidth(0)
-            self.search_widget.setMaximumWidth(policy.search_max_width)
-
-        self.builder_widget.setMaximumWidth(UNBOUNDED_MAX_WIDTH)
-        self.right_column_widget.setMaximumWidth(policy.right_column_max_width)
-        self._sync_trend_status_visibility(policy.mode)
-
-        self.cell_size = policy.cell_size
-        self.side_width = policy.side_width
-        self.header_height = policy.header_height
-        self.grid_h_spacing = policy.grid_h_spacing
-        self.grid_v_spacing = policy.grid_v_spacing
-        self.element_font_size = policy.element_font_size
-
-        self.periodic_table_widget.update_metrics(
-            cell_size=self.cell_size,
-            header_height=self.header_height,
-            side_width=self.side_width,
-            grid_h_spacing=self.grid_h_spacing,
-            grid_v_spacing=self.grid_v_spacing,
-            element_font_size=self.element_font_size,
-        )
-        self._sync_compact_section_heights()
-        self._sync_right_column_height(policy.content_direction)
-
-        self.content_widget.adjustSize()
-
-    def _sync_right_column_height(self, content_direction):
-        """Constrain the right column height to match the table when in horizontal layout."""
-        if content_direction == HORIZONTAL:
-            table_height = self.periodic_table_widget.sizeHint().height()
-            buttons_height = self.right_panel_buttons_widget.sizeHint().height()
-            spacing = self.right_column_widget.layout().spacing()
-            panel_height = max(0, table_height - buttons_height - spacing)
-            self.right_column_widget.setMaximumHeight(table_height)
-            self.right_panel_container.setMaximumHeight(panel_height)
-            return
-
-        self.right_column_widget.setMaximumHeight(UNBOUNDED_MAX_WIDTH)
-        self.right_panel_container.setMaximumHeight(UNBOUNDED_MAX_WIDTH)
-
-    def _sync_height_for_width_widget(self, widget):
-        """Set a widget's fixed height from its heightForWidth hint (used for flow-layout sections)."""
-        if widget is None:
-            return
-
-        if widget.hasHeightForWidth() and widget.width() > 0:
-            height = widget.heightForWidth(widget.width())
-        else:
-            height = widget.sizeHint().height()
-
-        if height > 0:
-            widget.setFixedHeight(height)
-
-    def _sync_compact_section_heights(self):
-        """Recalculate fixed heights for the trend container and panel buttons."""
-        self._sync_height_for_width_widget(self.trend_container)
-        self._sync_height_for_width_widget(self.right_panel_buttons_widget)
-
-    def _sync_trend_status_visibility(self, mode):
-        """Hide the trend status label on wide/medium layouts where space is tight."""
-        self.trend_status_label.setVisible(mode not in {"wide", "medium"})
+        self.layout_controller.apply()
 
     def resizeEvent(self, event):
         """Handle window resize by recomputing the responsive layout."""
