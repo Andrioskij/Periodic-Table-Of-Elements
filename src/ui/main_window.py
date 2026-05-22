@@ -77,6 +77,7 @@ from src.ui.compound_text import (
     get_localized_common_compound_name as get_localized_common_name,
 )
 from src.ui.context import AppContext
+from src.ui.controllers.theme_controller import ThemeController
 from src.ui.formatters import format_info_value, format_value
 from src.ui.layout_policy import (
     HORIZONTAL,
@@ -180,7 +181,10 @@ class MainWindow(QWidget):
         self.language_state = LanguageState()
 
         self.settings_service = context.settings_service
-        self.current_theme = self.settings_service.get_theme()
+        self.theme_controller = ThemeController(
+            current_theme=self.settings_service.get_theme(),
+            settings_service=self.settings_service,
+        )
         self.about_dialog = None
 
         self.cell_size = 50
@@ -212,8 +216,8 @@ class MainWindow(QWidget):
 
         title = build_title_row(
             about_text=self.tr("about_button"),
-            theme_button_text=self._theme_button_text(),
-            theme_button_tooltip=self._theme_button_tooltip(),
+            theme_button_text=self.theme_controller.button_text(),
+            theme_button_tooltip=self.theme_controller.button_tooltip(),
             language_options=LANGUAGE_OPTIONS,
             on_about_clicked=self.open_about_dialog,
             on_theme_toggle=self.toggle_theme,
@@ -598,28 +602,22 @@ class MainWindow(QWidget):
             self.settings_service.set_language(code)
             self.apply_language()
 
-    def _theme_button_text(self):
-        """Return the icon shown on the toggle button for the current theme."""
-        return "\u263C" if self.current_theme == "dark" else "\u263D"
-
-    def _theme_button_tooltip(self):
-        """Return the tooltip describing what toggling does from the current theme."""
-        target = "light" if self.current_theme == "dark" else "dark"
-        return f"Switch to {target} theme"
+    @property
+    def current_theme(self) -> str:
+        """Active theme name (`'dark'` or `'light'`), owned by `self.theme_controller`."""
+        return self.theme_controller.current_theme
 
     def toggle_theme(self):
         """Swap the active theme, persist the choice, and re-apply styles live."""
-        new_theme = "light" if self.current_theme == "dark" else "dark"
-        self.current_theme = new_theme
-        self.settings_service.set_theme(new_theme)
+        self.theme_controller.toggle_and_persist()
         self.apply_theme()
 
     def apply_theme(self):
         """Reload the stylesheet and refresh every widget that paints with theme colors."""
         self.setStyleSheet(get_stylesheet(self.current_theme))
         if hasattr(self, "theme_button"):
-            self.theme_button.setText(self._theme_button_text())
-            self.theme_button.setToolTip(self._theme_button_tooltip())
+            self.theme_button.setText(self.theme_controller.button_text())
+            self.theme_button.setToolTip(self.theme_controller.button_tooltip())
 
         self.orbital_diagram_panel.apply_theme(self.current_theme)
         self.lewis_panel.apply_theme(self.current_theme)
