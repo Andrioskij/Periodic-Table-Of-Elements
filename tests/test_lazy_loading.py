@@ -12,11 +12,16 @@ from pathlib import Path
 from unittest.mock import patch
 
 import src.services.localization_service as loc
+import src.services.ui_localization as ui_loc
 
 
 def _reload_localization_service():
     """Re-execute the module body so module-level dicts reset to empty and the
-    bootstrap runs fresh. Returns the reloaded module reference."""
+    bootstrap runs fresh. Also reloads `ui_localization` first so the
+    `@functools.cache` on its public lookups is rebuilt (the cache lives on
+    the function object, so a fresh module instance gives a fresh empty cache).
+    Returns the reloaded localization_service module reference."""
+    importlib.reload(ui_loc)
     return importlib.reload(loc)
 
 
