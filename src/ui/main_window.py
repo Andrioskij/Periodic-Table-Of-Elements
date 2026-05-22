@@ -21,7 +21,6 @@ from src.domain.nomenclature import (
     int_to_roman,
 )
 from src.domain.trends import (
-    compute_numeric_ranges,
     get_macro_class,
     get_macro_class_color,
 )
@@ -191,8 +190,6 @@ class MainWindow(QWidget):
         self.grid_v_spacing = TOKENS["spacing"]["grid_gap_desktop"]
         self.element_font_size = TOKENS["font"]["size"]["button_default"]
 
-        self.numeric_ranges = self.compute_numeric_ranges()
-
         self._configure_window()
         self._assemble_layout()
         self._configure_focus_and_shortcuts()
@@ -314,7 +311,7 @@ class MainWindow(QWidget):
 
         right = build_right_panel_area(
             tr=self.tr,
-            numeric_ranges=self.numeric_ranges,
+            numeric_ranges=self.context.trend_manager.numeric_ranges,
             on_right_mode_clicked=self.set_right_panel_mode,
             elements=self.elements,
         )
@@ -973,10 +970,6 @@ class MainWindow(QWidget):
             self.current_language,
         )
 
-    def compute_numeric_ranges(self):
-        """Compute min/max ranges for all numeric trend properties across elements."""
-        return compute_numeric_ranges(self.elements)
-
     def interpolate_color(self, color1, color2, t):
         """Linearly interpolate between two hex colors by factor *t* (0..1)."""
         return interpolate_ui_color(color1, color2, t)
@@ -1045,7 +1038,7 @@ class MainWindow(QWidget):
         return get_ui_button_colors(
             element,
             trend_mode=self.active_trend_mode,
-            numeric_ranges=self.numeric_ranges,
+            numeric_ranges=self.context.trend_manager.numeric_ranges,
             get_macro_class=self.get_macro_class,
             get_macro_class_color=self.get_macro_class_color,
             theme=self.current_theme,
