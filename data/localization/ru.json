@@ -15,7 +15,7 @@
     "right_stoichiometry": "Стехиометрия",
     "tools_button": "Калькуляторы",
     "molar_title": "Калькулятор молярной массы",
-    "molar_prompt": "Введите химическую формулу (напр. H2O, Ca(OH)2) для расчёта молярной массы.",
+    "molar_prompt": "Введите химическую формулу (напр. H2O, Ca(OH)2, CuSO4·5H2O) для расчёта молярной массы.",
     "molar_calculate": "Рассчитать",
     "molar_error": "Ошибка",
     "stoichiometry_title": "Уравнивание уравнений",
