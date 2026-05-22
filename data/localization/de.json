@@ -15,7 +15,7 @@
     "right_stoichiometry": "Stöchiometrie",
     "tools_button": "Rechner",
     "molar_title": "Molmassenrechner",
-    "molar_prompt": "Geben Sie eine chemische Formel ein (z.B. H2O, Ca(OH)2), um die Molmasse zu berechnen.",
+    "molar_prompt": "Geben Sie eine chemische Formel ein (z.B. H2O, Ca(OH)2, CuSO4·5H2O), um die Molmasse zu berechnen.",
     "molar_calculate": "Berechnen",
     "molar_error": "Fehler",
     "stoichiometry_title": "Gleichungsausgleich",

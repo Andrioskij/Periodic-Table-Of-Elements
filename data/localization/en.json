@@ -15,7 +15,7 @@
     "right_stoichiometry": "Stoichiometry",
     "tools_button": "Calculators",
     "molar_title": "Molar mass calculator",
-    "molar_prompt": "Enter a chemical formula (e.g. H2O, Ca(OH)2) to calculate its molar mass.",
+    "molar_prompt": "Enter a chemical formula (e.g. H2O, Ca(OH)2, CuSO4·5H2O) to calculate its molar mass.",
     "molar_calculate": "Calculate",
     "molar_error": "Error",
     "stoichiometry_title": "Equation balancer",

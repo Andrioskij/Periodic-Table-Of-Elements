@@ -15,7 +15,7 @@
     "right_stoichiometry": "Stechiometria",
     "tools_button": "Calcolatori",
     "molar_title": "Calcolatrice massa molare",
-    "molar_prompt": "Inserisci una formula chimica (es. H2O, Ca(OH)2) per calcolarne la massa molare.",
+    "molar_prompt": "Inserisci una formula chimica (es. H2O, Ca(OH)2, CuSO4·5H2O) per calcolarne la massa molare.",
     "molar_calculate": "Calcola",
     "molar_error": "Errore",
     "stoichiometry_title": "Bilanciamento equazioni",
