@@ -37,6 +37,16 @@ jobs:
           QT_QPA_PLATFORM: offscreen
         run: python -m pytest tests/ -q
 
+      # AGENTS.md forbids using `assert` for input validation because
+      # asserts are stripped under `python -O`. Re-running the suite
+      # with -O catches any regression: if a test (or production code
+      # invoked by it) ever relies on a load-bearing assert, this
+      # second pass fails while the first one still passes.
+      - name: Run test suite with asserts stripped (python -O)
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: python -O -m pytest tests/ -q
+
   test-and-build:
     runs-on: windows-latest
 
