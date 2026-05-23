@@ -666,6 +666,90 @@ function setupHelpModal() {
     });
 }
 
+// "Try example" button fillers. Each populates its calculator's form
+// with a typical, chemistry-meaningful input set so a user can see the
+// expected shape of the data and watch a real run end-to-end without
+// having to invent values. The handler only sets values — it doesn't
+// auto-submit, so the user still presses Calculate themselves and gets
+// to feel the workflow. For mode-driven calculators (concentration,
+// gas laws, pH), the mode selector is set first and `change` is
+// dispatched so the right sub-form becomes visible.
+const EXAMPLE_FILLERS = {
+    "molar-example": () => {
+        document.getElementById("molar-input").value = "CuSO4·5H2O";
+        document.getElementById("molar-input").focus();
+    },
+    "stoich-example": () => {
+        document.getElementById("stoich-input").value = "Fe + O2 -> Fe2O3";
+        document.getElementById("stoich-input").focus();
+    },
+    "conc-example": () => {
+        const mode = document.getElementById("conc-mode");
+        mode.value = "solution";
+        mode.dispatchEvent(new Event("change"));
+        document.getElementById("conc-solute-formula").value = "NaCl";
+        document.getElementById("conc-solute-mass").value = "5";
+        document.getElementById("conc-solute-moles").value = "";
+        document.getElementById("conc-solvent-mass").value = "";
+        document.getElementById("conc-solution-volume").value = "100";
+        document.getElementById("conc-volume-unit").value = "mL";
+    },
+    "gas-example": () => {
+        const mode = document.getElementById("gas-mode");
+        mode.value = "ideal";
+        mode.dispatchEvent(new Event("change"));
+        document.getElementById("gas-ideal-p").value = "1";
+        document.getElementById("gas-ideal-p-unit").value = "atm";
+        document.getElementById("gas-ideal-v").value = "22.4";
+        document.getElementById("gas-ideal-v-unit").value = "L";
+        document.getElementById("gas-ideal-n").value = "";
+        document.getElementById("gas-ideal-t").value = "273";
+        document.getElementById("gas-ideal-t-unit").value = "K";
+    },
+    "ph-example": () => {
+        const mode = document.getElementById("ph-mode");
+        mode.value = "interconvert";
+        mode.dispatchEvent(new Event("change"));
+        document.getElementById("ph-input-ph").value = "7";
+        document.getElementById("ph-input-poh").value = "";
+        document.getElementById("ph-input-h").value = "";
+        document.getElementById("ph-input-oh").value = "";
+    },
+    "emp-example": () => {
+        const rows = document.querySelectorAll("#emp-rows .gas-dalton-row");
+        const examples = [["H", "11.19"], ["O", "88.81"]];
+        rows.forEach((row, i) => {
+            if (i >= examples.length) return;
+            row.querySelector("input[data-role='symbol']").value = examples[i][0];
+            row.querySelector("input[data-role='amount']").value = examples[i][1];
+        });
+        document.getElementById("emp-total-mass").value = "18";
+    },
+    "builder-example": () => {
+        const aSym = document.getElementById("builder-a-symbol");
+        const bSym = document.getElementById("builder-b-symbol");
+        aSym.value = "Na";
+        aSym.dispatchEvent(new Event("change"));
+        bSym.value = "Cl";
+        bSym.dispatchEvent(new Event("change"));
+        // The oxidation combos are populated by the change handler above;
+        // pick canonical values for Na/Cl after they've been filled in.
+        document.getElementById("builder-a-oxidation").value = "1";
+        document.getElementById("builder-b-oxidation").value = "-1";
+    },
+    "solubility-example": () => {
+        document.getElementById("solubility-cation").value = "Ag⁺";
+        document.getElementById("solubility-anion").value = "Cl⁻";
+    },
+};
+
+function setupExampleButtons() {
+    for (const [buttonId, filler] of Object.entries(EXAMPLE_FILLERS)) {
+        const button = document.getElementById(buttonId);
+        if (button) button.addEventListener("click", filler);
+    }
+}
+
 function computeMatchScore(element, query, localizedName) {
     const q = (query || "").trim().toLowerCase();
     if (!q) return 0;
@@ -2832,6 +2916,7 @@ async function bootstrap() {
     setupSearchForm();
     setupToolsModal();
     setupHelpModal();
+    setupExampleButtons();
     applyStaticTranslations();
     renderPeriodicTable();
     setupTrendControls();

@@ -1039,6 +1039,39 @@ body.is-modal-open {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
 }
 
+/* Secondary "Try example" button — a softer affordance below each
+ * calculator's form that pre-fills typical inputs so users can see
+ * the workflow without having to invent valid chemistry data. Lives
+ * outside the <form> on purpose so a click never accidentally
+ * submits. align-self: flex-start keeps the button at content width
+ * inside the column-flex panel layout. */
+.example-button {
+    align-self: flex-start;
+    background: transparent;
+    color: var(--color-text-muted, #bdbdbd);
+    border: var(--border-default-width, 1px) solid
+        var(--color-border-button, #5f7384);
+    border-radius: var(--radius-button, 8px);
+    padding: var(--spacing-button-padding-y, 6px) var(--spacing-button-padding-x, 10px);
+    font-size: var(--font-size-button-default, 12px);
+    font-style: italic;
+    cursor: pointer;
+    transition: background-color 0.12s ease, color 0.12s ease,
+        border-color 0.12s ease;
+}
+
+.example-button:hover {
+    background: var(--color-bg-button-hover, #4b6478);
+    color: var(--color-text-primary, #f2f2f2);
+    border-color: var(--color-accent, #FFD60A);
+}
+
+.example-button:focus-visible {
+    outline: var(--border-input-focused-width, 2px) solid
+        var(--color-accent, #FFD60A);
+    outline-offset: 2px;
+}
+
 /* Per-panel "?" help button — anchors to the top-right of each calculator
  * panel so chemistry-novice users can read a plain-language explanation
  * of what the tool does before they're confronted with the form. The

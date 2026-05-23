@@ -126,6 +126,12 @@ class SolubilityPanel(QWidget):
         self.check_button.setAccessibleName("Check solubility")
         self.check_button.clicked.connect(self._on_check)
 
+        self.example_button = QPushButton()
+        self.example_button.setObjectName("panelExampleButton")
+        self.example_button.setAccessibleName("Try solubility example")
+        self.example_button.setVisible(False)
+        self.example_button.clicked.connect(self._on_example_clicked)
+
         check_row = QHBoxLayout()
         check_row.setContentsMargins(0, 0, 0, 0)
         check_row.setSpacing(6)
@@ -134,6 +140,7 @@ class SolubilityPanel(QWidget):
         check_row.addWidget(anion_label)
         check_row.addWidget(self.anion_combo, 1)
         check_row.addWidget(self.check_button)
+        check_row.addWidget(self.example_button)
 
         # --- Verdict label ---
         self.verdict_label = QLabel(prompt_text)
@@ -231,12 +238,15 @@ class SolubilityPanel(QWidget):
         rule_default,
         help_body="",
         help_close_text="Close",
+        example_text="",
     ):
         """Update all translatable strings when the UI language changes."""
         self.title_label.setText(title)
         self._help_body = help_body
         self._help_close_text = help_close_text
         self.help_button.setVisible(bool(help_body))
+        self.example_button.setText(example_text)
+        self.example_button.setVisible(bool(example_text))
         self._prompt_text = prompt
         self._cation_label_widget.setText(cation_label)
         self._anion_label_widget.setText(anion_label)
@@ -276,6 +286,12 @@ class SolubilityPanel(QWidget):
             parent=self.window(),
         )
         dialog.exec()
+
+    def _on_example_clicked(self):
+        """Pre-select Ag⁺ + Cl⁻ so the user can see the classic
+        insoluble verdict and the halide solubility rule that explains it."""
+        self.cation_combo.setCurrentText("Ag⁺")
+        self.anion_combo.setCurrentText("Cl⁻")
 
     def _on_check(self):
         """Look up solubility for the selected cation/anion pair."""

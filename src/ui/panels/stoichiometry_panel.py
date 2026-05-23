@@ -71,11 +71,18 @@ class StoichiometryPanel(QWidget):
         self.balance_button.clicked.connect(self._on_balance)
         self.equation_input.returnPressed.connect(self._on_balance)
 
+        self.example_button = QPushButton()
+        self.example_button.setObjectName("panelExampleButton")
+        self.example_button.setAccessibleName("Try stoichiometry example")
+        self.example_button.setVisible(False)
+        self.example_button.clicked.connect(self._on_example_clicked)
+
         eq_row = QHBoxLayout()
         eq_row.setContentsMargins(0, 0, 0, 0)
         eq_row.setSpacing(6)
         eq_row.addWidget(self.equation_input, 1)
         eq_row.addWidget(self.balance_button, 0)
+        eq_row.addWidget(self.example_button, 0)
 
         self.result_label = QLabel(prompt_text)
         self.result_label.setObjectName("compoundResultLabel")
@@ -181,6 +188,7 @@ class StoichiometryPanel(QWidget):
         self, *, title, prompt, balance_text, calc_masses_text,
         mass_section_text, error_prefix,
         help_body="", help_close_text="Close",
+        example_text="",
     ):
         """Apply localized strings to all visible labels."""
         self.set_title(title)
@@ -195,6 +203,13 @@ class StoichiometryPanel(QWidget):
         self._help_body = help_body
         self._help_close_text = help_close_text
         self.help_button.setVisible(bool(help_body))
+        self.example_button.setText(example_text)
+        self.example_button.setVisible(bool(example_text))
+
+    def _on_example_clicked(self):
+        """Pre-fill the equation input with a balanced-from-scratch example."""
+        self.equation_input.setText("Fe + O2 -> Fe2O3")
+        self.equation_input.setFocus()
 
     def _on_help_clicked(self):
         """Open the help dialog populated with this calculator's current

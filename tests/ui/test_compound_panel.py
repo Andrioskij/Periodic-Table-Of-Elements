@@ -106,6 +106,35 @@ class TestCompoundBuilderPanel(unittest.TestCase):
         self.assertTrue(self.panel.help_button.isVisibleTo(self.panel))
         self.assertIn("NaCl", self.panel._help_body)
 
+    def test_example_button_visibility_round_trip(self):
+        self.panel.apply_language(
+            selector_a_title="A", selector_b_title="B",
+            search_placeholder_a="a", search_placeholder_b="b",
+            oxidation_first="o", oxidation_second="o",
+            calculate_formula="c", reset="r",
+        )
+        self.assertFalse(self.panel.example_button.isVisibleTo(self.panel))
+        self.panel.apply_language(
+            selector_a_title="A", selector_b_title="B",
+            search_placeholder_a="a", search_placeholder_b="b",
+            oxidation_first="o", oxidation_second="o",
+            calculate_formula="c", reset="r",
+            example_text="Prova un esempio",
+        )
+        self.assertTrue(self.panel.example_button.isVisibleTo(self.panel))
+
+    def test_example_click_fills_search_inputs(self):
+        self.panel.apply_language(
+            selector_a_title="A", selector_b_title="B",
+            search_placeholder_a="a", search_placeholder_b="b",
+            oxidation_first="o", oxidation_second="o",
+            calculate_formula="c", reset="r",
+            example_text="Prova",
+        )
+        self.panel.example_button.click()
+        self.assertEqual(self.panel.search_a_input.text(), "Na")
+        self.assertEqual(self.panel.search_b_input.text(), "Cl")
+
 
 if __name__ == "__main__":
     unittest.main()

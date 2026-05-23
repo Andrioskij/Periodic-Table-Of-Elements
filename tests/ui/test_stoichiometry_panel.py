@@ -73,6 +73,28 @@ class TestStoichiometryPanel(unittest.TestCase):
         self.assertTrue(self.panel.help_button.isVisibleTo(self.panel))
         self.assertIn("Fe2O3", self.panel._help_body)
 
+    def test_example_button_visibility_round_trip(self):
+        self.panel.apply_language(
+            title="t", prompt="p", balance_text="b", calc_masses_text="cm",
+            mass_section_text="ms", error_prefix="e",
+        )
+        self.assertFalse(self.panel.example_button.isVisibleTo(self.panel))
+        self.panel.apply_language(
+            title="t", prompt="p", balance_text="b", calc_masses_text="cm",
+            mass_section_text="ms", error_prefix="e",
+            example_text="Prova un esempio",
+        )
+        self.assertTrue(self.panel.example_button.isVisibleTo(self.panel))
+
+    def test_example_click_fills_equation_input(self):
+        self.panel.apply_language(
+            title="t", prompt="p", balance_text="b", calc_masses_text="cm",
+            mass_section_text="ms", error_prefix="e",
+            example_text="Prova",
+        )
+        self.panel.example_button.click()
+        self.assertEqual(self.panel.equation_input.text(), "Fe + O2 -> Fe2O3")
+
 
 if __name__ == "__main__":
     unittest.main()

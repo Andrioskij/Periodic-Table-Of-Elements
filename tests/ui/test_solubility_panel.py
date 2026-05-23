@@ -102,6 +102,18 @@ class TestSolubilityPanel(unittest.TestCase):
         self.assertTrue(self.panel.help_button.isVisibleTo(self.panel))
         self.assertIn("AgCl", self.panel._help_body)
 
+    def test_example_button_visibility_round_trip(self):
+        self.panel.apply_language(**_LANG_KWARGS)
+        self.assertFalse(self.panel.example_button.isVisibleTo(self.panel))
+        self.panel.apply_language(**_LANG_KWARGS, example_text="Prova un esempio")
+        self.assertTrue(self.panel.example_button.isVisibleTo(self.panel))
+
+    def test_example_click_selects_silver_chloride(self):
+        self.panel.apply_language(**_LANG_KWARGS, example_text="Prova")
+        self.panel.example_button.click()
+        self.assertEqual(self.panel.cation_combo.currentText(), "Ag⁺")
+        self.assertEqual(self.panel.anion_combo.currentText(), "Cl⁻")
+
 
 if __name__ == "__main__":
     unittest.main()
