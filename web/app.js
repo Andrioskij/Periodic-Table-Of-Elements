@@ -1339,16 +1339,20 @@ ELEMENTS = json.loads(__elements_json)
 async function balanceEquation(equation) {
     const pyodide = await ensurePyodide();
     pyodide.globals.set("__equation", equation);
+    // See buildBinaryFormula for the rationale: a try/except as the
+    // last top-level statement returns None from runPython; build the
+    // payload first and serialise it on a bare last line instead.
     const result = pyodide.runPython(`
 import json
 try:
     reactants, products = stoichiometry.parse_equation(__equation)
     coeffs = stoichiometry.balance_parsed(reactants, products)
     formatted = stoichiometry.format_balanced_equation(reactants, products, coeffs)
-    json.dumps({"ok": True, "reactants": reactants, "products": products,
-                "coefficients": coeffs, "formatted": formatted})
+    payload = {"ok": True, "reactants": reactants, "products": products,
+               "coefficients": coeffs, "formatted": formatted}
 except stoichiometry.EquationError as exc:
-    json.dumps({"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)})
+    payload = {"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)}
+json.dumps(payload)
 `);
     return JSON.parse(result);
 }
@@ -1373,9 +1377,10 @@ try:
         json.loads(__r), json.loads(__p), json.loads(__c),
         ELEMENTS, __given_compound, __given_mass,
     )
-    json.dumps({"ok": True, "rows": rows})
+    payload = {"ok": True, "rows": rows}
 except stoichiometry.EquationError as exc:
-    json.dumps({"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)})
+    payload = {"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)}
+json.dumps(payload)
 `);
     return JSON.parse(result);
 }
@@ -1419,15 +1424,24 @@ async function buildBinaryFormula(aSymbol, aCharge, bSymbol, bCharge) {
     pyodide.globals.set("__a_charge", aCharge);
     pyodide.globals.set("__b_symbol", bSymbol);
     pyodide.globals.set("__b_charge", bCharge);
+    // `pyodide.runPython` returns the value of the *last top-level
+    // statement*; a try/except block is a compound statement, not an
+    // expression, so a script whose last statement is `try: … except:`
+    // returns `None` → `undefined` in JS → `JSON.parse(undefined)`
+    // throws `"undefined" is not valid JSON`. Building the payload
+    // dict inside the try/except and serialising it on a bare last
+    // line guarantees Pyodide eval's the json.dumps and returns the
+    // string.
     const result = pyodide.runPython(`
 import json
 try:
     formula = compound_builder.build_binary_formula(
         __a_symbol, int(__a_charge), __b_symbol, int(__b_charge),
     )
-    json.dumps({"ok": True, "formula": formula})
+    payload = {"ok": True, "formula": formula}
 except ValueError as exc:
-    json.dumps({"ok": False, "message": str(exc)})
+    payload = {"ok": False, "message": str(exc)}
+json.dumps(payload)
 `);
     return JSON.parse(result);
 }
@@ -1503,12 +1517,13 @@ import json
 total_raw = __total_mass.strip()
 total = float(total_raw) if total_raw else None
 try:
-    payload = molar_mass.empirical_formula_from_composition(
+    inner = molar_mass.empirical_formula_from_composition(
         json.loads(__rows), ELEMENTS, total_molar_mass=total,
     )
-    json.dumps({"ok": True, "payload": payload})
+    payload = {"ok": True, "payload": inner}
 except molar_mass.FormulaError as exc:
-    json.dumps({"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)})
+    payload = {"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)}
+json.dumps(payload)
 `);
     return JSON.parse(result);
 }
@@ -1522,13 +1537,14 @@ async function computeLimitingReagent(reactants, products, coefficients, reactan
     const result = pyodide.runPython(`
 import json
 try:
-    payload = stoichiometry.compute_limiting_reagent(
+    inner = stoichiometry.compute_limiting_reagent(
         json.loads(__r), json.loads(__p), json.loads(__c),
         ELEMENTS, json.loads(__masses),
     )
-    json.dumps({"ok": True, "payload": payload})
+    payload = {"ok": True, "payload": inner}
 except stoichiometry.EquationError as exc:
-    json.dumps({"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)})
+    payload = {"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)}
+json.dumps(payload)
 `);
     return JSON.parse(result);
 }
@@ -1542,9 +1558,10 @@ try:
     atoms = molar_mass.parse_formula(__formula)
     total = molar_mass.compute_molar_mass(atoms, ELEMENTS)
     composition = molar_mass.compute_percent_composition(atoms, ELEMENTS, total_mass=total)
-    json.dumps({"ok": True, "total": total, "composition": composition})
+    payload = {"ok": True, "total": total, "composition": composition}
 except molar_mass.FormulaError as exc:
-    json.dumps({"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)})
+    payload = {"ok": False, "code": exc.code, "params": exc.params, "message": str(exc)}
+json.dumps(payload)
 `);
     return JSON.parse(result);
 }
