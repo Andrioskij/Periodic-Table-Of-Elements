@@ -35,7 +35,12 @@ const state = {
     activeHelpTitleKey: null,
     activeTrend: "normal",
     numericTrendRanges: null,
+    compareMode: false,
+    compareSet: [],
+    comparisonModalReturnFocus: null,
 };
+
+const COMPARE_MAX = 3;
 
 const INFO_FIELDS = [
     { key: "atomic_number", source: "atomic_number" },
@@ -340,7 +345,7 @@ function renderPeriodicTable() {
         symbol.textContent = element.symbol;
         cell.append(number, symbol);
 
-        cell.addEventListener("click", () => selectElement(element.symbol));
+        cell.addEventListener("click", () => handleCellClick(element.symbol));
 
         if (inMain) {
             main.appendChild(cell);
@@ -494,6 +499,13 @@ function applyStaticTranslations() {
             document.getElementById("help-modal-body"),
             tr(state.activeLanguage, state.activeHelpKey),
         );
+    }
+    // If the comparison modal is open, re-render the table so the
+    // property labels and localized values (category, standard state)
+    // pick up the new language.
+    const comparisonModal = document.getElementById("comparison-modal");
+    if (comparisonModal && !comparisonModal.hidden) {
+        renderComparisonTable();
     }
 }
 
@@ -751,6 +763,224 @@ function setupExampleButtons() {
         const button = document.getElementById(buttonId);
         if (button) button.addEventListener("click", filler);
     }
+}
+
+// ===== Element comparison =====
+
+// Dispatch for periodic-table cell clicks. In compare mode the click
+// toggles the element into the comparison set instead of routing to
+// the regular Info panel — keeps the cell click site single-purpose
+// while letting Compare mode reuse the table as a multi-picker.
+function handleCellClick(symbol) {
+    if (state.compareMode) {
+        toggleElementInCompareSet(symbol);
+    } else {
+        selectElement(symbol);
+    }
+}
+
+function toggleCompareMode() {
+    state.compareMode = !state.compareMode;
+    document.body.classList.toggle("is-compare-mode", state.compareMode);
+    const toggle = document.getElementById("compare-toggle");
+    toggle.setAttribute("aria-pressed", String(state.compareMode));
+    if (!state.compareMode) {
+        // Exiting the mode discards any in-progress selection so the
+        // user starts fresh next time. Re-renders cell highlights.
+        state.compareSet = [];
+    }
+    refreshCompareUI();
+    if (!state.compareMode) {
+        closeComparisonModal();
+    }
+}
+
+function toggleElementInCompareSet(symbol) {
+    const index = state.compareSet.indexOf(symbol);
+    if (index >= 0) {
+        state.compareSet.splice(index, 1);
+    } else if (state.compareSet.length < COMPARE_MAX) {
+        state.compareSet.push(symbol);
+    } else {
+        // Silently ignore the over-cap click; the .is-comparison-full
+        // visual cue (cursor: not-allowed on non-set cells) already
+        // signals the limit.
+        return;
+    }
+    refreshCompareUI();
+}
+
+// Re-applies the compare-mode visuals: cell badges, the count on the
+// toggle button, and the visibility of the "View" button. Cheap to
+// call after any state.compareSet change.
+function refreshCompareUI() {
+    const count = state.compareSet.length;
+    const setMembers = new Set(state.compareSet);
+    const cap = state.compareSet.length >= COMPARE_MAX;
+
+    for (const cell of document.querySelectorAll(".element-cell")) {
+        const symbol = cell.dataset.symbol;
+        cell.classList.toggle("is-in-comparison", setMembers.has(symbol));
+        cell.classList.toggle(
+            "is-comparison-full",
+            state.compareMode && cap && !setMembers.has(symbol),
+        );
+    }
+
+    const countBadge = document.getElementById("compare-count");
+    if (count > 0) {
+        countBadge.textContent = String(count);
+        countBadge.hidden = false;
+    } else {
+        countBadge.textContent = "";
+        countBadge.hidden = true;
+    }
+
+    document.getElementById("compare-view").hidden = !(
+        state.compareMode && count >= 2
+    );
+}
+
+function buildComparisonHeaderCell(element) {
+    const cell = document.createElement("th");
+    cell.scope = "col";
+    const wrap = document.createElement("div");
+    wrap.className = "comparison-header-cell";
+    const symbol = document.createElement("span");
+    symbol.className = "comparison-header-symbol";
+    symbol.textContent = element.symbol;
+    const accent = getCategoryColor(element.category);
+    symbol.style.background = accent;
+    symbol.style.color = readableTextColor(accent);
+    const name = document.createElement("span");
+    name.className = "comparison-header-name";
+    name.textContent = `${element.name} (${element.atomic_number})`;
+    wrap.append(symbol, name);
+    cell.appendChild(wrap);
+    return cell;
+}
+
+function buildComparisonRow(field, elements) {
+    const tr = document.createElement("tr");
+    const th = document.createElement("th");
+    th.scope = "row";
+    th.textContent = tr_field_label(field.key);
+    tr.appendChild(th);
+    for (const element of elements) {
+        const td = document.createElement("td");
+        td.textContent = formatComparisonValue(field, element);
+        tr.appendChild(td);
+    }
+    return tr;
+}
+
+function tr_field_label(key) {
+    return tr(state.activeLanguage, key) || key;
+}
+
+function formatComparisonValue(field, element) {
+    const raw = element[field.source];
+    if (raw === null || raw === undefined || raw === "") return "—";
+    if (field.localize) {
+        return field.localize(state.activeLanguage, raw);
+    }
+    if (field.format) {
+        return field.format(raw);
+    }
+    return String(raw);
+}
+
+function renderComparisonTable() {
+    const table = document.getElementById("comparison-table");
+    const empty = document.getElementById("comparison-empty");
+    const wrap = document.getElementById("comparison-table-wrap");
+
+    table.replaceChildren();
+
+    const elements = state.compareSet
+        .map((symbol) => state.elementsBySymbol.get(symbol))
+        .filter(Boolean);
+
+    if (elements.length < 2) {
+        empty.hidden = false;
+        wrap.hidden = true;
+        return;
+    }
+
+    empty.hidden = true;
+    wrap.hidden = false;
+
+    const thead = document.createElement("thead");
+    const headerRow = document.createElement("tr");
+    const corner = document.createElement("th");
+    corner.scope = "col";
+    corner.textContent = tr_field_label("compare_property_label");
+    headerRow.appendChild(corner);
+    for (const element of elements) {
+        headerRow.appendChild(buildComparisonHeaderCell(element));
+    }
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+    for (const field of INFO_FIELDS) {
+        tbody.appendChild(buildComparisonRow(field, elements));
+    }
+    table.appendChild(tbody);
+}
+
+function openComparisonModal() {
+    const modal = document.getElementById("comparison-modal");
+    state.comparisonModalReturnFocus = document.activeElement;
+    renderComparisonTable();
+    modal.hidden = false;
+    document.body.classList.add("is-modal-open");
+    document.getElementById("comparison-close").focus();
+}
+
+function closeComparisonModal() {
+    const modal = document.getElementById("comparison-modal");
+    if (modal.hidden) return;
+    modal.hidden = true;
+    // Don't release the body scroll lock if another modal is still
+    // open underneath (the lock is shared across all modals).
+    const otherOpen = ["tools-modal", "help-modal"].some((id) => {
+        const node = document.getElementById(id);
+        return node && !node.hidden;
+    });
+    if (!otherOpen) {
+        document.body.classList.remove("is-modal-open");
+    }
+    const returnTo = state.comparisonModalReturnFocus;
+    state.comparisonModalReturnFocus = null;
+    if (returnTo && typeof returnTo.focus === "function") {
+        returnTo.focus();
+    }
+}
+
+function setupComparison() {
+    document.getElementById("compare-toggle").addEventListener(
+        "click", toggleCompareMode,
+    );
+    document.getElementById("compare-view").addEventListener(
+        "click", openComparisonModal,
+    );
+    document.getElementById("comparison-clear").addEventListener("click", () => {
+        state.compareSet = [];
+        refreshCompareUI();
+        closeComparisonModal();
+    });
+    const modal = document.getElementById("comparison-modal");
+    if (!modal) return;
+    for (const node of modal.querySelectorAll("[data-comparison-close]")) {
+        node.addEventListener("click", closeComparisonModal);
+    }
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !modal.hidden) {
+            event.preventDefault();
+            closeComparisonModal();
+        }
+    });
 }
 
 function computeMatchScore(element, query, localizedName) {
@@ -2923,6 +3153,7 @@ async function bootstrap() {
     setupToolsModal();
     setupHelpModal();
     setupExampleButtons();
+    setupComparison();
     applyStaticTranslations();
     renderPeriodicTable();
     setupTrendControls();

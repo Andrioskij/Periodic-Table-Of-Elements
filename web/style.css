@@ -1417,6 +1417,244 @@ body.is-modal-open {
  *    over 180ms so the page doesn't suddenly darken in one frame.
  */
 
+/* ===== Element comparison ===== */
+
+/* Compare-mode toggle button — when active (aria-pressed="true") it
+ * fills with the accent colour so the user can see at a glance that the
+ * table is in a different click mode. The count badge appears once
+ * elements are picked. */
+#compare-toggle[aria-pressed="true"] {
+    background: var(--color-accent, #FFD60A);
+    color: var(--color-text-on-accent, #111111);
+    border-color: var(--color-accent, #FFD60A);
+}
+
+.compare-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: var(--color-text-on-accent, #111111);
+    color: var(--color-accent, #FFD60A);
+    font-size: 11px;
+    font-weight: var(--font-weight-bold, 700);
+    line-height: 1;
+}
+
+#compare-toggle[aria-pressed="false"] .compare-count {
+    background: var(--color-accent, #FFD60A);
+    color: var(--color-text-on-accent, #111111);
+}
+
+/* In compare mode, give cells a "click-to-add" affordance: dim
+ * unselected cells slightly and brighten the ones already in the
+ * comparison set so the picked set is visually obvious. */
+body.is-compare-mode .element-cell {
+    opacity: 0.7;
+}
+
+body.is-compare-mode .element-cell.is-in-comparison {
+    opacity: 1;
+    outline: var(--border-input-focused-width, 2px) solid
+        var(--color-accent, #FFD60A);
+    outline-offset: -2px;
+}
+
+body.is-compare-mode .element-cell.is-comparison-full {
+    cursor: not-allowed;
+}
+
+/* Comparison modal — same pattern as .tools-modal but wider since the
+ * comparison table benefits from horizontal space. */
+.comparison-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-info-card-padding, 12px);
+}
+
+.comparison-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.comparison-modal-card {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-info-card-inner-gap, 12px);
+    width: 100%;
+    max-width: 720px;
+    max-height: 85vh;
+    background: var(--color-bg-card, #23272f);
+    border: var(--border-default-width, 1px) solid
+        var(--color-border-strong, #404854);
+    border-radius: var(--radius-info-card, 14px);
+    padding: var(--spacing-info-card-padding, 12px);
+    overflow: hidden;
+}
+
+.comparison-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-badge-gap, 6px);
+}
+
+.comparison-modal-title {
+    margin: 0;
+    font-size: var(--font-size-info-hero-name, 24px);
+    font-weight: var(--font-weight-bold, 700);
+    color: var(--color-text-strong, #dfe7ef);
+}
+
+.comparison-modal-close {
+    background: transparent;
+    color: var(--color-text-primary, #f2f2f2);
+    border: var(--border-default-width, 1px) solid
+        var(--color-border-button, #5f7384);
+    border-radius: var(--radius-button, 8px);
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.comparison-modal-close:hover {
+    background: var(--color-bg-button-hover, #4b6478);
+}
+
+.comparison-modal-close:focus-visible {
+    outline: var(--border-input-focused-width, 2px) solid
+        var(--color-accent, #FFD60A);
+    outline-offset: 2px;
+}
+
+.comparison-modal-body {
+    flex: 1 1 auto;
+    overflow: auto;
+}
+
+.comparison-empty {
+    margin: 0;
+    padding: var(--spacing-info-section-padding, 12px);
+    color: var(--color-text-muted, #bdbdbd);
+    font-style: italic;
+    text-align: center;
+}
+
+.comparison-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-badge-gap, 6px);
+}
+
+/* Comparison table — sticky property column on the left, header row
+ * with symbol-badge styling that picks up the category colour. */
+.comparison-table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: var(--font-size-info-field-label, 11px);
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: var(--spacing-info-metric-gap, 4px) var(--spacing-badge-padding-x, 10px);
+    border-bottom: var(--border-default-width, 1px) solid
+        var(--color-border-subtle, #44515b);
+    text-align: left;
+    vertical-align: top;
+}
+
+.comparison-table thead th {
+    color: var(--color-text-strong, #dfe7ef);
+    font-weight: var(--font-weight-bold, 700);
+    background: var(--color-bg-card-alt, #252526);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.comparison-table tbody th {
+    color: var(--color-text-muted, #bdbdbd);
+    text-transform: uppercase;
+    letter-spacing: var(--font-letter-spacing-info-section-title, 0.4px);
+    font-weight: var(--font-weight-medium, 500);
+    background: var(--color-bg-card-alt, #252526);
+    position: sticky;
+    left: 0;
+}
+
+.comparison-table tbody td {
+    color: var(--color-text-primary, #f2f2f2);
+}
+
+.comparison-table tbody tr:last-child th,
+.comparison-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Symbol badge inside the header column, tinted with the element's
+ * category colour (set inline by JS). Mirrors the visual idea of the
+ * info-hero symbol badge. */
+.comparison-header-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.comparison-header-symbol {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-button, 8px);
+    font-size: 16px;
+    font-weight: var(--font-weight-bold, 700);
+}
+
+.comparison-header-name {
+    font-size: var(--font-size-info-field-label, 11px);
+    font-weight: var(--font-weight-medium, 500);
+    color: var(--color-text-strong, #dfe7ef);
+    text-align: center;
+}
+
+/* On mobile the comparison modal goes full-screen like the others. */
+@media (max-width: 720px) {
+    .comparison-modal {
+        padding: 0;
+    }
+    .comparison-modal-card {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        border: none;
+    }
+    .comparison-header-symbol {
+        width: 30px;
+        height: 30px;
+        font-size: 13px;
+    }
+}
+
 @keyframes fade-in-up {
     from { opacity: 0; transform: translateY(-4px); }
     to { opacity: 1; transform: translateY(0); }
@@ -1444,7 +1682,8 @@ body.is-modal-open {
     }
 
     .tools-modal-backdrop,
-    .help-modal-backdrop {
+    .help-modal-backdrop,
+    .comparison-modal-backdrop {
         animation: backdrop-fade-in 0.18s ease-out;
     }
 }

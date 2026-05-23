@@ -343,7 +343,13 @@
     "empirical_help_body": "Ricava la formula empirica (e opzionalmente quella molecolare) di un composto a partire dalla sua composizione elementare.\n\nAggiungi una riga per ciascun elemento, inserisci il simbolo e la quantità come percentuale in massa o in grammi (puoi mescolare le due unità — il tool normalizza). Per ottenere anche la formula molecolare, fornisci la massa molare totale.\n\nEsempio: H 11.19 %, O 88.81 %, massa molare totale 18 → `H2O`.",
     "builder_help_body": "Costruisce la formula di un composto binario semplice scegliendo due elementi e i loro numeri di ossidazione, e ne fornisce sia il nome tradizionale che il nome di Stock.\n\nDigita o cerca il primo elemento nello slot **A**, scegli il numero di ossidazione dal menu a tendina. Ripeti per lo slot **B**. Premi Calcola formula.\n\nLimiti: solo composti binari semplici. A e B devono essere elementi diversi con numeri di ossidazione di segno opposto.",
     "solubility_help_body": "Indica se un composto ionico è solubile, insolubile o leggermente solubile in acqua, mostrando anche la regola di solubilità applicata.\n\nScegli un catione e un anione dai menu a tendina, premi Controlla. Il verdetto è colorato (verde = solubile, rosso = insolubile, giallo = leggermente solubile).\n\nLa matrice in basso è la tabella completa cation × anion, utile per individuare pattern di famiglia (es. tutti i nitrati sono solubili, molti carbonati no).",
-    "example_button": "Prova un esempio"
+    "example_button": "Prova un esempio",
+    "compare_button": "Confronta",
+    "compare_view_button": "Vedi",
+    "compare_modal_title": "Confronto elementi",
+    "compare_property_label": "Proprietà",
+    "compare_clear": "Pulisci",
+    "compare_pick_2_3": "Seleziona 2 o 3 elementi dalla tavola."
   },
   "localized_category_texts": {
     "actinide": "Attinide",

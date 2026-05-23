@@ -343,7 +343,13 @@
     "empirical_help_body": "Déduit la formule empirique (et en option la formule moléculaire) d'un composé à partir de sa composition élémentaire.\n\nAjoutez une ligne par élément, entrez le symbole et la quantité en pourcentage massique ou en grammes (vous pouvez mélanger les deux unités — l'outil normalise). Pour obtenir aussi la formule moléculaire, fournissez la masse molaire totale.\n\nExemple : H 11,19 %, O 88,81 %, masse molaire totale 18 → `H2O`.",
     "builder_help_body": "Construit la formule d'un composé binaire simple en choisissant deux éléments et leurs nombres d'oxydation, et donne à la fois le nom traditionnel et le nom de Stock.\n\nSaisissez ou recherchez le premier élément dans le slot **A**, choisissez son nombre d'oxydation dans le menu déroulant. Répétez pour le slot **B**. Cliquez sur Calculer la formule.\n\nPortée : composés binaires simples uniquement. A et B doivent être des éléments différents avec des nombres d'oxydation de signes opposés.",
     "solubility_help_body": "Indique si un composé ionique est soluble, insoluble ou légèrement soluble dans l'eau, et affiche la règle de solubilité applicable.\n\nChoisissez un cation et un anion dans les menus déroulants, cliquez sur Vérifier. Le verdict est codé en couleur (vert = soluble, rouge = insoluble, jaune = légèrement soluble).\n\nLa matrice en bas est le tableau complet cation × anion, utile pour repérer les motifs par famille (p. ex. tous les nitrates sont solubles, beaucoup de carbonates ne le sont pas).",
-    "example_button": "Essayer un exemple"
+    "example_button": "Essayer un exemple",
+    "compare_button": "Comparer",
+    "compare_view_button": "Voir",
+    "compare_modal_title": "Comparaison d’éléments",
+    "compare_property_label": "Propriété",
+    "compare_clear": "Effacer",
+    "compare_pick_2_3": "Choisissez 2 ou 3 éléments dans le tableau."
   },
   "localized_category_texts": {
     "actinide": "Actinide",
