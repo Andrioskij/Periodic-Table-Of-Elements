@@ -195,40 +195,49 @@
                 <nav class="tabs tools-modal-tabs" role="tablist">
                     <button id="tab-molar" class="tab is-active" role="tab"
                             aria-selected="true" aria-controls="panel-molar">
+                        <span class="tab-icon" aria-hidden="true">🧮</span>
                         <span data-i18n="right_molar">Molar mass</span>
                     </button>
                     <button id="tab-stoichiometry" class="tab" role="tab"
                             aria-selected="false" aria-controls="panel-stoichiometry">
+                        <span class="tab-icon" aria-hidden="true">⚖️</span>
                         <span data-i18n="right_stoichiometry">Stoichiometry</span>
                     </button>
                     <button id="tab-concentration" class="tab" role="tab"
                             aria-selected="false" aria-controls="panel-concentration">
+                        <span class="tab-icon" aria-hidden="true">💧</span>
                         <span data-i18n="concentration_title">Concentration calculator</span>
                     </button>
                     <button id="tab-gas-laws" class="tab" role="tab"
                             aria-selected="false" aria-controls="panel-gas-laws">
+                        <span class="tab-icon" aria-hidden="true">🌡️</span>
                         <span data-i18n="gas_laws_title">Gas laws</span>
                     </button>
                     <button id="tab-ph" class="tab" role="tab"
                             aria-selected="false" aria-controls="panel-ph">
+                        <span class="tab-icon" aria-hidden="true">🧪</span>
                         <span data-i18n="ph_title">pH calculator</span>
                     </button>
                     <button id="tab-empirical" class="tab" role="tab"
                             aria-selected="false" aria-controls="panel-empirical">
+                        <span class="tab-icon" aria-hidden="true">🔬</span>
                         <span data-i18n="empirical_title">Empirical formula</span>
                     </button>
                     <button id="tab-builder" class="tab" role="tab"
                             aria-selected="false" aria-controls="panel-builder">
+                        <span class="tab-icon" aria-hidden="true">🧱</span>
                         <span data-i18n="builder_title">Simple compounds</span>
                     </button>
                     <button id="tab-solubility" class="tab" role="tab"
                             aria-selected="false" aria-controls="panel-solubility">
+                        <span class="tab-icon" aria-hidden="true">🌊</span>
                         <span data-i18n="solubility_title">Solubility table</span>
                     </button>
                 </nav>
                 <div class="tools-modal-body">
                     <section id="panel-molar" class="panel" role="tabpanel"
                              aria-labelledby="tab-molar">
+                        <h3 class="panel-title" data-i18n="right_molar">Molar mass</h3>
                         <p id="molar-prompt" class="panel-prompt" data-i18n="molar_prompt">
                             Enter a chemical formula (e.g. H2O, Ca(OH)2, CuSO4·5H2O) to calculate its molar mass.
                         </p>
@@ -257,6 +266,7 @@
 
                     <section id="panel-stoichiometry" class="panel" role="tabpanel"
                              aria-labelledby="tab-stoichiometry" hidden>
+                        <h3 class="panel-title" data-i18n="right_stoichiometry">Stoichiometry</h3>
                         <p class="panel-prompt" data-i18n="stoichiometry_prompt">
                             Enter a chemical equation (e.g. Fe + O2 -&gt; Fe2O3) to balance it.
                         </p>
@@ -359,6 +369,7 @@
 
                     <section id="panel-concentration" class="panel" role="tabpanel"
                              aria-labelledby="tab-concentration" hidden>
+                        <h3 class="panel-title" data-i18n="concentration_title">Concentration calculator</h3>
                         <p class="panel-prompt" data-i18n="concentration_prompt">
                             Compute molarity / molality / mass-% or solve a dilution.
                         </p>
@@ -471,6 +482,7 @@
 
                     <section id="panel-gas-laws" class="panel" role="tabpanel"
                              aria-labelledby="tab-gas-laws" hidden>
+                        <h3 class="panel-title" data-i18n="gas_laws_title">Gas laws</h3>
                         <p class="panel-prompt" data-i18n="gas_laws_prompt">
                             Solve PV=nRT, the combined gas law, or partial pressures.
                         </p>
@@ -657,6 +669,7 @@
 
                     <section id="panel-ph" class="panel" role="tabpanel"
                              aria-labelledby="tab-ph" hidden>
+                        <h3 class="panel-title" data-i18n="ph_title">pH calculator</h3>
                         <p class="panel-prompt" data-i18n="ph_prompt">
                             Interconvert pH / pOH / [H⁺] / [OH⁻], or get pH from a strong-acid concentration.
                         </p>
@@ -735,6 +748,7 @@
 
                     <section id="panel-builder" class="panel" role="tabpanel"
                              aria-labelledby="tab-builder" hidden>
+                        <h3 class="panel-title" data-i18n="builder_title">Simple compounds</h3>
                         <p class="panel-prompt" data-i18n="compound_prompt">
                             Choose one element at a time, send it to A or B, then choose the oxidation states and calculate one simple binary formula.
                         </p>
@@ -773,6 +787,7 @@
 
                     <section id="panel-solubility" class="panel" role="tabpanel"
                              aria-labelledby="tab-solubility" hidden>
+                        <h3 class="panel-title" data-i18n="solubility_title">Solubility table</h3>
                         <p class="panel-prompt" data-i18n="solubility_prompt">
                             Select a cation and anion, then click Check.
                         </p>
@@ -803,6 +818,7 @@
 
                     <section id="panel-empirical" class="panel" role="tabpanel"
                              aria-labelledby="tab-empirical" hidden>
+                        <h3 class="panel-title" data-i18n="empirical_title">Empirical formula</h3>
                         <p class="panel-prompt" data-i18n="empirical_prompt">
                             Enter element percentages or masses; optionally a molar mass to get the molecular formula.
                         </p>

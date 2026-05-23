@@ -437,6 +437,10 @@ input {
 
 .tab {
     flex: 1 1 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-badge-gap, 6px);
     background: var(--color-bg-button, #3f5261);
     color: var(--color-text-primary, #f2f2f2);
     border: var(--border-default-width, 1px) solid var(--color-border-button, #5f7384);
@@ -444,12 +448,25 @@ input {
     padding: var(--spacing-button-padding-y, 6px) var(--spacing-button-padding-x, 10px);
     font-size: var(--font-size-button-default, 12px);
     font-weight: var(--font-weight-medium, 500);
+    transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+
+.tab:hover:not(.is-active) {
+    background: var(--color-bg-button-hover, #4b6478);
 }
 
 .tab.is-active {
     background: var(--color-accent, #FFD60A);
     color: var(--color-text-on-accent, #111111);
     border-color: var(--color-accent, #FFD60A);
+}
+
+/* Emoji renderers occasionally expand the line box past the text metrics
+ * (notably on Android Chrome), which would change tab height between
+ * Calculators (with icons) and the right-side Info/Lewis tabs (no
+ * icons). line-height: 1 keeps the row identical to the icon-less tabs. */
+.tab-icon {
+    line-height: 1;
 }
 
 .panel {
@@ -988,6 +1005,27 @@ body.is-modal-open {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-info-section-gap, 10px);
+}
+
+/* `.panel-title` is sized for the right-aside Info/Lewis/Electron panels
+ * (24px hero-name token). Inside the modal each of the 8 calculator panels
+ * already lives below the 24px modal header, so the same size competes
+ * with it; downscale to search-title (16px) for clear hierarchy. */
+.tools-modal-body .panel-title {
+    font-size: var(--font-size-search-title, 16px);
+}
+
+/* Accent strip + lift on every result card so it reads as the "output"
+ * region distinct from the form above. Uses the same accent as the
+ * selected-cell glow and active tab so the calculators share their
+ * visual language with the rest of the table. The same rule applies to
+ * .stoich-balanced (the balanced-equation card is also an "output"
+ * surface) so the two stoichiometry sub-results read as one family. */
+.tools-modal-body .molar-result,
+.tools-modal-body .stoich-balanced {
+    border-top: var(--border-result-accent-width, 2px) solid
+        var(--color-accent, #FFD60A);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
 }
 
 @media (max-width: 720px) {
