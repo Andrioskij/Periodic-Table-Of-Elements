@@ -42,6 +42,23 @@ class TestMolarMassPanel(unittest.TestCase):
         self.assertEqual(self.panel.calculate_button.text(), "Calcola")
         self.assertEqual(self.panel._error_prefix, "Errore")
 
+    def test_help_button_hidden_without_help_body(self):
+        # Default apply_language call with no help_body keeps the ? hidden.
+        self.panel.apply_language(
+            title="t", prompt="p", button_text="b", error_prefix="e",
+        )
+        self.assertFalse(self.panel.help_button.isVisibleTo(self.panel))
+
+    def test_help_button_visible_and_body_stored_when_help_body_provided(self):
+        self.panel.apply_language(
+            title="t", prompt="p", button_text="b", error_prefix="e",
+            help_body="Calcola la massa molare.\n\nEsempio: `H2O`.",
+            help_close_text="Chiudi",
+        )
+        self.assertTrue(self.panel.help_button.isVisibleTo(self.panel))
+        self.assertEqual(self.panel._help_close_text, "Chiudi")
+        self.assertIn("H2O", self.panel._help_body)
+
 
 if __name__ == "__main__":
     unittest.main()

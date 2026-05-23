@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
     QPushButton,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
@@ -17,6 +18,7 @@ from src.domain.molar_mass import (
     parse_formula,
 )
 from src.ui.error_format import format_formula_error
+from src.ui.help_dialog import HelpDialog
 
 
 class MolarMassPanel(QWidget):
@@ -36,6 +38,19 @@ class MolarMassPanel(QWidget):
         self.title_label.setObjectName("compoundTitleLabel")
         self.title_label.setWordWrap(True)
         self.title_label.setAccessibleName("Molar mass panel title")
+
+        self.help_button = QToolButton()
+        self.help_button.setObjectName("panelHelpButton")
+        self.help_button.setText("?")
+        self.help_button.setAccessibleName("How this calculator works")
+        self.help_button.setCursor(Qt.PointingHandCursor)
+        self.help_button.clicked.connect(self._on_help_clicked)
+
+        header_row = QHBoxLayout()
+        header_row.setContentsMargins(0, 0, 0, 0)
+        header_row.setSpacing(6)
+        header_row.addWidget(self.title_label, 1)
+        header_row.addWidget(self.help_button, 0, Qt.AlignTop)
 
         self.formula_input = QLineEdit()
         self.formula_input.setObjectName("molarMassInput")
@@ -71,7 +86,7 @@ class MolarMassPanel(QWidget):
         card_layout = QVBoxLayout()
         card_layout.setContentsMargins(12, 12, 12, 12)
         card_layout.setSpacing(10)
-        card_layout.addWidget(self.title_label)
+        card_layout.addLayout(header_row)
         card_layout.addLayout(input_row)
         card_layout.addWidget(self.result_label)
         self.card_widget.setLayout(card_layout)
@@ -86,6 +101,8 @@ class MolarMassPanel(QWidget):
         self._calculate_label_text = "Calculate"
         self._error_prefix = "Error"
         self._translate = None
+        self._help_body = ""
+        self._help_close_text = "Close"
 
     def set_translator(self, translate):
         """Provide the translator used to localize error messages."""
@@ -108,12 +125,29 @@ class MolarMassPanel(QWidget):
         """Set the localized prefix for error messages."""
         self._error_prefix = text
 
-    def apply_language(self, *, title, prompt, button_text, error_prefix):
+    def apply_language(
+        self, *, title, prompt, button_text, error_prefix,
+        help_body="", help_close_text="Close",
+    ):
         """Apply localized strings to all visible labels."""
         self.set_title(title)
         self.set_prompt(prompt)
         self.set_button_text(button_text)
         self.set_error_prefix(error_prefix)
+        self._help_body = help_body
+        self._help_close_text = help_close_text
+        self.help_button.setVisible(bool(help_body))
+
+    def _on_help_clicked(self):
+        """Open the help dialog populated with this calculator's current
+        localized title and body."""
+        dialog = HelpDialog(
+            title=self.title_label.text(),
+            body_text=self._help_body,
+            close_button_text=self._help_close_text,
+            parent=self.window(),
+        )
+        dialog.exec()
 
     def _on_calculate(self):
         """Parse the formula and display results."""

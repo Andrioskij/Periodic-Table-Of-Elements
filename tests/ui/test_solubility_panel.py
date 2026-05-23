@@ -89,6 +89,19 @@ class TestSolubilityPanel(unittest.TestCase):
         self.assertIn("Na\u207a", description)
         self.assertIn("Cl\u207b", description)
 
+    def test_help_button_hidden_without_help_body(self):
+        self.panel.apply_language(**_LANG_KWARGS)
+        self.assertFalse(self.panel.help_button.isVisibleTo(self.panel))
+
+    def test_help_button_visible_when_help_body_provided(self):
+        self.panel.apply_language(
+            **_LANG_KWARGS,
+            help_body="Consulta la tabella di solubilita.\n\nEsempio: `AgCl`.",
+            help_close_text="Chiudi",
+        )
+        self.assertTrue(self.panel.help_button.isVisibleTo(self.panel))
+        self.assertIn("AgCl", self.panel._help_body)
+
 
 if __name__ == "__main__":
     unittest.main()
