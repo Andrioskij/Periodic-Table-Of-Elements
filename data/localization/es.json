@@ -349,7 +349,20 @@
     "compare_modal_title": "Comparación de elementos",
     "compare_property_label": "Propiedad",
     "compare_clear": "Limpiar",
-    "compare_pick_2_3": "Elige 2 o 3 elementos de la tabla."
+    "compare_pick_2_3": "Elige 2 o 3 elementos de la tabla.",
+    "tour_welcome_title": "Bienvenido a la tabla periódica",
+    "tour_welcome_body": "Un breve recorrido te mostrará las funciones principales. Puedes saltarlo cuando quieras y no volverá a aparecer.",
+    "tour_calculators_title": "Calculadoras",
+    "tour_calculators_body": "Ocho herramientas de química: masa molar, estequiometría, pH, leyes de gases y más. Cada una tiene un botón de ayuda (?) que explica cómo funciona.",
+    "tour_compare_title": "Comparar",
+    "tour_compare_body": "Elige 2 o 3 elementos de la tabla para verlos uno al lado del otro — propiedades, configuración, categoría, todo.",
+    "tour_language_title": "Idioma",
+    "tour_language_body": "Disponible en 7 idiomas. Cambia cuando quieras sin perder el trabajo.",
+    "tour_theme_title": "Tema",
+    "tour_theme_body": "Cambia entre el tema claro y el oscuro.",
+    "tour_skip": "Saltar tour",
+    "tour_next": "Siguiente",
+    "tour_done": "Hecho"
   },
   "localized_category_texts": {
     "actinide": "Actínido",

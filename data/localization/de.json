@@ -349,7 +349,20 @@
     "compare_modal_title": "Elementvergleich",
     "compare_property_label": "Eigenschaft",
     "compare_clear": "Löschen",
-    "compare_pick_2_3": "Wähle 2 oder 3 Elemente aus dem Periodensystem."
+    "compare_pick_2_3": "Wähle 2 oder 3 Elemente aus dem Periodensystem.",
+    "tour_welcome_title": "Willkommen im Periodensystem",
+    "tour_welcome_body": "Eine kurze Tour zeigt dir die wichtigsten Funktionen. Du kannst sie jederzeit überspringen und siehst sie nie wieder.",
+    "tour_calculators_title": "Rechner",
+    "tour_calculators_body": "Acht Chemie-Tools: molare Masse, Stöchiometrie, pH, Gasgesetze und mehr. Jedes hat einen Hilfe-Button (?), der erklärt, wie es funktioniert.",
+    "tour_compare_title": "Vergleichen",
+    "tour_compare_body": "Wähle 2 oder 3 Elemente aus dem Periodensystem, um sie nebeneinander zu sehen — Eigenschaften, Konfiguration, Kategorie, alles.",
+    "tour_language_title": "Sprache",
+    "tour_language_body": "Verfügbar in 7 Sprachen. Jederzeit umschaltbar, ohne Arbeit zu verlieren.",
+    "tour_theme_title": "Thema",
+    "tour_theme_body": "Wechsle zwischen hellem und dunklem Thema.",
+    "tour_skip": "Tour überspringen",
+    "tour_next": "Weiter",
+    "tour_done": "Fertig"
   },
   "localized_category_texts": {
     "actinide": "Actinoid",
