@@ -135,7 +135,14 @@ def _copy_python_modules(dest_python: Path) -> list[Path]:
 
 
 def _copy_data(dest_data: Path) -> list[Path]:
-    """Copy elements.json and the localization JSONs into ``dest_data``."""
+    """Copy elements.json, the localization JSONs, and nomenclature_data.json
+    into ``dest_data``.
+
+    nomenclature_data.json feeds the web compound-builder's Stock and
+    traditional-name rendering: the file carries per-element localized
+    cation/anion names and the language-specific naming patterns
+    (`{cation} {anion}` for EN, `{anion} di {cation}` for IT, ...).
+    """
     dest_data.mkdir(parents=True, exist_ok=True)
     written = []
 
@@ -145,6 +152,13 @@ def _copy_data(dest_data: Path) -> list[Path]:
     elements_dst = dest_data / "elements.json"
     shutil.copyfile(elements_src, elements_dst)
     written.append(elements_dst)
+
+    nomenclature_src = REPO_ROOT / "data" / "reference" / "nomenclature_data.json"
+    if not nomenclature_src.exists():
+        raise FileNotFoundError(f"Nomenclature dataset not found: {nomenclature_src}")
+    nomenclature_dst = dest_data / "nomenclature_data.json"
+    shutil.copyfile(nomenclature_src, nomenclature_dst)
+    written.append(nomenclature_dst)
 
     loc_dst = dest_data / "localization"
     loc_dst.mkdir(parents=True, exist_ok=True)

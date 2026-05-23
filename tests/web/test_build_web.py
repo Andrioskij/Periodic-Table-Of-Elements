@@ -87,6 +87,29 @@ def test_build_web_bundles_lewis_modules(tmp_path):
     assert (dest / "python" / "src" / "domain" / "lewis_library.py").is_file()
 
 
+def test_build_web_bundles_nomenclature_data(tmp_path):
+    """nomenclature_data.json must be bundled byte-identical so the web
+    compound-builder Stock/traditional name rendering reads the same
+    source-of-truth payload the desktop reads."""
+    from pathlib import Path
+
+    dest = tmp_path / "web_out"
+    build_web(dest)
+
+    bundled = (dest / "data" / "nomenclature_data.json").read_bytes()
+    source = (
+        Path(__file__).resolve().parents[2]
+        / "data"
+        / "reference"
+        / "nomenclature_data.json"
+    ).read_bytes()
+    assert bundled == source, (
+        "web/data/nomenclature_data.json must be byte-identical to "
+        "data/reference/nomenclature_data.json so the desktop and web "
+        "compound-builder agree on cation/anion names and naming patterns."
+    )
+
+
 def test_build_web_bundled_compound_builder_matches_source(tmp_path):
     dest = tmp_path / "web_out"
     build_web(dest)
