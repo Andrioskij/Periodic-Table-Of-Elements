@@ -1390,3 +1390,61 @@ body.is-modal-open {
         flex-direction: column;
     }
 }
+
+/* ===== Micro-interactions =====
+ *
+ * Subtle motion that signals "something just happened" without slowing
+ * the user down. All animations are wrapped in
+ * `@media (prefers-reduced-motion: no-preference)` so users who set the
+ * OS-level reduce-motion preference see the previous instant transitions.
+ *
+ * The three patterns are:
+ *
+ * 1. **Result fade-in (`fade-in-up`)** — when a calculator's result card
+ *    transitions from `[hidden]` to visible, it fades in while sliding
+ *    up 4px. Triggers automatically because CSS animations restart when
+ *    an element first becomes rendered (`display: none` → `block`),
+ *    which is exactly what removing the `hidden` attribute does.
+ *
+ * 2. **Selected-cell tap (`cell-tap`)** — when a periodic-table cell
+ *    gains `.is-selected`, it bounces to 1.06× scale and back over
+ *    350ms. The class toggles on every selection change so the animation
+ *    plays each time the user picks a new element, making the act of
+ *    selecting feel responsive instead of instantaneous-but-silent.
+ *
+ * 3. **Modal backdrop fade (`backdrop-fade-in`)** — when the Calculators
+ *    or Help modal opens, the dark backdrop fades from 0 to full opacity
+ *    over 180ms so the page doesn't suddenly darken in one frame.
+ */
+
+@keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cell-tap {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.06); }
+    100% { transform: scale(1); }
+}
+
+@keyframes backdrop-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .tools-modal-body .molar-result,
+    .tools-modal-body .stoich-balanced {
+        animation: fade-in-up 0.25s ease-out;
+    }
+
+    .element-cell.is-selected {
+        animation: cell-tap 0.35s ease-out;
+    }
+
+    .tools-modal-backdrop,
+    .help-modal-backdrop {
+        animation: backdrop-fade-in 0.18s ease-out;
+    }
+}
