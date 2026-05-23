@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
     QPushButton,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
@@ -20,6 +21,7 @@ from src.domain.stoichiometry import (
     parse_equation,
 )
 from src.ui.error_format import format_equation_error, format_formula_error
+from src.ui.help_dialog import HelpDialog
 
 
 class StoichiometryPanel(QWidget):
@@ -44,6 +46,19 @@ class StoichiometryPanel(QWidget):
         self.title_label.setObjectName("compoundTitleLabel")
         self.title_label.setWordWrap(True)
         self.title_label.setAccessibleName("Stoichiometry panel title")
+
+        self.help_button = QToolButton()
+        self.help_button.setObjectName("panelHelpButton")
+        self.help_button.setText("?")
+        self.help_button.setAccessibleName("How this calculator works")
+        self.help_button.setCursor(Qt.PointingHandCursor)
+        self.help_button.clicked.connect(self._on_help_clicked)
+
+        header_row = QHBoxLayout()
+        header_row.setContentsMargins(0, 0, 0, 0)
+        header_row.setSpacing(6)
+        header_row.addWidget(self.title_label, 1)
+        header_row.addWidget(self.help_button, 0, Qt.AlignTop)
 
         self.equation_input = QLineEdit()
         self.equation_input.setObjectName("molarMassInput")
@@ -126,7 +141,7 @@ class StoichiometryPanel(QWidget):
         card_layout = QVBoxLayout()
         card_layout.setContentsMargins(12, 12, 12, 12)
         card_layout.setSpacing(10)
-        card_layout.addWidget(self.title_label)
+        card_layout.addLayout(header_row)
         card_layout.addLayout(eq_row)
         card_layout.addWidget(self.result_label)
         card_layout.addWidget(self.mass_section)
@@ -145,6 +160,8 @@ class StoichiometryPanel(QWidget):
         self._mass_section_text = "Enter mass for a compound:"
         self._error_prefix = "Error"
         self._translate = None
+        self._help_body = ""
+        self._help_close_text = "Close"
 
     def set_translator(self, translate):
         """Provide the translator used to localize error messages."""
@@ -162,7 +179,8 @@ class StoichiometryPanel(QWidget):
 
     def apply_language(
         self, *, title, prompt, balance_text, calc_masses_text,
-        mass_section_text, error_prefix
+        mass_section_text, error_prefix,
+        help_body="", help_close_text="Close",
     ):
         """Apply localized strings to all visible labels."""
         self.set_title(title)
@@ -174,6 +192,20 @@ class StoichiometryPanel(QWidget):
         self._mass_section_text = mass_section_text
         self.mass_section_label.setText(mass_section_text)
         self._error_prefix = error_prefix
+        self._help_body = help_body
+        self._help_close_text = help_close_text
+        self.help_button.setVisible(bool(help_body))
+
+    def _on_help_clicked(self):
+        """Open the help dialog populated with this calculator's current
+        localized title and body."""
+        dialog = HelpDialog(
+            title=self.title_label.text(),
+            body_text=self._help_body,
+            close_button_text=self._help_close_text,
+            parent=self.window(),
+        )
+        dialog.exec()
 
     def _on_balance(self):
         """Parse and balance the equation, then show results."""

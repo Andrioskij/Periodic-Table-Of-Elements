@@ -81,6 +81,31 @@ class TestCompoundBuilderPanel(unittest.TestCase):
         self.panel.set_result_text("")
         self.assertFalse(self.panel.result_label.isVisible())
 
+    def test_help_button_hidden_without_help_body(self):
+        # Existing test_apply_language_updates_all_translatable_labels above
+        # already exercises the no-help-body path; this asserts visibility
+        # explicitly so a regression surfaces on the right test.
+        self.panel.apply_language(
+            selector_a_title="A", selector_b_title="B",
+            search_placeholder_a="a", search_placeholder_b="b",
+            oxidation_first="o", oxidation_second="o",
+            calculate_formula="c", reset="r",
+        )
+        self.assertFalse(self.panel.help_button.isVisibleTo(self.panel))
+
+    def test_help_button_visible_when_help_body_provided(self):
+        self.panel.apply_language(
+            selector_a_title="A", selector_b_title="B",
+            search_placeholder_a="a", search_placeholder_b="b",
+            oxidation_first="o", oxidation_second="o",
+            calculate_formula="c", reset="r",
+            title="🧱  Composti semplici",
+            help_body="Costruisce composti binari.\n\nEsempio: `NaCl`.",
+            help_close_text="Chiudi",
+        )
+        self.assertTrue(self.panel.help_button.isVisibleTo(self.panel))
+        self.assertIn("NaCl", self.panel._help_body)
+
 
 if __name__ == "__main__":
     unittest.main()

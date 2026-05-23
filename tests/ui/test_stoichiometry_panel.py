@@ -56,6 +56,23 @@ class TestStoichiometryPanel(unittest.TestCase):
         self.assertEqual(self.panel._mass_section_text, "Inserisci massa:")
         self.assertEqual(self.panel._error_prefix, "Errore")
 
+    def test_help_button_hidden_without_help_body(self):
+        self.panel.apply_language(
+            title="t", prompt="p", balance_text="b", calc_masses_text="cm",
+            mass_section_text="ms", error_prefix="e",
+        )
+        self.assertFalse(self.panel.help_button.isVisibleTo(self.panel))
+
+    def test_help_button_visible_when_help_body_provided(self):
+        self.panel.apply_language(
+            title="t", prompt="p", balance_text="b", calc_masses_text="cm",
+            mass_section_text="ms", error_prefix="e",
+            help_body="Bilancia un'equazione.\n\nEsempio: `Fe + O2 -> Fe2O3`.",
+            help_close_text="Chiudi",
+        )
+        self.assertTrue(self.panel.help_button.isVisibleTo(self.panel))
+        self.assertIn("Fe2O3", self.panel._help_body)
+
 
 if __name__ == "__main__":
     unittest.main()

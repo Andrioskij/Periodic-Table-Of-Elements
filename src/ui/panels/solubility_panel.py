@@ -15,6 +15,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QScrollArea,
     QSizePolicy,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
@@ -27,6 +28,7 @@ from src.domain.solubility import (
     get_solubility_matrix,
     get_solubility_rule,
 )
+from src.ui.help_dialog import HelpDialog
 from src.ui.theme import get_theme
 
 # Cell and layout constants
@@ -87,6 +89,22 @@ class SolubilityPanel(QWidget):
         self.title_label.setObjectName("compoundTitleLabel")
         self.title_label.setWordWrap(True)
         self.title_label.setAccessibleName("Solubility panel title")
+
+        self.help_button = QToolButton()
+        self.help_button.setObjectName("panelHelpButton")
+        self.help_button.setText("?")
+        self.help_button.setAccessibleName("How this calculator works")
+        self.help_button.setCursor(Qt.PointingHandCursor)
+        self.help_button.clicked.connect(self._on_help_clicked)
+
+        header_row = QHBoxLayout()
+        header_row.setContentsMargins(0, 0, 0, 0)
+        header_row.setSpacing(6)
+        header_row.addWidget(self.title_label, 1)
+        header_row.addWidget(self.help_button, 0, Qt.AlignTop)
+
+        self._help_body = ""
+        self._help_close_text = "Close"
 
         # --- Quick check section ---
         cation_label = QLabel("Cation")
@@ -149,7 +167,7 @@ class SolubilityPanel(QWidget):
         card_layout = QVBoxLayout()
         card_layout.setContentsMargins(12, 12, 12, 12)
         card_layout.setSpacing(10)
-        card_layout.addWidget(self.title_label)
+        card_layout.addLayout(header_row)
         card_layout.addLayout(check_row)
         card_layout.addWidget(self.verdict_label)
         card_layout.addWidget(scroll, 1)
@@ -211,9 +229,14 @@ class SolubilityPanel(QWidget):
         rule_hydroxide,
         rule_carbonate_phosphate_sulfide,
         rule_default,
+        help_body="",
+        help_close_text="Close",
     ):
         """Update all translatable strings when the UI language changes."""
         self.title_label.setText(title)
+        self._help_body = help_body
+        self._help_close_text = help_close_text
+        self.help_button.setVisible(bool(help_body))
         self._prompt_text = prompt
         self._cation_label_widget.setText(cation_label)
         self._anion_label_widget.setText(anion_label)
@@ -242,6 +265,17 @@ class SolubilityPanel(QWidget):
 
         # Refresh matrix so its accessibility description picks up the new verdict labels.
         self._render_matrix()
+
+    def _on_help_clicked(self):
+        """Open the help dialog populated with this calculator's current
+        localized title and body."""
+        dialog = HelpDialog(
+            title=self.title_label.text(),
+            body_text=self._help_body,
+            close_button_text=self._help_close_text,
+            parent=self.window(),
+        )
+        dialog.exec()
 
     def _on_check(self):
         """Look up solubility for the selected cation/anion pair."""

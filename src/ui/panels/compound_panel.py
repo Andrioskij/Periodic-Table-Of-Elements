@@ -6,9 +6,12 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QPushButton,
     QSizePolicy,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
+
+from src.ui.help_dialog import HelpDialog
 
 
 class CompoundBuilderPanel(QWidget):
@@ -32,7 +35,24 @@ class CompoundBuilderPanel(QWidget):
         self.title_label.setObjectName("compoundTitleLabel")
         self.title_label.setWordWrap(True)
         self.title_label.setAccessibleName("Simple compounds panel title")
-        layout.addWidget(self.title_label)
+
+        self.help_button = QToolButton()
+        self.help_button.setObjectName("panelHelpButton")
+        self.help_button.setText("?")
+        self.help_button.setAccessibleName("How this calculator works")
+        self.help_button.setCursor(Qt.PointingHandCursor)
+        self.help_button.setVisible(False)
+        self.help_button.clicked.connect(self._on_help_clicked)
+
+        header_row = QHBoxLayout()
+        header_row.setContentsMargins(0, 0, 0, 0)
+        header_row.setSpacing(6)
+        header_row.addWidget(self.title_label, 1)
+        header_row.addWidget(self.help_button, 0, Qt.AlignTop)
+        layout.addLayout(header_row)
+
+        self._help_body = ""
+        self._help_close_text = "Close"
 
         self.selector_cards_layout = QHBoxLayout()
         self.selector_cards_layout.setContentsMargins(0, 0, 0, 0)
@@ -159,9 +179,14 @@ class CompoundBuilderPanel(QWidget):
         calculate_formula,
         reset,
         title="",
+        help_body="",
+        help_close_text="Close",
     ):
         self.title_label.setText(title)
         self.title_label.setVisible(bool(title))
+        self._help_body = help_body
+        self._help_close_text = help_close_text
+        self.help_button.setVisible(bool(help_body))
         self.selector_a_title_label.setText(selector_a_title)
         self.selector_b_title_label.setText(selector_b_title)
         self.search_a_input.setPlaceholderText(search_placeholder_a)
@@ -170,6 +195,17 @@ class CompoundBuilderPanel(QWidget):
         self.b_oxidation_label.setText(oxidation_second)
         self.build_button.setText(calculate_formula)
         self.builder_reset_button.setText(reset)
+
+    def _on_help_clicked(self):
+        """Open the help dialog populated with this calculator's current
+        localized title and body."""
+        dialog = HelpDialog(
+            title=self.title_label.text(),
+            body_text=self._help_body,
+            close_button_text=self._help_close_text,
+            parent=self.window(),
+        )
+        dialog.exec()
 
     def set_selector_texts(self, first_text, second_text):
         self.selector_a_summary_label.setText(first_text)

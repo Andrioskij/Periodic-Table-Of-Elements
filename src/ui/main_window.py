@@ -668,6 +668,7 @@ class MainWindow(QWidget):
         self.search_help_label.setText(texts["search_helper"])
         self.search_input.setPlaceholderText(texts["search_placeholder"])
         self.search_button.setText(texts["search_button"])
+        help_close = self.tr("close_dialog")
         self.compound_builder_panel.apply_language(
             title=f"{CalculatorIcons.BUILDER}  {self.tr('builder_title')}",
             selector_a_title=texts["builder_slot_a_title"],
@@ -678,12 +679,16 @@ class MainWindow(QWidget):
             oxidation_second=texts["oxidation_second"],
             calculate_formula=texts["calculate_formula"],
             reset=texts["reset"],
+            help_body=self.tr("builder_help_body"),
+            help_close_text=help_close,
         )
         self.molar_mass_panel.apply_language(
             title=f"{CalculatorIcons.MOLAR}  {self.tr('molar_title')}",
             prompt=self.tr("molar_prompt"),
             button_text=self.tr("molar_calculate"),
             error_prefix=self.tr("molar_error"),
+            help_body=self.tr("molar_help_body"),
+            help_close_text=help_close,
         )
         self.stoichiometry_panel.apply_language(
             title=f"{CalculatorIcons.STOICHIOMETRY}  {self.tr('stoichiometry_title')}",
@@ -692,6 +697,8 @@ class MainWindow(QWidget):
             calc_masses_text=self.tr("stoichiometry_calc_masses"),
             mass_section_text=self.tr("stoichiometry_mass_section"),
             error_prefix=self.tr("stoichiometry_error"),
+            help_body=self.tr("stoichiometry_help_body"),
+            help_close_text=help_close,
         )
         self.lewis_panel.apply_language(
             title=self.tr("lewis_title"),
@@ -719,6 +726,8 @@ class MainWindow(QWidget):
             rule_hydroxide=self.tr("solubility_rule_hydroxide"),
             rule_carbonate_phosphate_sulfide=self.tr("solubility_rule_carbonate_phosphate_sulfide"),
             rule_default=self.tr("solubility_rule_default"),
+            help_body=self.tr("solubility_help_body"),
+            help_close_text=help_close,
         )
         self.periodic_table_widget.set_language_texts(
             selected_none_text=texts["selected_none"],
