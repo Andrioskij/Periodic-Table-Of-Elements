@@ -39,6 +39,8 @@ const state = {
     compareSet: [],
     comparisonModalReturnFocus: null,
     tourStep: null,
+    nomenclatureData: null,
+    lastBuilderPair: null,
 };
 
 const COMPARE_MAX = 3;
@@ -507,6 +509,22 @@ function applyStaticTranslations() {
     const comparisonModal = document.getElementById("comparison-modal");
     if (comparisonModal && !comparisonModal.hidden) {
         renderComparisonTable();
+    }
+    // If the compound builder has a result visible, re-localize the
+    // Stock and traditional names so they track the new language
+    // without forcing the user to re-press Calculate.
+    if (state.lastBuilderPair) {
+        const { cation, anion } = state.lastBuilderPair;
+        const { stock, traditional } = computeNomenclatureNames({
+            cationSymbol: cation.sym,
+            cationCharge: cation.ch,
+            anionSymbol: anion.sym,
+            language: state.activeLanguage,
+        });
+        const stockNode = document.getElementById("builder-stock-name");
+        const tradNode = document.getElementById("builder-traditional-name");
+        if (stockNode) stockNode.textContent = stock;
+        if (tradNode) tradNode.textContent = traditional;
     }
 }
 
@@ -3097,6 +3115,103 @@ function parseOxidationStatesJS(raw) {
     return [...positives, ...negatives];
 }
 
+// Standard Roman-numeral conversion, mirroring src/domain/nomenclature.py
+// `int_to_roman`. Used for the IUPAC Stock name when a cation has more
+// than one positive oxidation state (e.g. iron(II) vs iron(III)).
+function intToRoman(value) {
+    if (value === null || value === undefined || value <= 0) return "";
+    const table = [
+        [1000, "M"], [900, "CM"], [500, "D"], [400, "CD"],
+        [100, "C"], [90, "XC"], [50, "L"], [40, "XL"],
+        [10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"],
+    ];
+    let result = "";
+    let remaining = value;
+    for (const [step, glyph] of table) {
+        while (remaining >= step) {
+            result += glyph;
+            remaining -= step;
+        }
+    }
+    return result;
+}
+
+// Mirrors the desktop nomenclature flow (src/ui/compound_text.py
+// compose_compound_result_text + src/domain/nomenclature.py) without
+// the Pyodide round-trip: localized cation/anion names live in
+// nomenclature_data.json (loaded at init into state.nomenclatureData),
+// and the per-language naming patterns (`{cation} {anion}` for EN,
+// `{anion} di {cation}` for IT, etc.) come from the same file. The
+// function returns the *localized* Stock and traditional names, falling
+// back to the `traditional_na` UI string when the dataset doesn't carry
+// the needed anion form.
+function computeNomenclatureNames({ cationSymbol, cationCharge, anionSymbol, language }) {
+    const data = state.nomenclatureData;
+    const na = tr(language, "traditional_na") || "—";
+    if (!data) return { stock: na, traditional: na };
+
+    const elements = data.elements || {};
+    const cationEntry = elements[cationSymbol] || {};
+    const anionEntry = elements[anionSymbol] || {};
+    const patterns =
+        (data.naming_patterns && data.naming_patterns[language])
+        || (data.naming_patterns && data.naming_patterns.en)
+        || {
+            stock_simple: "{cation} {anion}",
+            stock_roman: "{cation}({roman}) {anion}",
+            traditional: "{epithet} {anion}",
+        };
+
+    const cationName =
+        cationEntry[`name_${language}`] || cationEntry.name_en || cationSymbol;
+    const anionName =
+        anionEntry[`anion_${language}`] || anionEntry.anion_en;
+    if (!anionName) return { stock: na, traditional: na };
+
+    const cationElement = state.elementsBySymbol.get(cationSymbol);
+    const positiveStates = parseOxidationStatesJS(
+        cationElement?.oxidation_states,
+    ).filter((v) => v > 0);
+    const uniquePositive = [...new Set(positiveStates)].sort((a, b) => a - b);
+
+    let stock;
+    if (uniquePositive.length > 1) {
+        stock = (patterns.stock_roman || "{cation}({roman}) {anion}")
+            .replaceAll("{cation}", cationName)
+            .replaceAll("{anion}", anionName)
+            .replaceAll("{roman}", intToRoman(Math.abs(cationCharge)));
+    } else {
+        stock = (patterns.stock_simple || "{cation} {anion}")
+            .replaceAll("{cation}", cationName)
+            .replaceAll("{anion}", anionName);
+    }
+
+    // Traditional name only makes sense when the cation actually
+    // exhibits two different positive states (low/high ⇒ -ous/-ic).
+    let traditional = na;
+    if (uniquePositive.length >= 2) {
+        const isLow = cationCharge === uniquePositive[0];
+        const isHigh = cationCharge === uniquePositive[uniquePositive.length - 1];
+        let epithet = null;
+        if (isLow) {
+            epithet =
+                cationEntry[`traditional_low_${language}`]
+                || cationEntry.traditional_low_en;
+        } else if (isHigh) {
+            epithet =
+                cationEntry[`traditional_high_${language}`]
+                || cationEntry.traditional_high_en;
+        }
+        if (epithet) {
+            traditional = (patterns.traditional || "{epithet} {anion}")
+                .replaceAll("{epithet}", epithet)
+                .replaceAll("{anion}", anionName);
+        }
+    }
+
+    return { stock, traditional };
+}
+
 function setupCompoundBuilderForm() {
     const aSymbolInput = document.getElementById("builder-a-symbol");
     const bSymbolInput = document.getElementById("builder-b-symbol");
@@ -3188,6 +3303,22 @@ function setupCompoundBuilderForm() {
             }
             status.textContent = "";
             resultValue.textContent = payload.formula;
+            const { stock, traditional } = computeNomenclatureNames({
+                cationSymbol: cation.sym,
+                cationCharge: cation.ch,
+                anionSymbol: anion.sym,
+                language: state.activeLanguage,
+            });
+            document.getElementById("builder-stock-name").textContent = stock;
+            document.getElementById("builder-traditional-name").textContent = traditional;
+            // Remember the last successful pair so a language switch can
+            // re-render the localized names without making the user
+            // press Calculate again.
+            state.lastBuilderPair = {
+                cation: { sym: cation.sym, ch: cation.ch },
+                anion: { sym: anion.sym, ch: anion.ch },
+                formula: payload.formula,
+            };
             resultWrap.hidden = false;
         } catch (err) {
             status.classList.add("is-error");
@@ -3313,6 +3444,12 @@ async function bootstrap() {
     for (const element of state.elements) {
         state.elementsBySymbol.set(element.symbol, element);
     }
+
+    // Nomenclature data drives the compound-builder Stock + traditional
+    // name rendering; ship it client-side so the formatting can run
+    // without a Pyodide round-trip on every Calculate.
+    const nomenclatureResponse = await fetch("./data/nomenclature_data.json");
+    state.nomenclatureData = await nomenclatureResponse.json();
 
     loaderMessage.textContent = "Loading translations…";
     await loadLanguage("en");
