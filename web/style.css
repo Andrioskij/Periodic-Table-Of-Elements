@@ -947,7 +947,10 @@ body.is-modal-open {
     flex-direction: column;
     gap: var(--spacing-info-card-inner-gap, 12px);
     width: 100%;
-    max-width: 720px;
+    /* 920px gives the 4×2 tab grid below ~210px per tab — enough room for
+     * the widest label ("Concentration calculator" + 💧 + padding) without
+     * forcing it to wrap to a second line. */
+    max-width: 920px;
     max-height: 85vh;
     background: var(--color-bg-card, #23272f);
     border: var(--border-default-width, 1px) solid var(--color-border-strong, #404854);
@@ -995,8 +998,16 @@ body.is-modal-open {
     outline-offset: 2px;
 }
 
+/* 8 calculator tabs in a 4×2 grid: a single row would need 1200px+ to fit
+ * the widest labels, and `flex: 1 1 0` with default `min-width: auto`
+ * refuses to shrink below min-content, so the row overflows the card
+ * instead of wrapping. The grid distributes equally regardless of label
+ * length and stacks cleanly to a second row. */
 .tools-modal-tabs {
     flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--spacing-badge-gap, 6px);
 }
 
 .tools-modal-body {
@@ -1040,17 +1051,10 @@ body.is-modal-open {
         border-radius: 0;
         border: none;
     }
-    /* 8 tabs with `flex: 1 1 0` collapse below their min-content width
-     * on a narrow viewport; let the row scroll horizontally instead so
-     * every calculator stays reachable.
-     */
+    /* Below the modal's mobile breakpoint the full-screen sheet doesn't
+     * have room for 4 tabs in a row; collapse the 4×2 grid into 2×4. */
     .tools-modal-tabs {
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        -webkit-overflow-scrolling: touch;
-    }
-    .tools-modal-tabs .tab {
-        flex: 0 0 auto;
+        grid-template-columns: 1fr 1fr;
     }
 }
 
@@ -1148,26 +1152,13 @@ body.is-modal-open {
         line-height: 1;
     }
 
-    /* Calculators modal: on phones the desktop layout (24px title,
-     * horizontally-scrolling tab row, side-by-side form controls) wastes
-     * vertical space and hides 5 of the 8 calculator tabs behind a
-     * scroll the user can't easily discover. Shrink the title, lay the
-     * tabs out as a visible 2-column grid so all 8 fit on screen, and
-     * stack `.molar-form` input + button vertically so the input gets
-     * full width when the soft keyboard appears.
-     */
+    /* Calculators modal sub-mobile tweaks: shrink the 24px title so it
+     * doesn't dominate the narrow card, and stack .molar-form input +
+     * button vertically so the input gets full width when the soft
+     * keyboard appears. The 2-col tab grid is inherited from the 720px
+     * breakpoint. */
     .tools-modal-title {
         font-size: var(--font-size-search-title, 16px);
-    }
-
-    .tools-modal-tabs {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        overflow: visible;
-    }
-
-    .tools-modal-tabs .tab {
-        flex: initial;
     }
 
     .molar-form {
