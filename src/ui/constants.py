@@ -124,8 +124,24 @@ class SettingKeys:
     TOOL_AREA_MODE = "tool_area_mode"
 
 
+class CalculatorIcons:
+    """Emoji prefixed to calculator panel titles for visual scanning.
+
+    Mirrors the icons used in the web Calculators modal tabs
+    (web/index.html, `.tab-icon` spans) so the desktop pannelli and the
+    web tabs share their visual language. Kept out of the localization
+    JSONs because the glyph is a UI cue, not translatable text.
+    """
+
+    MOLAR = "🧮"
+    STOICHIOMETRY = "⚖️"
+    BUILDER = "🧱"
+    SOLUBILITY = "🌊"
+
+
 __all__ = [
     "ObjectNames",
     "LocalizationKeys",
     "SettingKeys",
+    "CalculatorIcons",
 ]

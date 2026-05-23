@@ -75,6 +75,7 @@ from src.ui.compound_text import (
 from src.ui.compound_text import (
     get_localized_common_compound_name as get_localized_common_name,
 )
+from src.ui.constants import CalculatorIcons
 from src.ui.context import AppContext
 from src.ui.controllers.responsive_layout_controller import ResponsiveLayoutController
 from src.ui.controllers.theme_controller import ThemeController
@@ -668,6 +669,7 @@ class MainWindow(QWidget):
         self.search_input.setPlaceholderText(texts["search_placeholder"])
         self.search_button.setText(texts["search_button"])
         self.compound_builder_panel.apply_language(
+            title=f"{CalculatorIcons.BUILDER}  {self.tr('builder_title')}",
             selector_a_title=texts["builder_slot_a_title"],
             selector_b_title=texts["builder_slot_b_title"],
             search_placeholder_a=texts["builder_search_placeholder_a"],
@@ -678,13 +680,13 @@ class MainWindow(QWidget):
             reset=texts["reset"],
         )
         self.molar_mass_panel.apply_language(
-            title=self.tr("molar_title"),
+            title=f"{CalculatorIcons.MOLAR}  {self.tr('molar_title')}",
             prompt=self.tr("molar_prompt"),
             button_text=self.tr("molar_calculate"),
             error_prefix=self.tr("molar_error"),
         )
         self.stoichiometry_panel.apply_language(
-            title=self.tr("stoichiometry_title"),
+            title=f"{CalculatorIcons.STOICHIOMETRY}  {self.tr('stoichiometry_title')}",
             prompt=self.tr("stoichiometry_prompt"),
             balance_text=self.tr("stoichiometry_balance"),
             calc_masses_text=self.tr("stoichiometry_calc_masses"),
@@ -699,7 +701,7 @@ class MainWindow(QWidget):
             not_in_library_text=self.tr("lewis_not_in_library"),
         )
         self.solubility_panel.apply_language(
-            title=self.tr("solubility_title"),
+            title=f"{CalculatorIcons.SOLUBILITY}  {self.tr('solubility_title')}",
             prompt=self.tr("solubility_prompt"),
             cation_label=self.tr("solubility_cation_label"),
             anion_label=self.tr("solubility_anion_label"),

@@ -28,6 +28,12 @@ class CompoundBuilderPanel(QWidget):
         layout.setContentsMargins(4, 3, 4, 3)
         layout.setSpacing(2)
 
+        self.title_label = QLabel()
+        self.title_label.setObjectName("compoundTitleLabel")
+        self.title_label.setWordWrap(True)
+        self.title_label.setAccessibleName("Simple compounds panel title")
+        layout.addWidget(self.title_label)
+
         self.selector_cards_layout = QHBoxLayout()
         self.selector_cards_layout.setContentsMargins(0, 0, 0, 0)
         self.selector_cards_layout.setSpacing(4)
@@ -152,7 +158,10 @@ class CompoundBuilderPanel(QWidget):
         oxidation_second,
         calculate_formula,
         reset,
+        title="",
     ):
+        self.title_label.setText(title)
+        self.title_label.setVisible(bool(title))
         self.selector_a_title_label.setText(selector_a_title)
         self.selector_b_title_label.setText(selector_b_title)
         self.search_a_input.setPlaceholderText(search_placeholder_a)
