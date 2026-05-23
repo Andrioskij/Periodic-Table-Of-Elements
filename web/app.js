@@ -478,7 +478,10 @@ function applyStaticTranslations() {
             tr(state.activeLanguage, node.dataset.i18nAriaLabel),
         );
     }
-    document.getElementById("info-empty").textContent = tr(
+    // info-empty is the empty-state wrapper around an inline SVG + the
+    // localizable <p>; reach the text element directly so the SVG isn't
+    // wiped by setting textContent on the wrapper.
+    document.querySelector("#info-empty .empty-state-text").textContent = tr(
         state.activeLanguage,
         "info_prompt",
     );
@@ -2426,7 +2429,10 @@ async function renderLewisPanel() {
     const symbol = state.selectedSymbol;
     if (!symbol) {
         prompt.hidden = false;
-        prompt.textContent = tr(state.activeLanguage, "lewis_prompt");
+        // The prompt is now a wrapper around an SVG + text node; target
+        // the inner text element so the illustration survives the reset.
+        prompt.querySelector(".empty-state-text").textContent =
+            tr(state.activeLanguage, "lewis_prompt");
         wrap.hidden = true;
         wrap.replaceChildren();
         return;

@@ -119,9 +119,26 @@
 
                 <section id="panel-info" class="panel" role="tabpanel"
                          aria-labelledby="tab-info">
-                    <p id="info-empty" class="info-empty" data-i18n="info_prompt">
-                        Select an element to see its details.
-                    </p>
+                    <div id="info-empty" class="empty-state">
+                        <svg class="empty-state-icon" viewBox="0 0 80 80"
+                             aria-hidden="true" focusable="false">
+                            <ellipse cx="40" cy="40" rx="32" ry="12"
+                                     fill="none" stroke="currentColor"
+                                     stroke-width="1.5"/>
+                            <ellipse cx="40" cy="40" rx="32" ry="12"
+                                     fill="none" stroke="currentColor"
+                                     stroke-width="1.5"
+                                     transform="rotate(60 40 40)"/>
+                            <ellipse cx="40" cy="40" rx="32" ry="12"
+                                     fill="none" stroke="currentColor"
+                                     stroke-width="1.5"
+                                     transform="rotate(120 40 40)"/>
+                            <circle cx="40" cy="40" r="5" fill="currentColor"/>
+                        </svg>
+                        <p class="empty-state-text" data-i18n="info_prompt">
+                            Select an element to see its details.
+                        </p>
+                    </div>
                     <article id="info-card" class="info-card" hidden>
                         <header class="info-hero">
                             <span id="info-atomic-number" class="info-atomic-number"></span>
@@ -139,10 +156,26 @@
                          aria-labelledby="tab-electron" hidden>
                     <h2 id="electron-title" class="panel-title"
                         data-i18n="diagram_title">Electron configuration</h2>
-                    <p id="electron-prompt" class="panel-prompt"
-                       data-i18n="diagram_prompt">
-                        Select an element to display the orbital diagram.
-                    </p>
+                    <div id="electron-prompt" class="empty-state">
+                        <svg class="empty-state-icon" viewBox="0 0 80 80"
+                             aria-hidden="true" focusable="false">
+                            <ellipse cx="40" cy="40" rx="32" ry="12"
+                                     fill="none" stroke="currentColor"
+                                     stroke-width="1.5"/>
+                            <ellipse cx="40" cy="40" rx="32" ry="12"
+                                     fill="none" stroke="currentColor"
+                                     stroke-width="1.5"
+                                     transform="rotate(60 40 40)"/>
+                            <ellipse cx="40" cy="40" rx="32" ry="12"
+                                     fill="none" stroke="currentColor"
+                                     stroke-width="1.5"
+                                     transform="rotate(120 40 40)"/>
+                            <circle cx="40" cy="40" r="5" fill="currentColor"/>
+                        </svg>
+                        <p class="empty-state-text" data-i18n="diagram_prompt">
+                            Select an element to display the orbital diagram.
+                        </p>
+                    </div>
                     <p id="electron-status" class="molar-status" aria-live="polite"></p>
                     <div id="electron-diagram-wrap" class="orbital-diagram-wrap" hidden></div>
                 </section>
@@ -159,10 +192,26 @@
                             <option value="molecule">Molecule</option>
                         </select>
                     </label>
-                    <p id="lewis-prompt" class="panel-prompt"
-                       data-i18n="lewis_prompt">
-                        Select an element to view its Lewis dot diagram.
-                    </p>
+                    <div id="lewis-prompt" class="empty-state">
+                        <svg class="empty-state-icon" viewBox="0 0 80 80"
+                             aria-hidden="true" focusable="false">
+                            <ellipse cx="40" cy="40" rx="32" ry="12"
+                                     fill="none" stroke="currentColor"
+                                     stroke-width="1.5"/>
+                            <ellipse cx="40" cy="40" rx="32" ry="12"
+                                     fill="none" stroke="currentColor"
+                                     stroke-width="1.5"
+                                     transform="rotate(60 40 40)"/>
+                            <ellipse cx="40" cy="40" rx="32" ry="12"
+                                     fill="none" stroke="currentColor"
+                                     stroke-width="1.5"
+                                     transform="rotate(120 40 40)"/>
+                            <circle cx="40" cy="40" r="5" fill="currentColor"/>
+                        </svg>
+                        <p class="empty-state-text" data-i18n="lewis_prompt">
+                            Select an element to view its Lewis dot diagram.
+                        </p>
+                    </div>
                     <form id="lewis-molecule-form" class="molar-form"
                           autocomplete="off" hidden>
                         <input id="lewis-molecule-input" class="molar-input"

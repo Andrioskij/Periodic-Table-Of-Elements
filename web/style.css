@@ -494,6 +494,34 @@ input {
     font-style: italic;
 }
 
+/* Empty-state pattern: before an element is selected, the Info / Lewis /
+ * Electron-config side panels show a small atom-glyph illustration above
+ * the "Select an element..." prompt so the panel doesn't feel barren.
+ * The wrapper `<div>` keeps the same id as the old `<p>` it replaced
+ * (info-empty / electron-prompt / lewis-prompt) so existing show/hide
+ * toggles in app.js continue to flip the right element. */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-info-section-gap, 10px);
+    padding: var(--spacing-info-section-padding, 12px) 0;
+    text-align: center;
+}
+
+.empty-state-icon {
+    width: 64px;
+    height: 64px;
+    color: var(--color-text-muted, #bdbdbd);
+    opacity: 0.45;
+}
+
+.empty-state-text {
+    margin: 0;
+    color: var(--color-text-muted, #bdbdbd);
+    font-style: italic;
+}
+
 .info-card {
     display: flex;
     flex-direction: column;
