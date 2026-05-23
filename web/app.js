@@ -30,6 +30,9 @@ const state = {
     pyodideLoading: null,
     stoich: null,
     toolsModalReturnFocus: null,
+    helpModalReturnFocus: null,
+    activeHelpKey: null,
+    activeHelpTitleKey: null,
     activeTrend: "normal",
     numericTrendRanges: null,
 };
@@ -479,6 +482,16 @@ function applyStaticTranslations() {
         state.activeLanguage,
         "info_prompt",
     );
+    // If the help modal happens to be open during a language switch, refresh
+    // its title and body so the user doesn't see stale text.
+    if (state.activeHelpKey) {
+        document.getElementById("help-modal-title").textContent =
+            tr(state.activeLanguage, state.activeHelpTitleKey);
+        renderHelpBody(
+            document.getElementById("help-modal-body"),
+            tr(state.activeLanguage, state.activeHelpKey),
+        );
+    }
 }
 
 function populateLanguageSelect() {
@@ -557,9 +570,98 @@ function setupToolsModal() {
         node.addEventListener("click", closeToolsModal);
     }
     document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && !modal.hidden) {
+        if (event.key !== "Escape") return;
+        // The help modal stacks on top of the Calculators modal; let it
+        // handle ESC first so users back out one layer at a time.
+        const helpModal = document.getElementById("help-modal");
+        if (helpModal && !helpModal.hidden) return;
+        if (!modal.hidden) {
             event.preventDefault();
             closeToolsModal();
+        }
+    });
+}
+
+// Plain-text → DOM renderer for help body content. Splits the localized
+// body on blank-line boundaries and emits one <p> per paragraph using
+// textContent (no innerHTML — keeps the renderer XSS-safe even though
+// the input comes from our own data/localization JSONs). The single
+// formatting affordance is backtick-delimited inline code (`H2O`),
+// which is matched by regex and emitted as separate <code> nodes so the
+// surrounding text never reaches innerHTML.
+function renderHelpBody(container, bodyText) {
+    container.replaceChildren();
+    if (!bodyText) return;
+    const paragraphs = bodyText.split(/\n\n+/);
+    for (const paragraph of paragraphs) {
+        if (!paragraph.trim()) continue;
+        const p = document.createElement("p");
+        const segments = paragraph.split(/(`[^`]+`)/);
+        for (const segment of segments) {
+            if (!segment) continue;
+            if (segment.startsWith("`") && segment.endsWith("`")) {
+                const code = document.createElement("code");
+                code.textContent = segment.slice(1, -1);
+                p.appendChild(code);
+            } else {
+                p.appendChild(document.createTextNode(segment));
+            }
+        }
+        container.appendChild(p);
+    }
+}
+
+function openHelpModal(helpKey, titleKey) {
+    const modal = document.getElementById("help-modal");
+    state.helpModalReturnFocus = document.activeElement;
+    state.activeHelpKey = helpKey;
+    state.activeHelpTitleKey = titleKey;
+    document.getElementById("help-modal-title").textContent =
+        tr(state.activeLanguage, titleKey);
+    renderHelpBody(
+        document.getElementById("help-modal-body"),
+        tr(state.activeLanguage, helpKey),
+    );
+    modal.hidden = false;
+    document.body.classList.add("is-modal-open");
+    document.getElementById("help-close").focus();
+}
+
+function closeHelpModal() {
+    const modal = document.getElementById("help-modal");
+    if (modal.hidden) return;
+    modal.hidden = true;
+    state.activeHelpKey = null;
+    state.activeHelpTitleKey = null;
+    // Only release the body scroll lock if the Calculators modal isn't
+    // still open underneath (the lock is shared).
+    const toolsModal = document.getElementById("tools-modal");
+    if (toolsModal && toolsModal.hidden) {
+        document.body.classList.remove("is-modal-open");
+    }
+    const returnTo = state.helpModalReturnFocus;
+    state.helpModalReturnFocus = null;
+    if (returnTo && typeof returnTo.focus === "function") {
+        returnTo.focus();
+    }
+}
+
+function setupHelpModal() {
+    for (const button of document.querySelectorAll(".panel-help-button")) {
+        button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            openHelpModal(button.dataset.helpKey, button.dataset.helpTitleKey);
+        });
+    }
+    const modal = document.getElementById("help-modal");
+    if (!modal) return;
+    for (const node of modal.querySelectorAll("[data-help-close]")) {
+        node.addEventListener("click", closeHelpModal);
+    }
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !modal.hidden) {
+            event.preventDefault();
+            closeHelpModal();
         }
     });
 }
@@ -2729,6 +2831,7 @@ async function bootstrap() {
     setupLewisPanel();
     setupSearchForm();
     setupToolsModal();
+    setupHelpModal();
     applyStaticTranslations();
     renderPeriodicTable();
     setupTrendControls();
