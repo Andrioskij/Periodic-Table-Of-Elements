@@ -23,6 +23,16 @@
             <div class="topbar-side topbar-side-left" aria-hidden="true"></div>
             <h1 id="app-title" class="app-title">PERIODIC TABLE OF ELEMENTS</h1>
             <div class="topbar-side topbar-controls">
+                <button id="compare-toggle" class="control-button" type="button"
+                        aria-pressed="false" aria-controls="comparison-modal">
+                    <span class="compare-icon" aria-hidden="true">⫼</span>
+                    <span data-i18n="compare_button">Compare</span>
+                    <span id="compare-count" class="compare-count" hidden></span>
+                </button>
+                <button id="compare-view" class="control-button" type="button"
+                        aria-controls="comparison-modal" hidden>
+                    <span data-i18n="compare_view_button">View</span>
+                </button>
                 <button id="tools-open" class="control-button" type="button"
                         aria-haspopup="dialog" aria-controls="tools-modal">
                     <span class="tools-icon" aria-hidden="true">🧮</span>
@@ -949,6 +959,34 @@
                         </div>
                     </section>
                 </div>
+            </div>
+        </div>
+
+        <div id="comparison-modal" class="comparison-modal" role="dialog" aria-modal="true"
+             aria-labelledby="comparison-modal-title" hidden>
+            <div class="comparison-modal-backdrop" data-comparison-close></div>
+            <div class="comparison-modal-card" role="document">
+                <header class="comparison-modal-header">
+                    <h2 id="comparison-modal-title" class="comparison-modal-title"
+                        data-i18n="compare_modal_title">Element comparison</h2>
+                    <button id="comparison-close" class="comparison-modal-close" type="button"
+                            data-comparison-close
+                            data-i18n-aria-label="close_dialog"
+                            aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </header>
+                <div class="comparison-modal-body">
+                    <p id="comparison-empty" class="comparison-empty"
+                       data-i18n="compare_pick_2_3">Pick 2 or 3 elements from the table.</p>
+                    <div id="comparison-table-wrap" class="comparison-table-wrap" hidden>
+                        <table id="comparison-table" class="comparison-table"></table>
+                    </div>
+                </div>
+                <footer class="comparison-modal-footer">
+                    <button id="comparison-clear" class="control-button" type="button"
+                            data-i18n="compare_clear">Clear</button>
+                </footer>
             </div>
         </div>
 

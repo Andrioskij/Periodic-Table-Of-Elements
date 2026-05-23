@@ -343,7 +343,13 @@
     "empirical_help_body": "Derives the empirical formula (and optionally the molecular formula) of a compound from its elemental composition.\n\nAdd a row per element, then enter the symbol and the quantity either as a mass-percent or as grams (mix is allowed — the tool normalises). To get the molecular formula on top of the empirical one, supply the total molar mass.\n\nExample: H 11.19 %, O 88.81 %, total molar mass 18 → `H2O`.",
     "builder_help_body": "Builds the formula of a simple binary compound from two elements and their oxidation numbers, and gives both the traditional and the Stock nomenclature names.\n\nType or search the first element into slot **A**, pick its oxidation number from the dropdown. Repeat for slot **B**. Press Calculate formula.\n\nScope: only simple binary compounds. A and B must be different elements with oxidation numbers of opposite sign.",
     "solubility_help_body": "Looks up whether an ionic compound is soluble, insoluble or slightly soluble in water, and shows the applicable solubility rule.\n\nPick a cation and an anion from the dropdowns, press Check. The verdict is colour-coded (green = soluble, red = insoluble, yellow = slightly).\n\nThe matrix below is the full cation × anion table for quick scanning — use it to spot patterns across families (e.g. all nitrates are soluble, most carbonates are not).",
-    "example_button": "Try example"
+    "example_button": "Try example",
+    "compare_button": "Compare",
+    "compare_view_button": "View",
+    "compare_modal_title": "Element comparison",
+    "compare_property_label": "Property",
+    "compare_clear": "Clear",
+    "compare_pick_2_3": "Pick 2 or 3 elements from the table."
   },
   "localized_category_texts": {
     "actinide": "Actinide",

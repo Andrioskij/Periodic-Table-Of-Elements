@@ -343,7 +343,13 @@
     "empirical_help_body": "Deduce la fórmula empírica (y opcionalmente la molecular) de un compuesto a partir de su composición elemental.\n\nAñade una fila por elemento, introduce el símbolo y la cantidad como porcentaje en masa o como gramos (puedes mezclar las dos unidades — la herramienta normaliza). Para obtener también la fórmula molecular, proporciona la masa molar total.\n\nEjemplo: H 11.19 %, O 88.81 %, masa molar total 18 → `H2O`.",
     "builder_help_body": "Construye la fórmula de un compuesto binario simple eligiendo dos elementos y sus números de oxidación, y proporciona tanto el nombre tradicional como el nombre de Stock.\n\nEscribe o busca el primer elemento en la casilla **A**, elige su número de oxidación del menú desplegable. Repite para la casilla **B**. Pulsa Calcular fórmula.\n\nAlcance: solo compuestos binarios simples. A y B deben ser elementos distintos con números de oxidación de signo opuesto.",
     "solubility_help_body": "Indica si un compuesto iónico es soluble, insoluble o ligeramente soluble en agua, y muestra la regla de solubilidad aplicable.\n\nElige un catión y un anión de los desplegables y pulsa Comprobar. El veredicto está codificado por color (verde = soluble, rojo = insoluble, amarillo = ligeramente soluble).\n\nLa matriz inferior es la tabla completa catión × anión, útil para detectar patrones por familia (p. ej. todos los nitratos son solubles, muchos carbonatos no).",
-    "example_button": "Probar ejemplo"
+    "example_button": "Probar ejemplo",
+    "compare_button": "Comparar",
+    "compare_view_button": "Ver",
+    "compare_modal_title": "Comparación de elementos",
+    "compare_property_label": "Propiedad",
+    "compare_clear": "Limpiar",
+    "compare_pick_2_3": "Elige 2 o 3 elementos de la tabla."
   },
   "localized_category_texts": {
     "actinide": "Actínido",

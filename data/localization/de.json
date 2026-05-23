@@ -343,7 +343,13 @@
     "empirical_help_body": "Ermittelt die empirische Formel (und optional die Molekülformel) einer Verbindung aus ihrer Elementzusammensetzung.\n\nFüge eine Zeile pro Element hinzu, gib das Symbol und die Menge als Massenprozent oder in Gramm ein (du kannst beide Einheiten mischen — das Tool normalisiert). Für die Molekülformel zusätzlich die molare Gesamtmasse angeben.\n\nBeispiel: H 11,19 %, O 88,81 %, Gesamtmolmasse 18 → `H2O`.",
     "builder_help_body": "Konstruiert die Formel einer einfachen binären Verbindung aus zwei Elementen und ihren Oxidationszahlen und liefert sowohl den traditionellen als auch den Stock-Namen.\n\nTippe oder suche das erste Element im Slot **A**, wähle seine Oxidationszahl aus dem Dropdown. Wiederhole es für Slot **B**. Drücke Formel berechnen.\n\nGeltungsbereich: nur einfache binäre Verbindungen. A und B müssen unterschiedliche Elemente mit Oxidationszahlen entgegengesetzten Vorzeichens sein.",
     "solubility_help_body": "Gibt an, ob eine ionische Verbindung in Wasser löslich, unlöslich oder schwer löslich ist, und zeigt die anwendbare Löslichkeitsregel.\n\nWähle ein Kation und ein Anion aus den Dropdowns und drücke Prüfen. Das Urteil ist farbcodiert (grün = löslich, rot = unlöslich, gelb = schwer löslich).\n\nDie Matrix unten ist die vollständige Kation × Anion Tabelle und nützlich, um Muster nach Familie zu erkennen (z. B. alle Nitrate sind löslich, viele Carbonate nicht).",
-    "example_button": "Beispiel ausprobieren"
+    "example_button": "Beispiel ausprobieren",
+    "compare_button": "Vergleichen",
+    "compare_view_button": "Anzeigen",
+    "compare_modal_title": "Elementvergleich",
+    "compare_property_label": "Eigenschaft",
+    "compare_clear": "Löschen",
+    "compare_pick_2_3": "Wähle 2 oder 3 Elemente aus dem Periodensystem."
   },
   "localized_category_texts": {
     "actinide": "Actinoid",
