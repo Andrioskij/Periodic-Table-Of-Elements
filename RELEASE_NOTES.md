@@ -1,5 +1,31 @@
 # Release notes
 
+## 1.5.0 "Chemistry Tool"
+
+A "Calculator UX" release that turns the eight web calculators into self-explaining tools and gives the table two big new features for elements exploration.
+
+Added
+- Help (`?`) popups on every calculator (web + desktop): each tool now explains in plain language what it does, how to use it, and shows a worked example. Same body text serves both surfaces — 8 calculators × 7 languages of content.
+- "Try example" button on every calculator (web + desktop): one click pre-fills the form with a representative input (e.g. `CuSO4·5H2O` for molar mass, `Fe + O2 -> Fe2O3` for stoichiometry, Ag⁺/Cl⁻ for solubility) so users see the workflow without having to invent valid chemistry data.
+- Element comparison view: a new "Compare" toggle in the topbar lets the user pick 2-3 elements from the table and see them in a side-by-side modal with every property aligned in one glance — the kind of thing a paper table can't do.
+- First-visit onboarding tour: a 5-step skippable walkthrough (welcome → Calculators → Compare → Language → Theme) gated on `localStorage.pte_onboarded` so it only appears once per browser. Resize-aware, mobile-friendly (docks to bottom on phones).
+- Atom-glyph empty state on Info / Electron config / Lewis side panels: before an element is selected, an inline-SVG atom illustration sits above the prompt so the panel reads as a deliberately-empty space waiting to be filled.
+- Web Calculators tab icons (🧮 ⚖️ 💧 🌡️ 🧪 🔬 🧱 🌊), per-panel `<h3>` titles, and accent-yellow top border on result cards so the output region reads as distinct from the form.
+- Desktop calculator panel titles now carry the same icon prefixes as the web tabs (`MOLAR=🧮`, `STOICHIOMETRY=⚖️`, `BUILDER=🧱`, `SOLUBILITY=🌊`).
+- Micro-interactions: result cards fade in with a 4px slide-up, the selected periodic-table cell bounces briefly on every selection change, the modal backdrop fades in instead of darkening in one frame. All wrapped in `@media (prefers-reduced-motion: no-preference)` so users with reduce-motion set still get the previous instant transitions.
+
+Changed
+- Web Calculators modal now lays out tabs in a 4×2 grid (was a single overflow-prone row); modal max-width bumped from 720px to 920px. Fixes a real bug where "Simple compounds" overflowed and "Solubility" was hidden at desktop widths.
+
+Performance
+- Localization lookup memoization (`functools.cache`) on the per-element rendering hot path.
+
+Refactor
+- `ThemeController` and `ResponsiveLayoutController` extracted from `MainWindow` (IMP-001 chunks #1 and #2): ~95 LOC and 5 methods shed from the orchestrator.
+
+CI / tooling
+- Windows CI now runs pytest a second time under `-O` to catch any `assert` accidentally used for input validation.
+
 ## 1.4.5 "Chemistry Tool"
 
 Added
