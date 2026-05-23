@@ -349,7 +349,20 @@
     "compare_modal_title": "Comparaison d’éléments",
     "compare_property_label": "Propriété",
     "compare_clear": "Effacer",
-    "compare_pick_2_3": "Choisissez 2 ou 3 éléments dans le tableau."
+    "compare_pick_2_3": "Choisissez 2 ou 3 éléments dans le tableau.",
+    "tour_welcome_title": "Bienvenue dans le tableau périodique",
+    "tour_welcome_body": "Une visite rapide vous montrera les fonctions principales. Vous pouvez la passer à tout moment et elle ne réapparaîtra plus.",
+    "tour_calculators_title": "Calculatrices",
+    "tour_calculators_body": "Huit outils de chimie : masse molaire, stœchiométrie, pH, lois des gaz et plus. Chacun dispose d’un bouton d’aide (?) qui explique son fonctionnement.",
+    "tour_compare_title": "Comparer",
+    "tour_compare_body": "Choisissez 2 ou 3 éléments du tableau pour les voir côte à côte — propriétés, configuration, catégorie, tout.",
+    "tour_language_title": "Langue",
+    "tour_language_body": "Disponible en 7 langues. Changez à tout moment sans perdre votre travail.",
+    "tour_theme_title": "Thème",
+    "tour_theme_body": "Basculez entre le thème clair et le thème sombre.",
+    "tour_skip": "Passer la visite",
+    "tour_next": "Suivant",
+    "tour_done": "Terminé"
   },
   "localized_category_texts": {
     "actinide": "Actinide",

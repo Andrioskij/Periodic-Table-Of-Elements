@@ -962,6 +962,24 @@
             </div>
         </div>
 
+        <div id="onboarding-overlay" class="onboarding-overlay" role="dialog"
+             aria-modal="true" aria-labelledby="onboarding-title" hidden>
+            <div id="onboarding-highlight" class="onboarding-highlight" hidden></div>
+            <div id="onboarding-popover" class="onboarding-popover">
+                <header class="onboarding-popover-header">
+                    <h2 id="onboarding-title" class="onboarding-popover-title"></h2>
+                    <span id="onboarding-counter" class="onboarding-popover-counter"></span>
+                </header>
+                <p id="onboarding-text" class="onboarding-popover-text"></p>
+                <footer class="onboarding-popover-footer">
+                    <button id="onboarding-skip" class="control-button is-ghost"
+                            type="button" data-i18n="tour_skip">Skip</button>
+                    <button id="onboarding-next" class="control-button"
+                            type="button" data-i18n="tour_next">Next</button>
+                </footer>
+            </div>
+        </div>
+
         <div id="comparison-modal" class="comparison-modal" role="dialog" aria-modal="true"
              aria-labelledby="comparison-modal-title" hidden>
             <div class="comparison-modal-backdrop" data-comparison-close></div>

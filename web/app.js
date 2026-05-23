@@ -38,6 +38,7 @@ const state = {
     compareMode: false,
     compareSet: [],
     comparisonModalReturnFocus: null,
+    tourStep: null,
 };
 
 const COMPARE_MAX = 3;
@@ -955,6 +956,169 @@ function closeComparisonModal() {
     state.comparisonModalReturnFocus = null;
     if (returnTo && typeof returnTo.focus === "function") {
         returnTo.focus();
+    }
+}
+
+// ===== Onboarding tour =====
+
+// Step order: welcome (no target, full-screen dim), then a tour of
+// the 4 main topbar controls. Help (?) and Try-example buttons live
+// inside the Calculators modal — discoverable once the user opens it
+// (step 2 points there), so the tour doesn't need to walk into the
+// modal itself.
+const ONBOARDING_STORAGE_KEY = "pte_onboarded";
+const TOUR_STEPS = [
+    { titleKey: "tour_welcome_title", textKey: "tour_welcome_body" },
+    {
+        target: "#tools-open",
+        titleKey: "tour_calculators_title",
+        textKey: "tour_calculators_body",
+    },
+    {
+        target: "#compare-toggle",
+        titleKey: "tour_compare_title",
+        textKey: "tour_compare_body",
+    },
+    {
+        target: "#language-select",
+        titleKey: "tour_language_title",
+        textKey: "tour_language_body",
+    },
+    {
+        target: "#theme-toggle",
+        titleKey: "tour_theme_title",
+        textKey: "tour_theme_body",
+    },
+];
+
+function shouldShowOnboarding() {
+    try {
+        return !localStorage.getItem(ONBOARDING_STORAGE_KEY);
+    } catch (_) {
+        // localStorage can throw in privacy modes; if it does, treat
+        // the user as already-onboarded so the tour never blocks them.
+        return false;
+    }
+}
+
+function markOnboarded() {
+    try {
+        localStorage.setItem(ONBOARDING_STORAGE_KEY, "1");
+    } catch (_) {
+        // No-op: see shouldShowOnboarding.
+    }
+}
+
+function positionTourStep(stepIndex) {
+    const step = TOUR_STEPS[stepIndex];
+    const highlight = document.getElementById("onboarding-highlight");
+    const popover = document.getElementById("onboarding-popover");
+
+    // Reset any inline placement set by an earlier step.
+    popover.style.top = "";
+    popover.style.left = "";
+    popover.style.right = "";
+    popover.style.bottom = "";
+    popover.style.transform = "";
+
+    if (!step.target) {
+        highlight.classList.add("is-fullscreen");
+        highlight.hidden = false;
+        popover.style.top = "50%";
+        popover.style.left = "50%";
+        popover.style.transform = "translate(-50%, -50%)";
+        return;
+    }
+
+    const target = document.querySelector(step.target);
+    if (!target) {
+        highlight.hidden = true;
+        popover.style.top = "50%";
+        popover.style.left = "50%";
+        popover.style.transform = "translate(-50%, -50%)";
+        return;
+    }
+
+    highlight.classList.remove("is-fullscreen");
+    highlight.hidden = false;
+    const rect = target.getBoundingClientRect();
+    const padding = 6;
+    highlight.style.top = `${rect.top - padding}px`;
+    highlight.style.left = `${rect.left - padding}px`;
+    highlight.style.width = `${rect.width + padding * 2}px`;
+    highlight.style.height = `${rect.height + padding * 2}px`;
+
+    // Default placement: below the target, horizontally clamped
+    // inside the viewport with 16px breathing room from each edge.
+    const popoverWidth = 340;
+    const targetCentreX = rect.left + rect.width / 2;
+    let left = targetCentreX - popoverWidth / 2;
+    left = Math.max(16, Math.min(left, window.innerWidth - popoverWidth - 16));
+    popover.style.left = `${left}px`;
+    popover.style.top = `${rect.bottom + 16}px`;
+}
+
+function showTourStep(stepIndex) {
+    if (stepIndex >= TOUR_STEPS.length) {
+        finishOnboarding();
+        return;
+    }
+    state.tourStep = stepIndex;
+    const step = TOUR_STEPS[stepIndex];
+    document.getElementById("onboarding-title").textContent =
+        tr(state.activeLanguage, step.titleKey);
+    document.getElementById("onboarding-text").textContent =
+        tr(state.activeLanguage, step.textKey);
+    document.getElementById("onboarding-counter").textContent =
+        `${stepIndex + 1} / ${TOUR_STEPS.length}`;
+    // The Next button morphs to "Done" on the last step so the user
+    // knows clicking it closes the tour instead of advancing.
+    const nextLabel = stepIndex === TOUR_STEPS.length - 1
+        ? tr(state.activeLanguage, "tour_done")
+        : tr(state.activeLanguage, "tour_next");
+    document.getElementById("onboarding-next").textContent = nextLabel;
+
+    document.getElementById("onboarding-overlay").hidden = false;
+    positionTourStep(stepIndex);
+    document.getElementById("onboarding-next").focus();
+}
+
+function advanceOnboarding() {
+    if (state.tourStep === null || state.tourStep === undefined) return;
+    showTourStep(state.tourStep + 1);
+}
+
+function finishOnboarding() {
+    markOnboarded();
+    document.getElementById("onboarding-overlay").hidden = true;
+    state.tourStep = null;
+}
+
+function setupOnboarding() {
+    document.getElementById("onboarding-next").addEventListener(
+        "click", advanceOnboarding,
+    );
+    document.getElementById("onboarding-skip").addEventListener(
+        "click", finishOnboarding,
+    );
+    window.addEventListener("resize", () => {
+        if (state.tourStep !== null && state.tourStep !== undefined) {
+            positionTourStep(state.tourStep);
+        }
+    });
+    document.addEventListener("keydown", (event) => {
+        if (state.tourStep === null || state.tourStep === undefined) return;
+        if (event.key === "Escape") {
+            event.preventDefault();
+            finishOnboarding();
+        }
+    });
+    if (shouldShowOnboarding()) {
+        // Defer the start so the rest of the page (translations,
+        // periodic table, modals) finishes painting first; otherwise
+        // the welcome popover would render before the elements it
+        // later highlights even exist.
+        setTimeout(() => showTourStep(0), 250);
     }
 }
 
@@ -3154,6 +3318,7 @@ async function bootstrap() {
     setupHelpModal();
     setupExampleButtons();
     setupComparison();
+    setupOnboarding();
     applyStaticTranslations();
     renderPeriodicTable();
     setupTrendControls();

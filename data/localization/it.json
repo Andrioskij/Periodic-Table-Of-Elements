@@ -349,7 +349,20 @@
     "compare_modal_title": "Confronto elementi",
     "compare_property_label": "Proprietà",
     "compare_clear": "Pulisci",
-    "compare_pick_2_3": "Seleziona 2 o 3 elementi dalla tavola."
+    "compare_pick_2_3": "Seleziona 2 o 3 elementi dalla tavola.",
+    "tour_welcome_title": "Benvenuto nella tavola periodica",
+    "tour_welcome_body": "Un breve tour ti mostrerà le funzioni principali. Puoi saltarlo in qualsiasi momento e non lo rivedrai più.",
+    "tour_calculators_title": "Calcolatori",
+    "tour_calculators_body": "Otto strumenti di chimica: massa molare, stechiometria, pH, leggi dei gas e altro. Ognuno ha un pulsante di aiuto (?) che spiega come funziona.",
+    "tour_compare_title": "Confronta",
+    "tour_compare_body": "Seleziona 2 o 3 elementi dalla tavola per vederli affiancati — proprietà, configurazione, categoria, tutto.",
+    "tour_language_title": "Lingua",
+    "tour_language_body": "Disponibile in 7 lingue. Cambia in qualsiasi momento senza perdere il lavoro.",
+    "tour_theme_title": "Tema",
+    "tour_theme_body": "Passa dal tema chiaro al tema scuro.",
+    "tour_skip": "Salta tour",
+    "tour_next": "Avanti",
+    "tour_done": "Fine"
   },
   "localized_category_texts": {
     "actinide": "Attinide",

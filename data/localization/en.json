@@ -349,7 +349,20 @@
     "compare_modal_title": "Element comparison",
     "compare_property_label": "Property",
     "compare_clear": "Clear",
-    "compare_pick_2_3": "Pick 2 or 3 elements from the table."
+    "compare_pick_2_3": "Pick 2 or 3 elements from the table.",
+    "tour_welcome_title": "Welcome to the periodic table",
+    "tour_welcome_body": "A quick tour will show you the main features. You can skip it any time and never see it again.",
+    "tour_calculators_title": "Calculators",
+    "tour_calculators_body": "Eight chemistry tools: molar mass, stoichiometry, pH, gas laws, and more. Each one has a help (?) button explaining how it works.",
+    "tour_compare_title": "Compare",
+    "tour_compare_body": "Pick 2 or 3 elements from the table to see them side by side — properties, configuration, category, the lot.",
+    "tour_language_title": "Language",
+    "tour_language_body": "Available in 7 languages. Switch any time without losing your work.",
+    "tour_theme_title": "Theme",
+    "tour_theme_body": "Toggle between light and dark themes.",
+    "tour_skip": "Skip tour",
+    "tour_next": "Next",
+    "tour_done": "Done"
   },
   "localized_category_texts": {
     "actinide": "Actinide",

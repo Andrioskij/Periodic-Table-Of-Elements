@@ -349,7 +349,20 @@
     "compare_modal_title": "元素比较",
     "compare_property_label": "属性",
     "compare_clear": "清除",
-    "compare_pick_2_3": "从表中选择 2 或 3 个元素。"
+    "compare_pick_2_3": "从表中选择 2 或 3 个元素。",
+    "tour_welcome_title": "欢迎使用元素周期表",
+    "tour_welcome_body": "一段简短的导览将介绍主要功能。你可以随时跳过，之后不会再出现。",
+    "tour_calculators_title": "计算器",
+    "tour_calculators_body": "八种化学工具：摩尔质量、化学计量学、pH、气体定律等。每个都有帮助 (?) 按钮说明用法。",
+    "tour_compare_title": "比较",
+    "tour_compare_body": "从表中选择 2 或 3 个元素以并排查看——属性、构型、类别，全部。",
+    "tour_language_title": "语言",
+    "tour_language_body": "支持 7 种语言。可随时切换，不会丢失数据。",
+    "tour_theme_title": "主题",
+    "tour_theme_body": "在浅色与深色主题之间切换。",
+    "tour_skip": "跳过导览",
+    "tour_next": "下一步",
+    "tour_done": "完成"
   },
   "localized_category_texts": {
     "actinide": "锕系元素",

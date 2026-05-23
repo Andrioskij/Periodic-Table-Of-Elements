@@ -1417,6 +1417,114 @@ body.is-modal-open {
  *    over 180ms so the page doesn't suddenly darken in one frame.
  */
 
+/* ===== Onboarding tour =====
+ *
+ * Shown to first-time visitors (gated on `localStorage.pte_onboarded`)
+ * to walk through the 4 main topbar features. Layered above every
+ * other modal at z-index 400 so the tour always wins focus while it
+ * runs. The dim-the-page-except-this-button effect uses a single
+ * `box-shadow` with a 9999px spread on the highlight rectangle —
+ * simpler than `clip-path` and works in every modern browser.
+ */
+.onboarding-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    pointer-events: none;
+}
+
+.onboarding-highlight {
+    position: absolute;
+    border-radius: var(--radius-button, 8px);
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.65);
+    pointer-events: none;
+    transition: top 0.18s ease, left 0.18s ease,
+        width 0.18s ease, height 0.18s ease;
+}
+
+/* The welcome step has no target; cover the whole viewport with a
+ * uniform dim instead of cutting out a hole. */
+.onboarding-highlight.is-fullscreen {
+    inset: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: rgba(0, 0, 0, 0.65);
+}
+
+.onboarding-popover {
+    position: absolute;
+    max-width: 340px;
+    background: var(--color-bg-card, #23272f);
+    border: var(--border-default-width, 1px) solid
+        var(--color-accent, #FFD60A);
+    border-radius: var(--radius-info-card, 14px);
+    padding: var(--spacing-info-card-padding, 12px);
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-info-card-inner-gap, 12px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.onboarding-popover-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--spacing-badge-gap, 6px);
+}
+
+.onboarding-popover-title {
+    margin: 0;
+    font-size: var(--font-size-search-title, 16px);
+    font-weight: var(--font-weight-bold, 700);
+    color: var(--color-text-strong, #dfe7ef);
+}
+
+.onboarding-popover-counter {
+    font-size: var(--font-size-info-field-label, 11px);
+    color: var(--color-text-muted, #bdbdbd);
+    font-weight: var(--font-weight-medium, 500);
+}
+
+.onboarding-popover-text {
+    margin: 0;
+    color: var(--color-text-primary, #f2f2f2);
+    font-size: var(--font-size-input, 13px);
+    line-height: 1.5;
+}
+
+.onboarding-popover-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-badge-gap, 6px);
+}
+
+/* Ghost variant used by the Skip button — softer than the primary
+ * Next so the user clearly sees Next as the intended path. */
+.control-button.is-ghost {
+    background: transparent;
+    color: var(--color-text-muted, #bdbdbd);
+}
+
+.control-button.is-ghost:hover {
+    background: var(--color-bg-button-hover, #4b6478);
+    color: var(--color-text-primary, #f2f2f2);
+}
+
+/* At sub-tablet widths the popover docks to the viewport bottom
+ * center instead of trying to position next to the (smaller) target,
+ * which on a phone would always be clipped to an edge anyway. */
+@media (max-width: 600px) {
+    .onboarding-popover {
+        left: 50% !important;
+        right: auto !important;
+        top: auto !important;
+        bottom: 16px !important;
+        transform: translateX(-50%);
+        max-width: calc(100% - 32px);
+    }
+}
+
 /* ===== Element comparison ===== */
 
 /* Compare-mode toggle button — when active (aria-pressed="true") it
