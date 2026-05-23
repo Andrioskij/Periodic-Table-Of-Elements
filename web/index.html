@@ -237,6 +237,11 @@
                 <div class="tools-modal-body">
                     <section id="panel-molar" class="panel" role="tabpanel"
                              aria-labelledby="tab-molar">
+                        <button class="panel-help-button" type="button"
+                                data-help-key="molar_help_body"
+                                data-help-title-key="right_molar"
+                                data-i18n-aria-label="help_button_aria"
+                                aria-label="How this calculator works">?</button>
                         <h3 class="panel-title" data-i18n="right_molar">Molar mass</h3>
                         <p id="molar-prompt" class="panel-prompt" data-i18n="molar_prompt">
                             Enter a chemical formula (e.g. H2O, Ca(OH)2, CuSO4·5H2O) to calculate its molar mass.
@@ -266,6 +271,11 @@
 
                     <section id="panel-stoichiometry" class="panel" role="tabpanel"
                              aria-labelledby="tab-stoichiometry" hidden>
+                        <button class="panel-help-button" type="button"
+                                data-help-key="stoichiometry_help_body"
+                                data-help-title-key="right_stoichiometry"
+                                data-i18n-aria-label="help_button_aria"
+                                aria-label="How this calculator works">?</button>
                         <h3 class="panel-title" data-i18n="right_stoichiometry">Stoichiometry</h3>
                         <p class="panel-prompt" data-i18n="stoichiometry_prompt">
                             Enter a chemical equation (e.g. Fe + O2 -&gt; Fe2O3) to balance it.
@@ -369,6 +379,11 @@
 
                     <section id="panel-concentration" class="panel" role="tabpanel"
                              aria-labelledby="tab-concentration" hidden>
+                        <button class="panel-help-button" type="button"
+                                data-help-key="concentration_help_body"
+                                data-help-title-key="concentration_title"
+                                data-i18n-aria-label="help_button_aria"
+                                aria-label="How this calculator works">?</button>
                         <h3 class="panel-title" data-i18n="concentration_title">Concentration calculator</h3>
                         <p class="panel-prompt" data-i18n="concentration_prompt">
                             Compute molarity / molality / mass-% or solve a dilution.
@@ -482,6 +497,11 @@
 
                     <section id="panel-gas-laws" class="panel" role="tabpanel"
                              aria-labelledby="tab-gas-laws" hidden>
+                        <button class="panel-help-button" type="button"
+                                data-help-key="gas_laws_help_body"
+                                data-help-title-key="gas_laws_title"
+                                data-i18n-aria-label="help_button_aria"
+                                aria-label="How this calculator works">?</button>
                         <h3 class="panel-title" data-i18n="gas_laws_title">Gas laws</h3>
                         <p class="panel-prompt" data-i18n="gas_laws_prompt">
                             Solve PV=nRT, the combined gas law, or partial pressures.
@@ -669,6 +689,11 @@
 
                     <section id="panel-ph" class="panel" role="tabpanel"
                              aria-labelledby="tab-ph" hidden>
+                        <button class="panel-help-button" type="button"
+                                data-help-key="ph_help_body"
+                                data-help-title-key="ph_title"
+                                data-i18n-aria-label="help_button_aria"
+                                aria-label="How this calculator works">?</button>
                         <h3 class="panel-title" data-i18n="ph_title">pH calculator</h3>
                         <p class="panel-prompt" data-i18n="ph_prompt">
                             Interconvert pH / pOH / [H⁺] / [OH⁻], or get pH from a strong-acid concentration.
@@ -748,6 +773,11 @@
 
                     <section id="panel-builder" class="panel" role="tabpanel"
                              aria-labelledby="tab-builder" hidden>
+                        <button class="panel-help-button" type="button"
+                                data-help-key="builder_help_body"
+                                data-help-title-key="builder_title"
+                                data-i18n-aria-label="help_button_aria"
+                                aria-label="How this calculator works">?</button>
                         <h3 class="panel-title" data-i18n="builder_title">Simple compounds</h3>
                         <p class="panel-prompt" data-i18n="compound_prompt">
                             Choose one element at a time, send it to A or B, then choose the oxidation states and calculate one simple binary formula.
@@ -787,6 +817,11 @@
 
                     <section id="panel-solubility" class="panel" role="tabpanel"
                              aria-labelledby="tab-solubility" hidden>
+                        <button class="panel-help-button" type="button"
+                                data-help-key="solubility_help_body"
+                                data-help-title-key="solubility_title"
+                                data-i18n-aria-label="help_button_aria"
+                                aria-label="How this calculator works">?</button>
                         <h3 class="panel-title" data-i18n="solubility_title">Solubility table</h3>
                         <p class="panel-prompt" data-i18n="solubility_prompt">
                             Select a cation and anion, then click Check.
@@ -818,6 +853,11 @@
 
                     <section id="panel-empirical" class="panel" role="tabpanel"
                              aria-labelledby="tab-empirical" hidden>
+                        <button class="panel-help-button" type="button"
+                                data-help-key="empirical_help_body"
+                                data-help-title-key="empirical_title"
+                                data-i18n-aria-label="help_button_aria"
+                                aria-label="How this calculator works">?</button>
                         <h3 class="panel-title" data-i18n="empirical_title">Empirical formula</h3>
                         <p class="panel-prompt" data-i18n="empirical_prompt">
                             Enter element percentages or masses; optionally a molar mass to get the molecular formula.
@@ -844,6 +884,23 @@
                         </div>
                     </section>
                 </div>
+            </div>
+        </div>
+
+        <div id="help-modal" class="help-modal" role="dialog" aria-modal="true"
+             aria-labelledby="help-modal-title" hidden>
+            <div class="help-modal-backdrop" data-help-close></div>
+            <div class="help-modal-card" role="document">
+                <header class="help-modal-header">
+                    <h2 id="help-modal-title" class="help-modal-title"></h2>
+                    <button id="help-close" class="help-modal-close" type="button"
+                            data-help-close
+                            data-i18n-aria-label="close_dialog"
+                            aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </header>
+                <div id="help-modal-body" class="help-modal-body"></div>
             </div>
         </div>
 

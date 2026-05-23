@@ -1039,6 +1039,170 @@ body.is-modal-open {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
 }
 
+/* Per-panel "?" help button — anchors to the top-right of each calculator
+ * panel so chemistry-novice users can read a plain-language explanation
+ * of what the tool does before they're confronted with the form. The
+ * panel must be the positioning context (see .tools-modal-body .panel
+ * rule below). */
+.tools-modal-body .panel {
+    position: relative;
+}
+
+.panel-help-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    background: transparent;
+    color: var(--color-text-muted, #bdbdbd);
+    border: var(--border-default-width, 1px) solid
+        var(--color-border-button, #5f7384);
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: var(--font-weight-bold, 700);
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.panel-help-button:hover {
+    color: var(--color-text-on-accent, #111111);
+    background: var(--color-accent, #FFD60A);
+    border-color: var(--color-accent, #FFD60A);
+}
+
+.panel-help-button:focus-visible {
+    outline: var(--border-input-focused-width, 2px) solid
+        var(--color-accent, #FFD60A);
+    outline-offset: 2px;
+}
+
+/* The panel-title sits to the left of the help button; reserve enough
+ * right padding so a long localized title can't run under the button. */
+.tools-modal-body .panel-title {
+    padding-right: 32px;
+}
+
+/* Help modal — stacks on top of the Calculators modal (z-index 250 >
+ * tools-modal's 200) so the user doesn't lose context. Same visual
+ * pattern as .tools-modal but narrower (max-width 520px) because the
+ * help body is prose, not a form. */
+.help-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 250;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-info-card-padding, 12px);
+}
+
+.help-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.help-modal-card {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-info-card-inner-gap, 12px);
+    width: 100%;
+    max-width: 520px;
+    max-height: 80vh;
+    background: var(--color-bg-card, #23272f);
+    border: var(--border-default-width, 1px) solid
+        var(--color-border-strong, #404854);
+    border-radius: var(--radius-info-card, 14px);
+    padding: var(--spacing-info-card-padding, 12px);
+    overflow: hidden;
+}
+
+.help-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-badge-gap, 6px);
+}
+
+.help-modal-title {
+    margin: 0;
+    font-size: var(--font-size-search-title, 16px);
+    font-weight: var(--font-weight-bold, 700);
+    color: var(--color-text-strong, #dfe7ef);
+}
+
+.help-modal-close {
+    background: transparent;
+    color: var(--color-text-primary, #f2f2f2);
+    border: var(--border-default-width, 1px) solid
+        var(--color-border-button, #5f7384);
+    border-radius: var(--radius-button, 8px);
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.help-modal-close:hover {
+    background: var(--color-bg-button-hover, #4b6478);
+}
+
+.help-modal-close:focus-visible {
+    outline: var(--border-input-focused-width, 2px) solid
+        var(--color-accent, #FFD60A);
+    outline-offset: 2px;
+}
+
+.help-modal-body {
+    overflow-y: auto;
+    color: var(--color-text-primary, #f2f2f2);
+    font-size: var(--font-size-input, 13px);
+    line-height: 1.55;
+}
+
+.help-modal-body p {
+    margin: 0 0 var(--spacing-info-section-gap, 10px);
+}
+
+.help-modal-body p:last-child {
+    margin-bottom: 0;
+}
+
+.help-modal-body code {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    background: var(--color-bg-card-alt, #252526);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.95em;
+    color: var(--color-text-strong, #dfe7ef);
+}
+
+@media (max-width: 720px) {
+    .help-modal {
+        padding: 0;
+    }
+    .help-modal-card {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        border: none;
+    }
+}
+
 @media (max-width: 720px) {
     .tools-modal {
         padding: 0;
