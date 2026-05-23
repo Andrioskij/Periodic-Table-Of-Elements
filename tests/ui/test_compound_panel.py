@@ -28,6 +28,10 @@ class TestCompoundBuilderPanel(unittest.TestCase):
         self.assertIsNotNone(self.panel.a_oxidation_combo)
         self.assertIsNotNone(self.panel.b_oxidation_combo)
 
+    def test_instantiation_creates_empty_hidden_title_label(self):
+        self.assertEqual(self.panel.title_label.text(), "")
+        self.assertEqual(self.panel.title_label.accessibleName(), "Simple compounds panel title")
+
     def test_apply_language_updates_all_translatable_labels(self):
         self.panel.apply_language(
             selector_a_title="Imposta A",
@@ -45,6 +49,20 @@ class TestCompoundBuilderPanel(unittest.TestCase):
         self.assertEqual(self.panel.search_b_input.placeholderText(), "Cerca B...")
         self.assertEqual(self.panel.build_button.text(), "Calcola formula")
         self.assertEqual(self.panel.builder_reset_button.text(), "Reimposta")
+
+    def test_apply_language_sets_master_title_when_provided(self):
+        self.panel.apply_language(
+            title="🧱  Composti semplici",
+            selector_a_title="Imposta A",
+            selector_b_title="Imposta B",
+            search_placeholder_a="Cerca A...",
+            search_placeholder_b="Cerca B...",
+            oxidation_first="Stato di ossidazione:",
+            oxidation_second="Stato di ossidazione:",
+            calculate_formula="Calcola formula",
+            reset="Reimposta",
+        )
+        self.assertEqual(self.panel.title_label.text(), "🧱  Composti semplici")
 
     def test_set_selector_texts_writes_to_summary_labels(self):
         self.panel.set_selector_texts("Hydrogen (H)", "Oxygen (O)")
