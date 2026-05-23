@@ -6,6 +6,40 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-05-23
+
+A "Calculator UX" release: the eight web calculators get help popups, pre-filled examples, polished tabs and result cards; the desktop pannelli get the same help popups and pre-filled examples; the side panels gain atom-glyph empty states; and the table grows two big new features — a multi-element comparison view and a first-visit guided tour.
+
+### Added
+- **Web Calculators help popups**. Each of the 8 calculators in the Calculators modal (Molar mass, Stoichiometry, Concentration, Gas laws, pH, Empirical, Builder, Solubility) grows a circular `?` button in the top-right corner that opens a small modal stacked above the Calculators modal explaining what the tool does, how to use it, and showing a worked example. Body content is plain text with `\n\n` paragraph splitting and backtick-delimited inline `code`; rendering is XSS-safe (textContent, never innerHTML). 8 new `*_help_body` localization keys × 7 langs.
+- **Desktop Calculators help popups** (mirror of the web). `MolarMassPanel`, `StoichiometryPanel`, `CompoundBuilderPanel`, `SolubilityPanel` each grow a `?` `QToolButton` next to the title that opens a shared `HelpDialog` (`src/ui/help_dialog.py`) populated from the same `*_help_body` localization keys — zero new translations.
+- **"Try example" button** in every calculator (web 8 + desktop 4). A soft, italic, ghost-styled secondary button that pre-fills the form with a typical, chemistry-meaningful example (`CuSO4·5H2O` for molar mass, `Fe + O2 -> Fe2O3` for stoichiometry, NaCl 5 g in 100 mL for concentration, gas at STP, pH 7.0, H/O for empirical, Na+1/Cl-1 for builder, Ag⁺/Cl⁻ for solubility). Synergy with the `?` popups — help explains *what*, example demonstrates *how*. Single new `example_button` localization key × 7 langs.
+- **Atom-glyph empty state** on the 3 side panels (Info, Electron config, Lewis). Before an element is selected, each panel shows a small inline-SVG atom illustration (three rotated ellipses + a nucleus) above the existing "Select an element..." prompt so the panel reads as a deliberately-empty space waiting to be filled, not a blank rectangle. SVG uses `currentColor` so it inherits the muted text color and works in both themes without extra rules.
+- **Element comparison view**. New "Compare" toggle in the topbar enters a multi-select mode that lets the user pick up to 3 elements from the table; their picks get an accent outline and the toggle button shows a count badge. Once 2+ are picked, a "View" button opens a comparison modal with a side-by-side table — 1 row per `INFO_FIELDS` property × 1 column per picked element, with category-tinted symbol badges in the header. Property labels reuse existing i18n keys (`atomic_number`, `category`, etc.) so the table body needs no new translations. 6 new `compare_*` localization keys × 7 langs.
+- **First-visit onboarding tour**. New visitors are greeted by a 5-step tour (welcome → Calculators → Compare → Language → Theme) gated on `localStorage.pte_onboarded`. The tour dims the page with a single 9999px-spread `box-shadow` on a highlight rectangle (simpler than `clip-path`, works everywhere); on sub-600px viewports the popover docks to the viewport bottom-centre instead of trying to fit next to the highlight. Skip / ESC end the tour early and still set the flag so it never re-shows. 13 new `tour_*` localization keys × 7 langs.
+- **Web Calculators tab icons + per-panel titles + accent result cards** (visual polish). Each of the 8 tabs gets a leading emoji (🧮 ⚖️ 💧 🌡️ 🧪 🔬 🧱 🌊); each panel grows an `<h3>` title; `.molar-result` and `.stoich-balanced` get an accent-yellow top border + subtle box-shadow so the output region reads as distinct from the form.
+- **Desktop calculator panel title icons** mirroring the web tabs. New `CalculatorIcons` class in `src/ui/constants.py` (`MOLAR=🧮`, `STOICHIOMETRY=⚖️`, `BUILDER=🧱`, `SOLUBILITY=🌊`) is prepended to each panel's title at the `apply_language` call site. `CompoundBuilderPanel` gained the master title slot that finally consumes the existing `builder_title` localization key.
+- **`OrbitalDiagramPanel` lifecycle smoke tests** (`tests/ui/test_orbital_diagram_panel.py`, 8 new tests). Covers instantiation, `set_prompt`, `apply_theme` (no-op + palette switch + redraw after prior render), `show_orbital_diagram` happy path + missing-config fallback. Closes the last "untested panel" backlog item.
+- **`HelpDialog` unit tests** (`tests/ui/test_help_dialog.py`, 15 tests): 8 for `format_help_body` (paragraph split, backtick code extraction, HTML escape) + 7 for the dialog (title/body/close-button/modal/accept).
+- **`ThemeController` and `ResponsiveLayoutController`** extracted from `MainWindow` (IMP-001 chunks #1 and #2). View-holder pattern: each controller takes a window ref and exposes a single public method (`toggle_and_persist` / `apply`). `MainWindow` shed ~95 LOC of responsive-layout helpers plus 5 theme-related methods.
+
+### Changed
+- **Web Calculators modal layout**. Tabs now lay out as a 4×2 grid (`display: grid; grid-template-columns: repeat(4, minmax(0, 1fr))`) so the longest labels can't overflow the card; modal max-width bumped from 720px to 920px. The old `≤720px` horizontal-scroll fallback is gone (no longer needed); below 720px the grid collapses to 2 columns. Fixes a real bug where "Simple compounds" overflowed and "Solubility" was hidden off-screen at desktop widths.
+
+### Performance
+- **Localization lookup memoization**. `_get_localized_lookup_text` and siblings in `src/services/ui_localization.py` are now wrapped in `functools.cache`, keyed on `(language, value)`. Per-element-render dict walks become O(1) after the first hit; the cache is bounded by the cardinality of the localized values (categories, standard states, etc.) so it never grows unboundedly.
+
+### Refactor
+- **`compute_numeric_ranges` duplication removed**. `MainWindow` was recomputing what `self.context.trend_manager.numeric_ranges` already had cached at AppContext init; the method is gone and call sites read the context value directly.
+
+### CI / docs / tooling
+- **`python -O -m pytest` step in Windows CI**. A second pytest pass under optimisation strips `assert` statements, so any `assert` accidentally used for input validation surfaces as a regression in CI instead of in production-under-`-O`.
+- **Common pitfalls section in `CONTRIBUTING.md`**: the 7-JSON localization rule, the `-O` assert trap, the U+00B7 hydrate-separator convention, the panel-layer rule, and the `pyproject.toml` dynamic version.
+- **`CuSO4·5H2O` hydrate example** added to the `molar_prompt` placeholder text across all 7 languages so the U+00B7 convention is discoverable without reading the docs.
+
+### Documentation
+- **Onboarding tour** is gated on `localStorage.pte_onboarded`; to re-see it open DevTools and run `localStorage.removeItem("pte_onboarded")`, then reload.
+
 ## [1.4.5] - 2026-05-21
 
 ### Added
