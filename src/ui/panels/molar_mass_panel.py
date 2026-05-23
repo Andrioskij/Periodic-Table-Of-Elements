@@ -63,11 +63,18 @@ class MolarMassPanel(QWidget):
         self.calculate_button.clicked.connect(self._on_calculate)
         self.formula_input.returnPressed.connect(self._on_calculate)
 
+        self.example_button = QPushButton()
+        self.example_button.setObjectName("panelExampleButton")
+        self.example_button.setAccessibleName("Try molar mass example")
+        self.example_button.setVisible(False)
+        self.example_button.clicked.connect(self._on_example_clicked)
+
         input_row = QHBoxLayout()
         input_row.setContentsMargins(0, 0, 0, 0)
         input_row.setSpacing(6)
         input_row.addWidget(self.formula_input, 1)
         input_row.addWidget(self.calculate_button, 0)
+        input_row.addWidget(self.example_button, 0)
 
         self.result_label = QLabel(prompt_text)
         self.result_label.setObjectName("compoundResultLabel")
@@ -128,6 +135,7 @@ class MolarMassPanel(QWidget):
     def apply_language(
         self, *, title, prompt, button_text, error_prefix,
         help_body="", help_close_text="Close",
+        example_text="",
     ):
         """Apply localized strings to all visible labels."""
         self.set_title(title)
@@ -137,6 +145,14 @@ class MolarMassPanel(QWidget):
         self._help_body = help_body
         self._help_close_text = help_close_text
         self.help_button.setVisible(bool(help_body))
+        self.example_button.setText(example_text)
+        self.example_button.setVisible(bool(example_text))
+
+    def _on_example_clicked(self):
+        """Pre-fill the formula input with a representative example so the
+        user can see the expected input shape and click Calculate to run it."""
+        self.formula_input.setText("CuSO4·5H2O")
+        self.formula_input.setFocus()
 
     def _on_help_clicked(self):
         """Open the help dialog populated with this calculator's current

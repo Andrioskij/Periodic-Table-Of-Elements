@@ -140,6 +140,12 @@ class CompoundBuilderPanel(QWidget):
         self.builder_reset_button = QPushButton()
         self.builder_reset_button.setObjectName("builderResetButton")
 
+        self.example_button = QPushButton()
+        self.example_button.setObjectName("panelExampleButton")
+        self.example_button.setAccessibleName("Try compound builder example")
+        self.example_button.setVisible(False)
+        self.example_button.clicked.connect(self._on_example_clicked)
+
         self.builder_status_label = QLabel("")
         self.builder_status_label.setObjectName("builderStatusLabel")
         self.builder_status_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
@@ -148,6 +154,7 @@ class CompoundBuilderPanel(QWidget):
         self.builder_status_label.setWordWrap(False)
         self.action_buttons_layout.addWidget(self.build_button)
         self.action_buttons_layout.addWidget(self.builder_reset_button)
+        self.action_buttons_layout.addWidget(self.example_button)
         self.action_buttons_layout.addWidget(self.builder_status_label)
         self.action_buttons_layout.addStretch(1)
 
@@ -181,6 +188,7 @@ class CompoundBuilderPanel(QWidget):
         title="",
         help_body="",
         help_close_text="Close",
+        example_text="",
     ):
         self.title_label.setText(title)
         self.title_label.setVisible(bool(title))
@@ -195,6 +203,18 @@ class CompoundBuilderPanel(QWidget):
         self.b_oxidation_label.setText(oxidation_second)
         self.build_button.setText(calculate_formula)
         self.builder_reset_button.setText(reset)
+        self.example_button.setText(example_text)
+        self.example_button.setVisible(bool(example_text))
+
+    def _on_example_clicked(self):
+        """Pre-fill A=Na, B=Cl so the user can see a canonical binary
+        compound (NaCl) come together. The host MainWindow listens for
+        search-input changes and populates the oxidation combos, so
+        typing into the search inputs is enough to drive the flow."""
+        self.search_a_input.setText("Na")
+        self.search_a_input.returnPressed.emit()
+        self.search_b_input.setText("Cl")
+        self.search_b_input.returnPressed.emit()
 
     def _on_help_clicked(self):
         """Open the help dialog populated with this calculator's current

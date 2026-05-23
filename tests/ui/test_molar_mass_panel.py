@@ -59,6 +59,28 @@ class TestMolarMassPanel(unittest.TestCase):
         self.assertEqual(self.panel._help_close_text, "Chiudi")
         self.assertIn("H2O", self.panel._help_body)
 
+    def test_example_button_hidden_without_example_text(self):
+        self.panel.apply_language(
+            title="t", prompt="p", button_text="b", error_prefix="e",
+        )
+        self.assertFalse(self.panel.example_button.isVisibleTo(self.panel))
+
+    def test_example_button_visible_when_example_text_provided(self):
+        self.panel.apply_language(
+            title="t", prompt="p", button_text="b", error_prefix="e",
+            example_text="Prova un esempio",
+        )
+        self.assertTrue(self.panel.example_button.isVisibleTo(self.panel))
+        self.assertEqual(self.panel.example_button.text(), "Prova un esempio")
+
+    def test_example_click_fills_formula_input(self):
+        self.panel.apply_language(
+            title="t", prompt="p", button_text="b", error_prefix="e",
+            example_text="Prova",
+        )
+        self.panel.example_button.click()
+        self.assertEqual(self.panel.formula_input.text(), "CuSO4·5H2O")
+
 
 if __name__ == "__main__":
     unittest.main()

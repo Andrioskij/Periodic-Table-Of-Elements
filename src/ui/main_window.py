@@ -669,6 +669,7 @@ class MainWindow(QWidget):
         self.search_input.setPlaceholderText(texts["search_placeholder"])
         self.search_button.setText(texts["search_button"])
         help_close = self.tr("close_dialog")
+        example_text = self.tr("example_button")
         self.compound_builder_panel.apply_language(
             title=f"{CalculatorIcons.BUILDER}  {self.tr('builder_title')}",
             selector_a_title=texts["builder_slot_a_title"],
@@ -681,6 +682,7 @@ class MainWindow(QWidget):
             reset=texts["reset"],
             help_body=self.tr("builder_help_body"),
             help_close_text=help_close,
+            example_text=example_text,
         )
         self.molar_mass_panel.apply_language(
             title=f"{CalculatorIcons.MOLAR}  {self.tr('molar_title')}",
@@ -689,6 +691,7 @@ class MainWindow(QWidget):
             error_prefix=self.tr("molar_error"),
             help_body=self.tr("molar_help_body"),
             help_close_text=help_close,
+            example_text=example_text,
         )
         self.stoichiometry_panel.apply_language(
             title=f"{CalculatorIcons.STOICHIOMETRY}  {self.tr('stoichiometry_title')}",
@@ -699,6 +702,7 @@ class MainWindow(QWidget):
             error_prefix=self.tr("stoichiometry_error"),
             help_body=self.tr("stoichiometry_help_body"),
             help_close_text=help_close,
+            example_text=example_text,
         )
         self.lewis_panel.apply_language(
             title=self.tr("lewis_title"),
@@ -728,6 +732,7 @@ class MainWindow(QWidget):
             rule_default=self.tr("solubility_rule_default"),
             help_body=self.tr("solubility_help_body"),
             help_close_text=help_close,
+            example_text=example_text,
         )
         self.periodic_table_widget.set_language_texts(
             selected_none_text=texts["selected_none"],
