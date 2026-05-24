@@ -6,6 +6,19 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-05-23
+
+A same-day patch on top of v1.5.0 that closes a real user-reported bug in the web Compound Builder and finally brings the web side to nomenclature parity with the desktop.
+
+### Fixed
+- **Web Compound Builder no longer errors with `"undefined" is not valid JSON`** when calculating a binary formula (#80). Root cause: `pyodide.runPython` returns the value of the last top-level *statement*, and a `try/except` is a compound statement, not an expression; a script whose last top-level statement is a `try/except` block returns `None` → `undefined` in JS → `JSON.parse(undefined)` is coerced to `JSON.parse("undefined")`, which V8 reports as the observed error. Rewrites all 6 calculator-bridge `runPython` scripts (`buildBinaryFormula`, `balanceEquation`, `computeStoichiometricMasses`, `computeEmpiricalFormula`, `computeLimitingReagent`, `computeMolarMass`) to build the payload inside the try/except branches and serialise it on a bare `json.dumps(payload)` last line, which Pyodide's CodeRunner extracts and evaluates. A comment block in `buildBinaryFormula` documents the gotcha so the pattern isn't reintroduced.
+
+### Added
+- **Web Compound Builder shows IUPAC Stock + traditional names** alongside the binary formula (#81), closing the long-standing desktop ↔ web parity gap. Examples: `NaCl` → "sodium chloride" / "cloruro di sodio"; `FeCl3` → "iron(III) chloride" / "ferric chloride" / "cloruro ferrico". `tools/build_web.py::_copy_data` now also copies `data/reference/nomenclature_data.json` (byte-identity test guards against drift); `web/app.js` ships an `intToRoman` helper and a `computeNomenclatureNames` function that follows the same Stock_simple / Stock_roman / traditional-suffix flow as the desktop's `build_stock_name` + `build_traditional_name`, entirely client-side (no Pyodide round-trip — the naming logic is template substitution + Roman numerals + suffix matching). Reuses existing `stock_name`/`traditional_name`/`traditional_na` localization keys — zero new translations.
+
+### Refactor
+- **`LanguageController` extracted from `MainWindow`** (#82, IMP-001 chunk #3). Mirrors the ThemeController + ResponsiveLayoutController extractions from chunks #1 and #2: pulls `sync_language_selector`, the body of `change_language`, and the first line of `load_preferences` into a dataclass façade with a small testable surface (`load_from_settings`, `sync_selector`, `change_to(code) -> bool`). `MainWindow.tr()` and `apply_language()` deliberately stay where they are because they're either called from `_assemble_layout` (before the controller can exist) or fan out to ~10 siblings. 11 new unit tests using pure-Python fakes — no Qt dependency.
+
 ## [1.5.0] - 2026-05-23
 
 A "Calculator UX" release: the eight web calculators get help popups, pre-filled examples, polished tabs and result cards; the desktop pannelli get the same help popups and pre-filled examples; the side panels gain atom-glyph empty states; and the table grows two big new features — a multi-element comparison view and a first-visit guided tour.
