@@ -6,9 +6,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [1.5.1] - 2026-05-23
+## [1.5.1] - 2026-05-24
 
-A same-day patch on top of v1.5.0 that closes a real user-reported bug in the web Compound Builder and finally brings the web side to nomenclature parity with the desktop.
+A next-day patch on top of v1.5.0 that closes a real user-reported bug in the web Compound Builder and finally brings the web side to nomenclature parity with the desktop.
 
 ### Fixed
 - **Web Compound Builder no longer errors with `"undefined" is not valid JSON`** when calculating a binary formula (#80). Root cause: `pyodide.runPython` returns the value of the last top-level *statement*, and a `try/except` is a compound statement, not an expression; a script whose last top-level statement is a `try/except` block returns `None` → `undefined` in JS → `JSON.parse(undefined)` is coerced to `JSON.parse("undefined")`, which V8 reports as the observed error. Rewrites all 6 calculator-bridge `runPython` scripts (`buildBinaryFormula`, `balanceEquation`, `computeStoichiometricMasses`, `computeEmpiricalFormula`, `computeLimitingReagent`, `computeMolarMass`) to build the payload inside the try/except branches and serialise it on a bare `json.dumps(payload)` last line, which Pyodide's CodeRunner extracts and evaluates. A comment block in `buildBinaryFormula` documents the gotcha so the pattern isn't reintroduced.

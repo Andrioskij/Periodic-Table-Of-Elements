@@ -1,6 +1,15 @@
+import re
 from dataclasses import dataclass
 
 EV_TO_KJ_PER_MOL = 96.48533212331002
+
+# Unicode subscript digits, indexed 0–9 so the lookup is a constant-time
+# string slice (``_SUBSCRIPT_DIGITS[int(d)]``) instead of a per-digit
+# function call. Mirrors the JS ``SUBSCRIPT_DIGITS`` constant used by
+# the web companion's ``formatChemicalFormula`` so desktop and web
+# render the same glyphs.
+_SUBSCRIPT_DIGITS = "₀₁₂₃₄₅₆₇₈₉"
+_FORMULA_DIGIT_PATTERN = re.compile(r"([A-Za-z\)])(\d+)")
 
 
 @dataclass(frozen=True)
@@ -80,3 +89,38 @@ def _trim_trailing_zeroes(text):
 
     trimmed = text.rstrip("0").rstrip(".")
     return "0" if trimmed in {"", "-0"} else trimmed
+
+
+def subscript_chemical_formula(text):
+    """Convert each digit run that follows a letter or closing paren to
+    Unicode subscript characters, leaving stand-alone numbers untouched.
+
+    Display-time only — the underlying domain objects keep storing
+    plain ASCII (``"Fe2O3"``, ``"H2O"``, ``"Ca(OH)2"``) so parsers and
+    formula-comparison logic don't have to grow a Unicode awareness.
+
+    Examples:
+
+    >>> subscript_chemical_formula("H2O")
+    'H₂O'
+    >>> subscript_chemical_formula("Fe2(SO4)3")
+    'Fe₂(SO₄)₃'
+    >>> subscript_chemical_formula("CuSO4·5H2O")
+    'CuSO₄·5H₂O'
+    >>> subscript_chemical_formula("2 Fe + 3 O2 -> Fe2O3")
+    '2 Fe + 3 O₂ -> Fe₂O₃'
+
+    Standalone leading numbers (stoichiometric coefficients separated
+    from the element by a space) stay plain; hydrate counts like the
+    ``5`` in ``CuSO4·5H2O`` also stay plain because they're preceded
+    by ``·`` (or ``.``), not a letter or closing paren.
+    """
+    if not text:
+        return text
+
+    def _replace(match):
+        prefix, digits = match.group(1), match.group(2)
+        subbed = "".join(_SUBSCRIPT_DIGITS[int(d)] for d in digits)
+        return prefix + subbed
+
+    return _FORMULA_DIGIT_PATTERN.sub(_replace, text)

@@ -18,6 +18,7 @@ from src.domain.molar_mass import (
     parse_formula,
 )
 from src.ui.error_format import format_formula_error
+from src.ui.formatters import subscript_chemical_formula
 from src.ui.help_dialog import HelpDialog
 
 
@@ -185,7 +186,10 @@ class MolarMassPanel(QWidget):
             self.result_label.setText(f"<b>{self._error_prefix}:</b> {exc}")
             return
 
-        lines = [f"<b>{formula}</b>"]
+        # Echo the formula with Unicode subscripts (Fe2O3 → Fe₂O₃) so
+        # the rendered text reads as a chemistry-textbook formula
+        # rather than the raw ASCII the parser accepts.
+        lines = [f"<b>{subscript_chemical_formula(formula)}</b>"]
         lines.append(f"<br>Molar mass: <b>{total_mass:.4f} g/mol</b><br>")
         lines.append("<table style='margin-top:6px;'>")
         lines.append(
