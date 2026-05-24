@@ -21,6 +21,7 @@ from src.domain.stoichiometry import (
     parse_equation,
 )
 from src.ui.error_format import format_equation_error, format_formula_error
+from src.ui.formatters import subscript_chemical_formula
 from src.ui.help_dialog import HelpDialog
 
 
@@ -259,9 +260,15 @@ class StoichiometryPanel(QWidget):
         self._current_coefficients = coefficients
         self._current_molar_masses = molar_masses
 
-        self.result_label.setText(f"<b>{balanced}</b>")
+        # Subscript the formula counts (Fe2O3 → Fe₂O₃) for display;
+        # standalone leading stoichiometric coefficients stay plain
+        # because they're separated from elements by a space.
+        self.result_label.setText(
+            f"<b>{subscript_chemical_formula(balanced)}</b>"
+        )
 
-        # Populate compound combo
+        # Populate compound combo (kept ASCII so the lookup keys stay
+        # comparable to the underlying parsed reactants/products).
         self.compound_combo.clear()
         for compound in reactants + products:
             self.compound_combo.addItem(compound)
@@ -325,7 +332,7 @@ class StoichiometryPanel(QWidget):
         )
         for entry in result:
             lines.append(
-                f"<tr><td>{entry['compound']}</td>"
+                f"<tr><td>{subscript_chemical_formula(entry['compound'])}</td>"
                 f"<td align='right'>{entry['coefficient']}</td>"
                 f"<td align='right'>{entry['molar_mass']:.2f}</td>"
                 f"<td align='right'>{entry['moles']:.4f}</td>"

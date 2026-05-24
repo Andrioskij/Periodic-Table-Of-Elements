@@ -1,3 +1,5 @@
+from src.ui.formatters import subscript_chemical_formula
+
 _METAL_CATEGORIES = {
     "alkali metal",
     "alkaline earth metal",
@@ -150,8 +152,12 @@ def compose_compound_result_text(
     stock_name = build_stock_name(cation, cation_charge, anion)
     traditional_name = build_traditional_name(cation, cation_charge, anion)
 
+    # Subscript the formula at display time (Fe2O3 → Fe₂O₃). The
+    # underlying ``formula`` returned by build_binary_formula stays
+    # plain ASCII so callers that compare or persist it don't have to
+    # grow Unicode awareness.
     lines = [
-        f"{translate('formula_label')}: {formula}",
+        f"{translate('formula_label')}: {subscript_chemical_formula(formula)}",
         f"{translate('stock_name')}: {stock_name}",
         f"{translate('traditional_name')}: {traditional_name or translate('traditional_na')}",
     ]

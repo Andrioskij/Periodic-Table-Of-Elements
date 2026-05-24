@@ -67,6 +67,28 @@ function kebab(name) {
     return name.replace(/_/g, "-");
 }
 
+// Unicode subscript digits, indexed 0-9 for constant-time lookup.
+// Mirrors `_SUBSCRIPT_DIGITS` in src/ui/formatters.py so desktop and
+// web render chemistry formulas with the same glyphs.
+const SUBSCRIPT_DIGITS = "₀₁₂₃₄₅₆₇₈₉";
+
+// Convert each digit run that follows a letter or closing paren into
+// Unicode subscript characters, leaving standalone numbers untouched.
+// Display-time only — the underlying parser inputs and result payloads
+// keep storing plain ASCII (`Fe2O3`, `H2O`, `Ca(OH)2`).
+//   H2O          -> H₂O
+//   Fe2(SO4)3    -> Fe₂(SO₄)₃
+//   CuSO4·5H2O   -> CuSO₄·5H₂O
+//   2 Fe + 3 O2 -> Fe2O3   ->   2 Fe + 3 O₂ -> Fe₂O₃
+function formatChemicalFormula(text) {
+    if (!text) return text;
+    return text.replace(/([A-Za-z)])(\d+)/g, (_match, prefix, digits) => {
+        let subbed = "";
+        for (const d of digits) subbed += SUBSCRIPT_DIGITS[Number(d)];
+        return prefix + subbed;
+    });
+}
+
 function formatNumber(value, decimals) {
     if (value === null || value === undefined || value === "") return "—";
     const num = Number(value);
@@ -1783,7 +1805,7 @@ function setupMolarForm() {
                 return;
             }
             status.textContent = "";
-            totalNode.textContent = `${formula} → ${payload.total.toFixed(3)} g/mol`;
+            totalNode.textContent = `${formatChemicalFormula(formula)} → ${payload.total.toFixed(3)} g/mol`;
             tbody.replaceChildren();
             for (const row of payload.composition) {
                 const tr = document.createElement("tr");
@@ -1840,7 +1862,7 @@ function setupStoichForm() {
         for (const reactant of reactants) {
             const row = document.createElement("tr");
             const tdName = document.createElement("td");
-            tdName.textContent = reactant;
+            tdName.textContent = formatChemicalFormula(reactant);
             const tdInput = document.createElement("td");
             const input = document.createElement("input");
             input.type = "number";
@@ -1893,13 +1915,14 @@ function setupStoichForm() {
             }
             status.textContent = "";
             const limitingLabel = tr(state.activeLanguage, "stoichiometry_limiting_label");
-            limitingNode.textContent = `${limitingLabel}: ${payload.payload.limiting}`;
+            limitingNode.textContent =
+                `${limitingLabel}: ${formatChemicalFormula(payload.payload.limiting)}`;
             limitingNode.hidden = false;
             yieldsTbody.replaceChildren();
             for (const row of payload.payload.yields) {
                 const tr = document.createElement("tr");
                 const cells = [
-                    row.compound,
+                    formatChemicalFormula(row.compound),
                     row.theoretical_moles.toFixed(4),
                     row.theoretical_mass_g.toFixed(4),
                 ];
@@ -1919,7 +1942,7 @@ function setupStoichForm() {
                 for (const row of payload.payload.excess) {
                     const tr = document.createElement("tr");
                     const cells = [
-                        row.compound,
+                        formatChemicalFormula(row.compound),
                         row.excess_moles.toFixed(4),
                         row.excess_g.toFixed(4),
                     ];
@@ -1960,15 +1983,18 @@ function setupStoichForm() {
                 return;
             }
             status.textContent = "";
-            balanced.textContent = payload.formatted;
+            balanced.textContent = formatChemicalFormula(payload.formatted);
             balanced.hidden = false;
 
             const compounds = [...payload.reactants, ...payload.products];
             compoundSelect.replaceChildren();
             for (const compound of compounds) {
                 const option = document.createElement("option");
+                // Value stays plain ASCII so it round-trips back to
+                // the Pyodide bridge unchanged; the visible label gets
+                // the Unicode subscript formatting.
                 option.value = compound;
-                option.textContent = compound;
+                option.textContent = formatChemicalFormula(compound);
                 compoundSelect.appendChild(option);
             }
             state.stoich = {
@@ -2016,7 +2042,7 @@ function setupStoichForm() {
             for (const row of payload.rows) {
                 const tr = document.createElement("tr");
                 const cells = [
-                    row.compound,
+                    formatChemicalFormula(row.compound),
                     String(row.coefficient),
                     row.molar_mass.toFixed(3),
                     row.moles.toFixed(4),
@@ -3302,7 +3328,7 @@ function setupCompoundBuilderForm() {
                 return;
             }
             status.textContent = "";
-            resultValue.textContent = payload.formula;
+            resultValue.textContent = formatChemicalFormula(payload.formula);
             const { stock, traditional } = computeNomenclatureNames({
                 cationSymbol: cation.sym,
                 cationCharge: cation.ch,
@@ -3412,13 +3438,13 @@ function setupEmpiricalForm() {
             const empiricalDt = document.createElement("dt");
             empiricalDt.textContent = tr(state.activeLanguage, "empirical_result_empirical");
             const empiricalDd = document.createElement("dd");
-            empiricalDd.textContent = payload.payload.empirical;
+            empiricalDd.textContent = formatChemicalFormula(payload.payload.empirical);
             resultList.append(empiricalDt, empiricalDd);
             if (payload.payload.molecular) {
                 const molDt = document.createElement("dt");
                 molDt.textContent = tr(state.activeLanguage, "empirical_result_molecular");
                 const molDd = document.createElement("dd");
-                molDd.textContent = payload.payload.molecular;
+                molDd.textContent = formatChemicalFormula(payload.payload.molecular);
                 resultList.append(molDt, molDd);
             }
             resultWrap.hidden = false;
