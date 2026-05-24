@@ -77,6 +77,7 @@ from src.ui.compound_text import (
 )
 from src.ui.constants import CalculatorIcons
 from src.ui.context import AppContext
+from src.ui.controllers.language_controller import LanguageController
 from src.ui.controllers.responsive_layout_controller import ResponsiveLayoutController
 from src.ui.controllers.theme_controller import ThemeController
 from src.ui.formatters import format_info_value, format_value
@@ -195,6 +196,11 @@ class MainWindow(QWidget):
         self._finalize_layout()
 
         self.layout_controller = ResponsiveLayoutController(self)
+        self.language_controller = LanguageController(
+            language_state=self.language_state,
+            settings_service=self.settings_service,
+            language_selector=self.language_selector,
+        )
 
         self.populate_oxidation_combo(self.a_oxidation_combo, None)
         self.populate_oxidation_combo(self.b_oxidation_combo, None)
@@ -533,7 +539,7 @@ class MainWindow(QWidget):
 
     def load_preferences(self):
         """Load persisted user preferences (language, trend mode, panel mode, window geometry)."""
-        self.current_language = self.settings_service.get_language()
+        self.language_controller.load_from_settings()
         self.active_trend_mode = self.settings_service.get_trend_mode()
         self.right_panel_mode = self.settings_service.get_right_panel_mode()
         self.restore_window_preferences()
@@ -559,14 +565,6 @@ class MainWindow(QWidget):
             }
         )
         self.settings_service.set_window_state("maximized" if self.isMaximized() else "normal")
-
-    def sync_language_selector(self):
-        """Synchronize the language combo box to match the current language without emitting signals."""
-        index = self.language_selector.findData(self.current_language)
-        if index >= 0 and index != self.language_selector.currentIndex():
-            self.language_selector.blockSignals(True)
-            self.language_selector.setCurrentIndex(index)
-            self.language_selector.blockSignals(False)
 
     def sync_builder_state_from_controls(self):
         """Read the currently selected oxidation states from the combo boxes and sync with manager."""
@@ -594,9 +592,7 @@ class MainWindow(QWidget):
     def change_language(self, index):
         """Handle language selector change: persist the choice and re-apply all UI text."""
         code = self.language_selector.currentData()
-        if code:
-            self.current_language = code
-            self.settings_service.set_language(code)
+        if self.language_controller.change_to(code):
             self.apply_language()
 
     @property
@@ -636,7 +632,7 @@ class MainWindow(QWidget):
 
     def apply_language(self):
         """Re-apply all localized texts, refresh panels, and update the responsive layout."""
-        self.sync_language_selector()
+        self.language_controller.sync_selector()
         texts = build_main_window_texts(self.tr, TREND_BUTTON_SPECS)
         self._apply_main_window_language_texts(texts)
 
