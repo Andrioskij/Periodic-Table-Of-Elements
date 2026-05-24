@@ -1,5 +1,4 @@
 from PySide6.QtCore import QEvent, Qt
-from PySide6.QtGui import QKeySequence, QShortcut
 from PySide6.QtWidgets import (
     QApplication,
     QListWidgetItem,
@@ -77,6 +76,7 @@ from src.ui.compound_text import (
 )
 from src.ui.constants import CalculatorIcons
 from src.ui.context import AppContext
+from src.ui.controllers.accessibility_controller import AccessibilityController
 from src.ui.controllers.language_controller import LanguageController
 from src.ui.controllers.responsive_layout_controller import ResponsiveLayoutController
 from src.ui.controllers.theme_controller import ThemeController
@@ -93,7 +93,6 @@ from src.ui.main_window_builder import (
     build_trend_controls,
 )
 from src.ui.main_window_language import (
-    build_accessibility_specs,
     build_main_window_texts,
 )
 from src.ui.main_window_panels import (
@@ -191,8 +190,14 @@ class MainWindow(QWidget):
         self.element_font_size = TOKENS["font"]["size"]["button_default"]
 
         self._configure_window()
+        # Created before _assemble_layout because the layout builder
+        # calls accessibility_controller.refresh_control_accessibility()
+        # while wiring the trend controls. The controller holds only a
+        # window ref; its methods resolve widget attributes lazily, so
+        # an early construction is safe.
+        self.accessibility_controller = AccessibilityController(self)
         self._assemble_layout()
-        self._configure_focus_and_shortcuts()
+        self.accessibility_controller.configure_focus_and_shortcuts()
         self._finalize_layout()
 
         self.layout_controller = ResponsiveLayoutController(self)
@@ -291,7 +296,7 @@ class MainWindow(QWidget):
         self.trend_status_label = trend["trend_status_label"]
         self.main_layout.addWidget(self.trend_container)
         self.main_layout.addWidget(self.trend_status_label)
-        self.refresh_control_accessibility()
+        self.accessibility_controller.refresh_control_accessibility()
 
         self.periodic_table_widget = build_periodic_table_widget(
             self.elements,
@@ -346,7 +351,7 @@ class MainWindow(QWidget):
         )
         self.main_layout.addLayout(self.content_layout)
         self.main_layout.addWidget(self.builder_widget)
-        self.refresh_control_accessibility()
+        self.accessibility_controller.refresh_control_accessibility()
 
     @property
     def selected_button(self):
@@ -440,82 +445,6 @@ class MainWindow(QWidget):
         self.main_scroll_area.setWidget(self.content_widget)
         self.outer_layout.addWidget(self.main_scroll_area)
         self.setLayout(self.outer_layout)
-
-    def _configure_focus_and_shortcuts(self):
-        """Configure focus policies, tab order, keyboard shortcuts, and event filters."""
-        # Global focus policies
-        self.setFocusPolicy(Qt.StrongFocus)
-        self.about_button.setFocusPolicy(Qt.StrongFocus)
-        self.language_selector.setFocusPolicy(Qt.StrongFocus)
-        self.search_input.setFocusPolicy(Qt.StrongFocus)
-        self.compound_builder_panel.setFocusPolicy(Qt.StrongFocus)
-        self.periodic_table_widget.setFocusPolicy(Qt.StrongFocus)
-        self.right_column_widget.setFocusPolicy(Qt.StrongFocus)
-
-        # Trend buttons and panel buttons should be keyboard-controllable
-        for _mode, button in self.trend_buttons.items():
-            button.setFocusPolicy(Qt.StrongFocus)
-            button.installEventFilter(self)
-
-        for _mode, button in self.right_panel_buttons.items():
-            button.setFocusPolicy(Qt.StrongFocus)
-            button.installEventFilter(self)
-
-        # Right panel component accessibility
-        self.info_panel.setFocusPolicy(Qt.StrongFocus)
-        self.orbital_diagram_panel.setFocusPolicy(Qt.StrongFocus)
-        self.lewis_panel.setFocusPolicy(Qt.StrongFocus)
-        self.molar_mass_panel.setFocusPolicy(Qt.StrongFocus)
-        self.stoichiometry_panel.setFocusPolicy(Qt.StrongFocus)
-
-        # Tab order: about -> language -> search -> trend -> panels -> table -> builder
-        def safe_set_tab_order(first, second):
-            if first is None or second is None:
-                return
-            try:
-                if first.window() is second.window():
-                    self.setTabOrder(first, second)
-            except Exception:
-                pass  # avoid setTabOrder warnings in complex widget hierarchies
-
-        safe_set_tab_order(self.about_button, self.language_selector)
-        safe_set_tab_order(self.language_selector, self.search_input)
-
-        trend_keys = list(self.trend_buttons.keys())
-        if trend_keys:
-            first_trend = self.trend_buttons[trend_keys[0]]
-            safe_set_tab_order(self.search_input, first_trend)
-            previous = first_trend
-            for key in trend_keys[1:]:
-                current = self.trend_buttons[key]
-                safe_set_tab_order(previous, current)
-                previous = current
-
-            right_keys = list(self.right_panel_buttons.keys())
-            if right_keys:
-                first_right_panel = self.right_panel_buttons[right_keys[0]]
-                safe_set_tab_order(previous, first_right_panel)
-                previous_right = first_right_panel
-                for key in right_keys[1:]:
-                    current = self.right_panel_buttons[key]
-                    safe_set_tab_order(previous_right, current)
-                    previous_right = current
-
-                safe_set_tab_order(previous_right, self.periodic_table_widget)
-
-        safe_set_tab_order(self.periodic_table_widget, self.compound_builder_panel)
-
-        # Keyboard shortcuts
-        QShortcut(QKeySequence("Ctrl+F"), self, activated=self._focus_search_input)
-        QShortcut(QKeySequence("Ctrl+R"), self, activated=self._focus_search_input)
-        QShortcut(QKeySequence("Ctrl+1"), self, activated=lambda: self.set_right_panel_mode("info"))
-        QShortcut(QKeySequence("Ctrl+2"), self, activated=lambda: self.set_right_panel_mode("diagram"))
-        QShortcut(QKeySequence("Ctrl+3"), self, activated=lambda: self.set_right_panel_mode("lewis"))
-        QShortcut(QKeySequence("Ctrl+L"), self, activated=self.reset_builder)
-
-    def _focus_search_input(self):
-        """Move keyboard focus to the search input field."""
-        self.search_input.setFocus(Qt.TabFocusReason)
 
     def eventFilter(self, obj, event):
         """Activate a trend or panel mode when its button receives focus."""
@@ -642,7 +571,7 @@ class MainWindow(QWidget):
         if self.about_dialog is not None:
             self.about_dialog.apply_language()
 
-        self.refresh_control_accessibility()
+        self.accessibility_controller.refresh_control_accessibility()
         self.periodic_table_widget.refresh_button_styles()
         self.refresh_info_panel()
         self.refresh_diagram_panel()
@@ -1418,45 +1347,6 @@ class MainWindow(QWidget):
             button.blockSignals(True)
             button.setChecked(state["checked_modes"][button_mode])
             button.blockSignals(False)
-
-    def refresh_control_accessibility(self):
-        """Rebuild and apply accessible names, descriptions, and tooltips for all interactive controls."""
-        specs = build_accessibility_specs(
-            about_text=self.about_button.text(),
-            search_placeholder=self.search_input.placeholderText(),
-            search_button_text=self.search_button.text(),
-            build_button_text=self.build_button.text(),
-            reset_button_text=self.builder_reset_button.text(),
-            trend_button_texts={
-                mode: button.text()
-                for mode, button in getattr(self, "trend_buttons", {}).items()
-            },
-            right_panel_button_texts={
-                mode: button.text()
-                for mode, button in getattr(self, "right_panel_buttons", {}).items()
-            },
-        )
-
-        self._apply_accessibility_spec(self.about_button, specs["about_button"])
-        self._apply_accessibility_spec(self.search_input, specs["search_input"])
-        self._apply_accessibility_spec(self.search_button, specs["search_button"])
-        self._apply_accessibility_spec(self.build_button, specs["build_button"])
-        self._apply_accessibility_spec(
-            self.builder_reset_button,
-            specs["builder_reset_button"],
-        )
-
-        for mode, button in getattr(self, "trend_buttons", {}).items():
-            self._apply_accessibility_spec(button, specs["trend_buttons"][mode])
-
-        for mode, button in getattr(self, "right_panel_buttons", {}).items():
-            self._apply_accessibility_spec(button, specs["right_panel_buttons"][mode])
-
-    def _apply_accessibility_spec(self, widget, spec):
-        """Apply a single accessibility spec dict (name, description, tooltip) to a widget."""
-        widget.setAccessibleName(spec["name"])
-        widget.setAccessibleDescription(spec["description"])
-        widget.setToolTip(spec["tooltip"])
 
     def show_element_info(self, element):
         """Render the full element-info view in the info panel."""
