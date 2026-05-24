@@ -1,5 +1,18 @@
 # Release notes
 
+## 1.5.1 "Chemistry Tool"
+
+A same-day patch on top of v1.5.0.
+
+Fixes
+- Web Compound Builder no longer errors with `"undefined" is not valid JSON` when calculating a binary formula. Root cause: a Pyodide quirk where a `try/except` as the last top-level statement returns `None`; all 6 calculator-bridge scripts (`buildBinaryFormula`, `balanceEquation`, `computeStoichiometricMasses`, `computeEmpiricalFormula`, `computeLimitingReagent`, `computeMolarMass`) are rewritten so the JSON-serialise call sits as a bare last line outside the try/except, which Pyodide reliably evaluates.
+
+Added
+- Web Compound Builder now shows IUPAC Stock + traditional names alongside the binary formula (e.g. NaCl → "sodium chloride" / "cloruro di sodio"; FeCl3 → "iron(III) chloride" / "cloruro ferrico"). The desktop already did this; closes the parity gap. Implemented entirely client-side, no Pyodide round-trip.
+
+Refactor
+- `LanguageController` extracted from `MainWindow` (IMP-001 chunk #3, after ThemeController + ResponsiveLayoutController).
+
 ## 1.5.0 "Chemistry Tool"
 
 A "Calculator UX" release that turns the eight web calculators into self-explaining tools and gives the table two big new features for elements exploration.
