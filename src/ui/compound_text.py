@@ -94,7 +94,8 @@ def format_common_compounds_section(compounds, *, translate, get_localized_name)
 
     lines = [translate("common_compounds") + ":"]
     for entry in compounds:
-        lines.append(f"- {entry.get('formula')}: {get_localized_name(entry)}")
+        formula = subscript_chemical_formula(entry.get("formula"))
+        lines.append(f"- {formula}: {get_localized_name(entry)}")
     return "\n".join(lines)
 
 
