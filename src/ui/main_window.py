@@ -31,12 +31,10 @@ from src.services.localization_service import (
     tr as translate_text,
 )
 from src.ui.about_dialog import AboutDialog
-from src.ui.compound_text import (
-    compose_compound_result_text as compose_compound_panel_text,
-)
 from src.ui.constants import CalculatorIcons
 from src.ui.context import AppContext
 from src.ui.controllers.accessibility_controller import AccessibilityController
+from src.ui.controllers.compound_controller import CompoundController
 from src.ui.controllers.language_controller import LanguageController
 from src.ui.controllers.nomenclature_controller import NomenclatureController
 from src.ui.controllers.responsive_layout_controller import ResponsiveLayoutController
@@ -174,6 +172,20 @@ class MainWindow(QWidget):
         self.nomenclature_controller = NomenclatureController(
             nomenclature_data=self.nomenclature_data,
             language_controller=self.language_controller,
+        )
+        self.compound_controller = CompoundController(
+            builder_manager=self.context.compound_builder_manager,
+            selection_state=self.selection_state,
+            nomenclature_controller=self.nomenclature_controller,
+            compound_builder_panel=self.compound_builder_panel,
+            search_a_input=self.search_a_input,
+            search_b_input=self.search_b_input,
+            a_oxidation_combo=self.a_oxidation_combo,
+            b_oxidation_combo=self.b_oxidation_combo,
+            translate=self.tr,
+            format_oxidation_state=self.format_oxidation_state,
+            populate_oxidation_combo=self.populate_oxidation_combo,
+            get_ranked_matches=self.get_ranked_matches,
         )
 
         self.populate_oxidation_combo(self.a_oxidation_combo, None)
@@ -466,21 +478,7 @@ class MainWindow(QWidget):
 
     def sync_builder_state_from_controls(self):
         """Read the currently selected oxidation states from the combo boxes and sync with manager."""
-        oxidation_a = self.get_current_oxidation(self.a_oxidation_combo)
-        oxidation_b = self.get_current_oxidation(self.b_oxidation_combo)
-
-        # Delegate to manager if both elements are selected
-        if self.compound_a is not None and oxidation_a is not None:
-            self.context.compound_builder_manager.set_element_a(
-                self.compound_a["atomic_number"],
-                oxidation_a
-            )
-
-        if self.compound_b is not None and oxidation_b is not None:
-            self.context.compound_builder_manager.set_element_b(
-                self.compound_b["atomic_number"],
-                oxidation_b
-            )
+        self.compound_controller.sync_state_from_controls()
 
     def refresh_selection_header(self):
         """Sync the selection state from the table widget and update the builder header."""
@@ -711,100 +709,27 @@ class MainWindow(QWidget):
 
     def refresh_builder_panel(self, *, update_selectors=True):
         """Refresh all compound builder UI: selection text, status, selectors, and action buttons."""
-        self.sync_builder_state_from_controls()
-        self.refresh_builder_status()
-        if update_selectors:
-            self.refresh_builder_selector_texts()
-        self.refresh_builder_action_accessibility()
+        self.compound_controller.refresh_builder_panel(update_selectors=update_selectors)
 
     def refresh_builder_status(self):
         """Update the builder status label showing selected elements and their oxidation states."""
-        if self.compound_a is None:
-            text_a = self.tr("not_selected")
-        else:
-            oxidation_a = self.context.compound_builder_manager.state.element_a_oxidation
-            text_a = (
-                f"{self.compound_a['symbol']} "
-                f"{self.format_oxidation_state(oxidation_a) if oxidation_a is not None else self.tr('traditional_na')}"
-            )
-
-        if self.compound_b is None:
-            text_b = self.tr("not_selected")
-        else:
-            oxidation_b = self.context.compound_builder_manager.state.element_b_oxidation
-            text_b = (
-                f"{self.compound_b['symbol']} "
-                f"{self.format_oxidation_state(oxidation_b) if oxidation_b is not None else self.tr('traditional_na')}"
-            )
-
-        self.compound_builder_panel.set_status_text(self.tr("builder_status", a=text_a, b=text_b))
+        self.compound_controller.refresh_builder_status()
 
     def refresh_builder_selector_texts(self):
         """Update the A/B selector summary labels with localized element names or placeholder text."""
-        if self.compound_a is None:
-            first_text = self.tr("first_element")
-        else:
-            first_text = self.tr(
-                "first_selected",
-                name=self.get_localized_element_name(self.compound_a),
-                symbol=self.compound_a.get("symbol"),
-            )
-
-        if self.compound_b is None:
-            second_text = self.tr("second_element")
-        else:
-            second_text = self.tr(
-                "second_selected",
-                name=self.get_localized_element_name(self.compound_b),
-                symbol=self.compound_b.get("symbol"),
-            )
-
-        self.compound_builder_panel.set_selector_texts(first_text, second_text)
-        self.compound_builder_panel.selector_a_summary_label.setToolTip(first_text)
-        self.compound_builder_panel.selector_b_summary_label.setToolTip(second_text)
+        self.compound_controller.refresh_builder_selector_texts()
 
     def refresh_builder_action_accessibility(self):
         """Update tooltips and accessible descriptions on the search inputs."""
-        for search_input, slot_text in (
-            (self.search_a_input, self.compound_builder_panel.selector_a_summary_label.text()),
-            (self.search_b_input, self.compound_builder_panel.selector_b_summary_label.text()),
-        ):
-            search_input.setToolTip(slot_text)
-            search_input.setAccessibleDescription(slot_text)
+        self.compound_controller.refresh_builder_action_accessibility()
 
     def refresh_compound_panel(self, *, rebuild=False):
         """Refresh the nomenclature result shown in the builder panel."""
-        self.sync_builder_state_from_controls()
-        has_compound_pair = self.compound_a is not None and self.compound_b is not None
-
-        if rebuild:
-            text = self.compose_compound_result_text() or ""
-        elif has_compound_pair:
-            preview = self.format_common_compounds_section()
-            text = self.tr("pair_ready_prompt")
-            if preview:
-                text += "\n\n" + preview
-        else:
-            text = ""
-
-        self.compound_builder_panel.set_result_text(text)
+        self.compound_controller.refresh_compound_panel(rebuild=rebuild)
 
     def compose_compound_result_text(self):
         """Build the full compound result text (formula + IUPAC + traditional names)."""
-        manager_state = self.context.compound_builder_manager.state
-        return compose_compound_panel_text(
-            compound_a=self.compound_a,
-            compound_b=self.compound_b,
-            first_oxidation=manager_state.element_a_oxidation,
-            second_oxidation=manager_state.element_b_oxidation,
-            common_section=self.format_common_compounds_section(),
-            translate=self.tr,
-            build_binary_formula=self.build_binary_formula,
-            build_stock_name=self.build_stock_name,
-            build_traditional_name=self.build_traditional_name,
-            nomenclature_data=self.nomenclature_data,
-            language_code=self.current_language,
-        )
+        return self.compound_controller.compose_compound_result_text()
 
     def refresh_lewis_panel(self):
         """Refresh the Lewis dot diagram panel based on the selected element and panel mode."""
@@ -1108,62 +1033,15 @@ class MainWindow(QWidget):
 
     def _on_search_element_a(self):
         """Search for an element by name/symbol and assign it to compound slot A."""
-        query = self.search_a_input.text().strip()
-        if not query:
-            return
-        matches = self.get_ranked_matches(query, limit=1)
-        if matches:
-            element = matches[0]
-            self.compound_a = element
-            self.search_a_input.setText(
-                f"{self.get_localized_element_name(element)} ({element['symbol']})"
-            )
-            self.populate_oxidation_combo(self.a_oxidation_combo, element)
-
-            # Delegate to manager (without oxidation state yet)
-            self.context.compound_builder_manager.set_element_a(element["atomic_number"], 1)
-
-            self.refresh_builder_panel()
-            self.refresh_compound_panel()
-        else:
-            self.search_a_input.setText("")
+        self.compound_controller.on_search_element_a()
 
     def _on_search_element_b(self):
         """Search for an element by name/symbol and assign it to compound slot B."""
-        query = self.search_b_input.text().strip()
-        if not query:
-            return
-        matches = self.get_ranked_matches(query, limit=1)
-        if matches:
-            element = matches[0]
-            self.compound_b = element
-            self.search_b_input.setText(
-                f"{self.get_localized_element_name(element)} ({element['symbol']})"
-            )
-            self.populate_oxidation_combo(self.b_oxidation_combo, element)
-
-            # Delegate to manager (without oxidation state yet)
-            self.context.compound_builder_manager.set_element_b(element["atomic_number"], -1)
-
-            self.refresh_builder_panel()
-            self.refresh_compound_panel()
-        else:
-            self.search_b_input.setText("")
+        self.compound_controller.on_search_element_b()
 
     def reset_builder(self):
         """Clear both compound slots, oxidation selections, and reset the builder UI."""
-        # Delegate reset to manager
-        self.context.compound_builder_manager.reset()
-
-        # Clear MainWindow presentation state
-        self.compound_a = None
-        self.compound_b = None
-        self.search_a_input.setText("")
-        self.search_b_input.setText("")
-        self.populate_oxidation_combo(self.a_oxidation_combo, None)
-        self.populate_oxidation_combo(self.b_oxidation_combo, None)
-        self.refresh_builder_status()
-        self.refresh_compound_panel()
+        self.compound_controller.reset()
 
     def get_support_entry(self, symbol):
         """Look up the nomenclature support entry for a given element symbol."""
@@ -1207,9 +1085,7 @@ class MainWindow(QWidget):
 
     def get_common_compounds_for_current_pair(self):
         """Return common compounds for the currently selected A/B element pair."""
-        return self.nomenclature_controller.get_common_compounds_for_pair(
-            self.compound_a, self.compound_b,
-        )
+        return self.compound_controller.get_common_compounds_for_current_pair()
 
     def get_localized_common_compound_name(self, compound_entry):
         """Return the localized display name for a common-compound entry."""
@@ -1217,9 +1093,7 @@ class MainWindow(QWidget):
 
     def format_common_compounds_section(self):
         """Build the HTML section listing common compounds for the current pair."""
-        return self.nomenclature_controller.format_common_compounds_section(
-            self.compound_a, self.compound_b,
-        )
+        return self.compound_controller.format_common_compounds_section()
 
     def update_compound_suggestions_preview(self):
         """Refresh the compound panel to update the common-compound preview."""
@@ -1249,7 +1123,7 @@ class MainWindow(QWidget):
 
     def build_compound(self):
         """Rebuild the formula result in the nomenclature area."""
-        self.refresh_compound_panel(rebuild=True)
+        self.compound_controller.build_compound()
 
     def set_right_panel_mode(self, mode):
         """Activate a right-panel mode, persist the choice, and refresh the panel stack."""
