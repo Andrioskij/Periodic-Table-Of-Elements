@@ -9,14 +9,7 @@ from src.app_metadata import build_window_title
 from src.config.design_tokens import TOKENS
 from src.config.static_data import NUMERIC_TREND_PROPERTIES
 from src.domain.compound_builder import (
-    build_binary_formula,
-    format_formula_part,
     parse_oxidation_states,
-)
-from src.domain.nomenclature import (
-    build_stock_name,
-    build_traditional_name,
-    int_to_roman,
 )
 from src.domain.trends import (
     get_macro_class,
@@ -26,22 +19,7 @@ from src.services.localization_service import (
     LANGUAGE_OPTIONS,
 )
 from src.services.localization_service import (
-    format_stock_compound_name as localize_stock_compound_name,
-)
-from src.services.localization_service import (
-    format_traditional_compound_name as localize_traditional_compound_name,
-)
-from src.services.localization_service import (
-    get_language_naming_rules as get_naming_rules,
-)
-from src.services.localization_service import (
-    get_localized_anion_name as get_anion_name_for_language,
-)
-from src.services.localization_service import (
     get_localized_category_text as get_category_text_for_language,
-)
-from src.services.localization_service import (
-    get_localized_element_name as get_element_name_for_language,
 )
 from src.services.localization_service import (
     get_localized_macro_class_text as get_macro_class_text_for_language,
@@ -50,34 +28,17 @@ from src.services.localization_service import (
     get_localized_standard_state_text as get_standard_state_text_for_language,
 )
 from src.services.localization_service import (
-    get_localized_support_text as get_support_text_for_language,
-)
-from src.services.localization_service import (
-    get_support_entry as get_nomenclature_support_entry,
-)
-from src.services.localization_service import (
     tr as translate_text,
 )
 from src.ui.about_dialog import AboutDialog
 from src.ui.compound_text import (
     compose_compound_result_text as compose_compound_panel_text,
 )
-from src.ui.compound_text import (
-    format_common_compounds_section as format_compound_preview_section,
-)
-from src.ui.compound_text import (
-    get_common_compounds_for_pair,
-)
-from src.ui.compound_text import (
-    get_compound_pair_key as build_compound_pair_key,
-)
-from src.ui.compound_text import (
-    get_localized_common_compound_name as get_localized_common_name,
-)
 from src.ui.constants import CalculatorIcons
 from src.ui.context import AppContext
 from src.ui.controllers.accessibility_controller import AccessibilityController
 from src.ui.controllers.language_controller import LanguageController
+from src.ui.controllers.nomenclature_controller import NomenclatureController
 from src.ui.controllers.responsive_layout_controller import ResponsiveLayoutController
 from src.ui.controllers.theme_controller import ThemeController
 from src.ui.formatters import format_info_value, format_value
@@ -205,6 +166,14 @@ class MainWindow(QWidget):
             language_state=self.language_state,
             settings_service=self.settings_service,
             language_selector=self.language_selector,
+        )
+        # Bind nomenclature helpers to the active language + dataset so
+        # the formatters are testable in isolation. MainWindow keeps
+        # 1-line passthrough methods for backward compatibility with
+        # the existing call sites (~60 across the file).
+        self.nomenclature_controller = NomenclatureController(
+            nomenclature_data=self.nomenclature_data,
+            language_controller=self.language_controller,
         )
 
         self.populate_oxidation_combo(self.a_oxidation_combo, None)
@@ -891,19 +860,11 @@ class MainWindow(QWidget):
 
     def get_localized_element_name(self, element):
         """Return the element name localized to the current UI language."""
-        return get_element_name_for_language(
-            element,
-            self.nomenclature_data,
-            self.current_language,
-        )
+        return self.nomenclature_controller.get_localized_element_name(element)
 
     def get_localized_anion_name(self, element):
         """Return the anion name of an element localized to the current UI language."""
-        return get_anion_name_for_language(
-            element,
-            self.nomenclature_data,
-            self.current_language,
-        )
+        return self.nomenclature_controller.get_localized_anion_name(element)
 
     def interpolate_color(self, color1, color2, t):
         """Linearly interpolate between two hex colors by factor *t* (0..1)."""
@@ -1206,45 +1167,31 @@ class MainWindow(QWidget):
 
     def get_support_entry(self, symbol):
         """Look up the nomenclature support entry for a given element symbol."""
-        return get_nomenclature_support_entry(self.nomenclature_data, symbol)
+        return self.nomenclature_controller.get_support_entry(symbol)
 
     def get_language_naming_rules(self, language_code=None):
         """Return the naming-rule dict for the given (or current) language."""
-        return get_naming_rules(
-            self.nomenclature_data,
-            language_code or self.current_language,
-        )
+        return self.nomenclature_controller.get_language_naming_rules(language_code)
 
     def get_localized_support_text(self, entry, field_prefix):
         """Return a localized nomenclature support text field from an entry."""
-        return get_support_text_for_language(
-            entry,
-            field_prefix,
-            self.current_language,
-        )
+        return self.nomenclature_controller.get_localized_support_text(entry, field_prefix)
 
     def format_stock_compound_name(self, anion_name, cation_name, roman=None):
         """Build a localized IUPAC (Stock) compound name from anion/cation names and optional roman numeral."""
-        return localize_stock_compound_name(
-            self.nomenclature_data,
-            self.current_language,
-            anion_name,
-            cation_name,
-            roman,
+        return self.nomenclature_controller.format_stock_compound_name(
+            anion_name, cation_name, roman,
         )
 
     def format_traditional_compound_name(self, anion_name, epithet):
         """Build a localized traditional compound name from anion name and suffix epithet."""
-        return localize_traditional_compound_name(
-            self.nomenclature_data,
-            self.current_language,
-            anion_name,
-            epithet,
+        return self.nomenclature_controller.format_traditional_compound_name(
+            anion_name, epithet,
         )
 
     def int_to_roman(self, number):
         """Convert an integer to its Roman numeral representation."""
-        return int_to_roman(number)
+        return self.nomenclature_controller.int_to_roman(number)
 
     def update_builder_status(self, *args):
         """Signal handler that refreshes the builder panel when oxidation combos change."""
@@ -1256,29 +1203,22 @@ class MainWindow(QWidget):
 
     def get_compound_pair_key(self, symbol_a, symbol_b):
         """Return a canonical key string for a pair of element symbols."""
-        return build_compound_pair_key(symbol_a, symbol_b)
+        return self.nomenclature_controller.get_compound_pair_key(symbol_a, symbol_b)
 
     def get_common_compounds_for_current_pair(self):
         """Return common compounds for the currently selected A/B element pair."""
-        if self.compound_a is None or self.compound_b is None:
-            return []
-
-        return get_common_compounds_for_pair(
-            self.nomenclature_data,
-            self.compound_a.get("symbol"),
-            self.compound_b.get("symbol"),
+        return self.nomenclature_controller.get_common_compounds_for_pair(
+            self.compound_a, self.compound_b,
         )
 
     def get_localized_common_compound_name(self, compound_entry):
         """Return the localized display name for a common-compound entry."""
-        return get_localized_common_name(compound_entry, self.current_language)
+        return self.nomenclature_controller.get_localized_common_compound_name(compound_entry)
 
     def format_common_compounds_section(self):
         """Build the HTML section listing common compounds for the current pair."""
-        return format_compound_preview_section(
-            self.get_common_compounds_for_current_pair(),
-            translate=self.tr,
-            get_localized_name=self.get_localized_common_compound_name,
+        return self.nomenclature_controller.format_common_compounds_section(
+            self.compound_a, self.compound_b,
         )
 
     def update_compound_suggestions_preview(self):
@@ -1287,40 +1227,24 @@ class MainWindow(QWidget):
 
     def format_formula_part(self, symbol, count):
         """Format a single part of a chemical formula (symbol with optional subscript)."""
-        return format_formula_part(symbol, count)
+        return self.nomenclature_controller.format_formula_part(symbol, count)
 
     def build_binary_formula(self, cation_symbol, cation_charge, anion_symbol, anion_charge):
         """Build the balanced binary formula string from cation/anion symbols and charges."""
-        return build_binary_formula(
-            cation_symbol,
-            cation_charge,
-            anion_symbol,
-            anion_charge,
-            formatter=self.format_formula_part,
+        return self.nomenclature_controller.build_binary_formula(
+            cation_symbol, cation_charge, anion_symbol, anion_charge,
         )
 
     def build_stock_name(self, cation, cation_charge, anion):
         """Build the IUPAC (Stock) name for a binary compound from cation, charge, and anion."""
-        return build_stock_name(
-            anion_name=self.get_localized_anion_name(anion),
-            cation_name=self.get_localized_element_name(cation),
-            cation_charge=cation_charge,
-            oxidation_states=cation.get("oxidation_states"),
-            traditional_na=self.tr("traditional_na"),
-            format_stock_compound_name=self.format_stock_compound_name,
+        return self.nomenclature_controller.build_stock_name(
+            cation, cation_charge, anion,
         )
 
     def build_traditional_name(self, cation, cation_charge, anion):
         """Build the traditional name for a binary compound using suffix nomenclature."""
-        entry = self.get_support_entry(cation.get("symbol"))
-        return build_traditional_name(
-            anion_name=self.get_localized_anion_name(anion),
-            cation_charge=cation_charge,
-            oxidation_states=cation.get("oxidation_states"),
-            low_name=self.get_localized_support_text(entry, "traditional_low"),
-            high_name=self.get_localized_support_text(entry, "traditional_high"),
-            traditional_na=self.tr("traditional_na"),
-            format_traditional_compound_name=self.format_traditional_compound_name,
+        return self.nomenclature_controller.build_traditional_name(
+            cation, cation_charge, anion,
         )
 
     def build_compound(self):
