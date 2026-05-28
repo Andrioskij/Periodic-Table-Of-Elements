@@ -25,12 +25,12 @@
       },
       "it": {
         "stock_simple": "{anion} di {cation}",
-        "stock_roman": "{anion} di {cation} ({roman})",
+        "stock_roman": "{anion} di {cation}({roman})",
         "traditional": "{anion} {epithet}"
       },
       "fr": {
         "stock_simple": "{anion} de {cation}",
-        "stock_roman": "{anion} de {cation} ({roman})",
+        "stock_roman": "{anion} de {cation}({roman})",
         "traditional": "{anion} {epithet}"
       },
       "de": {
@@ -45,12 +45,12 @@
       },
       "ru": {
         "stock_simple": "{anion} {cation}",
-        "stock_roman": "{anion} {cation} ({roman})",
+        "stock_roman": "{anion} {cation}({roman})",
         "traditional": "{anion} {epithet}"
       },
       "es": {
         "stock_simple": "{anion} de {cation}",
-        "stock_roman": "{anion} de {cation} ({roman})",
+        "stock_roman": "{anion} de {cation}({roman})",
         "traditional": "{anion} {epithet}"
       }
     },

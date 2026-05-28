@@ -118,6 +118,15 @@ class TestNomenclatureControllerFormatters(unittest.TestCase):
         )
         self.assertEqual(name, "iron(III) chloride")
 
+    def test_format_stock_compound_name_it_with_roman_has_no_space(self):
+        # Italian convention from the curated common-compounds dataset:
+        # "ossido di ferro(III)" - no space between cation name and "(III)".
+        self.lang.current_language = "it"
+        name = self.controller.format_stock_compound_name(
+            anion_name="ossido", cation_name="ferro", roman="III",
+        )
+        self.assertEqual(name, "ossido di ferro(III)")
+
 
 class TestNomenclatureControllerCommonCompounds(unittest.TestCase):
     @classmethod

@@ -2,6 +2,7 @@ import unittest
 
 from src.ui.compound_text import (
     compose_compound_result_text,
+    format_common_compounds_section,
     get_compound_pair_key,
     get_localized_common_compound_name,
 )
@@ -35,6 +36,43 @@ class TestGetLocalizedCommonCompoundName(unittest.TestCase):
     def test_falls_back_to_formula(self):
         entry = {"formula": "NaCl"}
         self.assertEqual(get_localized_common_compound_name(entry, "en"), "NaCl")
+
+
+class TestFormatCommonCompoundsSection(unittest.TestCase):
+    """The preview list of common compounds should subscript formula digits
+    that follow a letter or closing paren — same rule as the main formula
+    line. Regression coverage for the gap left by the original PR #86.
+    """
+
+    def _translate(self, key, **_kw):
+        return {"common_compounds": "Common compounds"}.get(key, key)
+
+    def _name(self, entry):
+        return entry.get("name_en")
+
+    def test_returns_empty_when_no_compounds(self):
+        self.assertEqual(
+            format_common_compounds_section(
+                [], translate=self._translate, get_localized_name=self._name,
+            ),
+            "",
+        )
+
+    def test_subscripts_digits_after_letter(self):
+        # Fe2O3 has two digit runs that follow letters; both must subscript.
+        compounds = [{"formula": "Fe2O3", "name_en": "iron(III) oxide"}]
+        section = format_common_compounds_section(
+            compounds, translate=self._translate, get_localized_name=self._name,
+        )
+        self.assertIn("Fe₂O₃", section)
+        self.assertNotIn("Fe2O3", section)
+
+    def test_preserves_compounds_without_digits(self):
+        compounds = [{"formula": "NaCl", "name_en": "sodium chloride"}]
+        section = format_common_compounds_section(
+            compounds, translate=self._translate, get_localized_name=self._name,
+        )
+        self.assertIn("NaCl", section)
 
 
 class TestComposeCompoundResultText(unittest.TestCase):
