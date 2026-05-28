@@ -6,6 +6,22 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.5.2] - 2026-05-28
+
+A polish patch on top of v1.5.1 that finishes the Unicode-subscript pass started in #86 and aligns the Romance + Russian Stock-name spacing convention to the curated dataset.
+
+### Added
+- **Unicode subscript display for chemical formulas across desktop + web** (#86). Digit runs that follow a letter or closing paren get rendered with the matching `U+208x` subscript glyphs (e.g. `Fe2O3` → `Fe₂O₃`, `Ca(OH)2` → `Ca(OH)₂`). Stand-alone numbers (coefficients, moles, masses) are left untouched. Desktop ships a single `subscript_chemical_formula` helper in `src/ui/formatters.py`; web ships the equivalent `formatChemicalFormula` and wires it into 8 call sites across the molar mass, stoichiometry, compound builder, and empirical-formula panels. Pure display layer — the underlying domain strings are unchanged.
+
+### Fixed
+- **Common-compounds preview list now subscripts formulas too** (#90). The main compound-builder result already showed `Fe₂O₃` via #86, but the "Common compounds" preview rows below it kept emitting raw digits (`Fe2O3`, `FeO`). The preview now goes through the same `subscript_chemical_formula` helper, so the two sections agree.
+- **IT/FR/ES/RU Stock-name spacing aligned with the curated dataset** (#90). The dynamic `stock_roman` patterns produced `ossido di ferro (III)` (space before the Roman numeral) while the curated `name_it`/`name_fr`/`name_es`/`name_ru` fields in `nomenclature_data.json` use `ossido di ferro(III)` (no space). The four patterns now match the curated convention. EN/DE/ZH were already consistent.
+
+### Refactor
+- **`NomenclatureController` extracted from `MainWindow`** (#87, IMP-001 chunk #5). 14 thin wrappers around localized formula + name formatters move into a controller bound to the language controller + nomenclature dataset, with 18 pure-Python unit tests (no Qt).
+- **`CompoundController` extracted from `MainWindow`** (#88, IMP-001 chunk #6). The compound-builder orchestration (state sync, panel refreshes, search-slot handlers, reset, build, result composition) moves into a controller bound to the builder manager + selection state + nomenclature controller + the compound builder widgets. 16 pure-Python unit tests using fake widgets + a real builder manager.
+- **`SelectionStateController` extracted from `MainWindow`** (#89, IMP-001 chunk #7). The element-selection orchestration (select / activate / apply + header sync + info/diagram/lewis refresh fan-out + solubility highlight) moves into a small controller, closing the IMP-001 chunked refactor. 7 pure-Python unit tests.
+
 ## [1.5.1] - 2026-05-24
 
 A next-day patch on top of v1.5.0 that closes a real user-reported bug in the web Compound Builder and finally brings the web side to nomenclature parity with the desktop.

@@ -1,5 +1,19 @@
 # Release notes
 
+## 1.5.2 "Chemistry Tool"
+
+A polish patch on top of v1.5.1.
+
+Added
+- Chemical formulas now display with proper Unicode subscripts everywhere (desktop + web): `Fe2O3` reads as `Fe₂O₃`, `Ca(OH)2` as `Ca(OH)₂`, `CuSO4·5H2O` as `CuSO₄·5H₂O`. Stand-alone numbers (coefficients, moles, masses) are left untouched. Pure display layer — the underlying chemistry strings haven't changed.
+
+Fixed
+- The "Common compounds" preview list under the compound builder result now subscripts its formula entries too (it was the one spot the original subscript pass missed).
+- Italian, French, Spanish and Russian Stock names no longer have a stray space before the Roman numeral: it's now `ossido di ferro(III)` / `oxyde de fer(III)` / `óxido de hierro(III)` / `оксид железа(III)`, matching the curated names in the dataset.
+
+Refactor
+- `MainWindow` finishes shedding its remaining responsibilities to three more dedicated controllers — `NomenclatureController`, `CompoundController`, `SelectionStateController` — closing the IMP-001 chunked refactor that started with `ThemeController` / `ResponsiveLayoutController` / `LanguageController` / `AccessibilityController` in earlier releases. Internal cleanup; no user-visible behavior change.
+
 ## 1.5.1 "Chemistry Tool"
 
 A same-day patch on top of v1.5.0.
