@@ -38,6 +38,7 @@ from src.ui.controllers.compound_controller import CompoundController
 from src.ui.controllers.language_controller import LanguageController
 from src.ui.controllers.nomenclature_controller import NomenclatureController
 from src.ui.controllers.responsive_layout_controller import ResponsiveLayoutController
+from src.ui.controllers.selection_state_controller import SelectionStateController
 from src.ui.controllers.theme_controller import ThemeController
 from src.ui.formatters import format_info_value, format_value
 from src.ui.main_window_builder import (
@@ -186,6 +187,12 @@ class MainWindow(QWidget):
             format_oxidation_state=self.format_oxidation_state,
             populate_oxidation_combo=self.populate_oxidation_combo,
             get_ranked_matches=self.get_ranked_matches,
+        )
+        self.selection_state_controller = SelectionStateController(
+            selection_state=self.selection_state,
+            periodic_table_widget=self.periodic_table_widget,
+            solubility_panel=self.solubility_panel,
+            refresh_panel_modes=self._refresh_panel_modes,
         )
 
         self.populate_oxidation_combo(self.a_oxidation_combo, None)
@@ -482,8 +489,7 @@ class MainWindow(QWidget):
 
     def refresh_selection_header(self):
         """Sync the selection state from the table widget and update the builder header."""
-        self.selection_state.selected_button = self.periodic_table_widget.selected_button
-        self.periodic_table_widget.refresh_selected_element_name()
+        self.selection_state_controller.refresh_selection_header()
 
     def change_language(self, index):
         """Handle language selector change: persist the choice and re-apply all UI text."""
@@ -975,27 +981,19 @@ class MainWindow(QWidget):
 
     def _handle_table_selection(self, element):
         """Slot connected to the periodic table widget's element_selected signal."""
-        self._apply_selected_element(element)
+        self.selection_state_controller.apply_selected_element(element)
 
     def activate_element(self, element):
         """Programmatically select an element (convenience entry point)."""
-        self.select_element(element)
+        self.selection_state_controller.activate_element(element)
 
     def select_element(self, element, button=None):
         """Select an element in the table widget and apply it as the active selection."""
-        self.periodic_table_widget.select_element(element)
-        self._apply_selected_element(element)
+        self.selection_state_controller.select_element(element)
 
     def _apply_selected_element(self, element):
         """Store the selected element and refresh the header and info/diagram panels."""
-        self.current_selected_element = element
-        self.refresh_selection_header()
-        self._refresh_panel_modes(("info", "diagram", "lewis"))
-        symbol = element.get("symbol", "") if element else ""
-        if symbol:
-            self.solubility_panel.highlight_element(symbol)
-        else:
-            self.solubility_panel.clear_highlight()
+        self.selection_state_controller.apply_selected_element(element)
 
     def parse_oxidation_states(self, oxidation_data):
         """Parse raw oxidation-state data into a sorted list of integers."""
